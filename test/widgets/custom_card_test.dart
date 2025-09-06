@@ -6,7 +6,7 @@ void main() {
   group('CustomCard', () {
     testWidgets('displays child widget', (WidgetTester tester) async {
       const childText = 'Card Content';
-      
+
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -16,7 +16,7 @@ void main() {
           ),
         ),
       );
-      
+
       expect(find.text(childText), findsOneWidget);
     });
 
@@ -30,20 +30,23 @@ void main() {
           ),
         ),
       );
-      
+
       final padding = tester.widget<Padding>(
-        find.descendant(
-          of: find.byType(CustomCard),
-          matching: find.byType(Padding),
-        ).last,
+        find
+            .descendant(
+              of: find.byType(CustomCard),
+              matching: find.byType(Padding),
+            )
+            .last,
       );
-      
+
       expect(padding.padding, equals(const EdgeInsets.all(16)));
     });
 
-    testWidgets('applies custom padding when provided', (WidgetTester tester) async {
+    testWidgets('applies custom padding when provided',
+        (WidgetTester tester) async {
       const customPadding = EdgeInsets.all(24.0);
-      
+
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -54,20 +57,23 @@ void main() {
           ),
         ),
       );
-      
+
       final padding = tester.widget<Padding>(
-        find.descendant(
-          of: find.byType(CustomCard),
-          matching: find.byType(Padding),
-        ).last,
+        find
+            .descendant(
+              of: find.byType(CustomCard),
+              matching: find.byType(Padding),
+            )
+            .last,
       );
-      
+
       expect(padding.padding, equals(customPadding));
     });
 
-    testWidgets('applies custom margin when provided', (WidgetTester tester) async {
+    testWidgets('applies custom margin when provided',
+        (WidgetTester tester) async {
       const customMargin = EdgeInsets.all(20.0);
-      
+
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -78,20 +84,21 @@ void main() {
           ),
         ),
       );
-      
+
       final card = tester.widget<Card>(
         find.descendant(
           of: find.byType(CustomCard),
           matching: find.byType(Card),
         ),
       );
-      
+
       expect(card.margin, equals(customMargin));
     });
 
-    testWidgets('applies custom background color when provided', (WidgetTester tester) async {
+    testWidgets('applies custom background color when provided',
+        (WidgetTester tester) async {
       const customColor = Colors.blue;
-      
+
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -102,20 +109,21 @@ void main() {
           ),
         ),
       );
-      
+
       final card = tester.widget<Card>(
         find.descendant(
           of: find.byType(CustomCard),
           matching: find.byType(Card),
         ),
       );
-      
+
       expect(card.color, equals(customColor));
     });
 
-    testWidgets('calls onTap when provided and tapped', (WidgetTester tester) async {
+    testWidgets('calls onTap when provided and tapped',
+        (WidgetTester tester) async {
       bool wasTapped = false;
-      
+
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -128,14 +136,15 @@ void main() {
           ),
         ),
       );
-      
+
       await tester.tap(find.byType(CustomCard));
       await tester.pump();
-      
+
       expect(wasTapped, isTrue);
     });
 
-    testWidgets('is not tappable when onTap is null', (WidgetTester tester) async {
+    testWidgets('is not tappable when onTap is null',
+        (WidgetTester tester) async {
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -145,7 +154,7 @@ void main() {
           ),
         ),
       );
-      
+
       // Should not find InkWell when onTap is null
       expect(
         find.descendant(
@@ -156,7 +165,8 @@ void main() {
       );
     });
 
-    testWidgets('wraps in InkWell when onTap is provided', (WidgetTester tester) async {
+    testWidgets('wraps in InkWell when onTap is provided',
+        (WidgetTester tester) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -167,7 +177,7 @@ void main() {
           ),
         ),
       );
-      
+
       expect(
         find.descendant(
           of: find.byType(CustomCard),

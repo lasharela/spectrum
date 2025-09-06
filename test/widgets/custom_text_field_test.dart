@@ -6,7 +6,7 @@ void main() {
   group('CustomTextField', () {
     testWidgets('displays label text', (WidgetTester tester) async {
       const labelText = 'Username';
-      
+
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -17,13 +17,13 @@ void main() {
           ),
         ),
       );
-      
+
       expect(find.text(labelText), findsOneWidget);
     });
 
     testWidgets('displays hint text', (WidgetTester tester) async {
       const hintText = 'Enter your username';
-      
+
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -35,7 +35,7 @@ void main() {
           ),
         ),
       );
-      
+
       // Check that the hint text is present in the widget tree
       expect(find.text(hintText), findsOneWidget);
     });
@@ -43,7 +43,7 @@ void main() {
     testWidgets('accepts text input', (WidgetTester tester) async {
       final controller = TextEditingController();
       const inputText = 'test input';
-      
+
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -54,16 +54,17 @@ void main() {
           ),
         ),
       );
-      
+
       await tester.enterText(find.byType(TextFormField), inputText);
       await tester.pump();
-      
+
       expect(controller.text, equals(inputText));
     });
 
-    testWidgets('obscures text when obscureText is true', (WidgetTester tester) async {
+    testWidgets('obscures text when obscureText is true',
+        (WidgetTester tester) async {
       final controller = TextEditingController(text: 'password123');
-      
+
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -75,14 +76,15 @@ void main() {
           ),
         ),
       );
-      
+
       // The TextFormField should be present
       expect(find.byType(TextFormField), findsOneWidget);
     });
 
-    testWidgets('shows text when obscureText is false', (WidgetTester tester) async {
+    testWidgets('shows text when obscureText is false',
+        (WidgetTester tester) async {
       final controller = TextEditingController(text: 'visible');
-      
+
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -94,7 +96,7 @@ void main() {
           ),
         ),
       );
-      
+
       // The TextFormField should be present
       expect(find.byType(TextFormField), findsOneWidget);
     });
@@ -111,15 +113,16 @@ void main() {
           ),
         ),
       );
-      
+
       // The TextFormField should be present with the custom keyboard type
       expect(find.byType(TextFormField), findsOneWidget);
     });
 
-    testWidgets('validates input when validator is provided', (WidgetTester tester) async {
+    testWidgets('validates input when validator is provided',
+        (WidgetTester tester) async {
       const errorMessage = 'Field is required';
       final formKey = GlobalKey<FormState>();
-      
+
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -139,18 +142,18 @@ void main() {
           ),
         ),
       );
-      
+
       // Trigger validation
       formKey.currentState?.validate();
       await tester.pump();
-      
+
       // Should show error message for empty field
       expect(find.text(errorMessage), findsOneWidget);
     });
 
     testWidgets('calls onChanged callback', (WidgetTester tester) async {
       String? changedValue;
-      
+
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -164,17 +167,17 @@ void main() {
           ),
         ),
       );
-      
+
       const inputText = 'new text';
       await tester.enterText(find.byType(TextFormField), inputText);
       await tester.pump();
-      
+
       expect(changedValue, equals(inputText));
     });
 
     testWidgets('is enabled by default', (WidgetTester tester) async {
       final controller = TextEditingController();
-      
+
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -185,7 +188,7 @@ void main() {
           ),
         ),
       );
-      
+
       // Should be able to enter text when enabled
       await tester.enterText(find.byType(TextFormField), 'test');
       expect(controller.text, equals('test'));
@@ -203,14 +206,14 @@ void main() {
           ),
         ),
       );
-      
+
       // The TextFormField should be present
       expect(find.byType(TextFormField), findsOneWidget);
     });
 
     testWidgets('shows prefix icon when provided', (WidgetTester tester) async {
       const icon = Icons.person;
-      
+
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -222,13 +225,13 @@ void main() {
           ),
         ),
       );
-      
+
       expect(find.byIcon(icon), findsOneWidget);
     });
 
     testWidgets('shows suffix icon when provided', (WidgetTester tester) async {
       const icon = Icons.clear;
-      
+
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -240,7 +243,7 @@ void main() {
           ),
         ),
       );
-      
+
       expect(find.byIcon(icon), findsOneWidget);
     });
   });

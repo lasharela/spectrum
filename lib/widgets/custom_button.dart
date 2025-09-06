@@ -11,7 +11,7 @@ class CustomButton extends StatelessWidget {
   final BorderRadius? borderRadius;
 
   const CustomButton({
-    Key? key,
+    super.key,
     required this.text,
     required this.onPressed,
     this.isLoading = false,
@@ -20,12 +20,12 @@ class CustomButton extends StatelessWidget {
     this.width,
     this.height = 48.0,
     this.borderRadius,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return SizedBox(
       width: width,
       height: height,
@@ -37,9 +37,8 @@ class CustomButton extends StatelessWidget {
             borderRadius: borderRadius ?? BorderRadius.circular(8.0),
           ),
         ),
-        child: isLoading
-            ? _buildLoader()
-            : _buildText(textColor ?? Colors.white),
+        child:
+            isLoading ? _buildLoader() : _buildText(textColor ?? Colors.white),
       ),
     );
   }

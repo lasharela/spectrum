@@ -30,11 +30,12 @@ void main() {
 
   testWidgets('App uses custom theme', (WidgetTester tester) async {
     await tester.pumpWidget(const MyApp());
-    
+
     // Verify that the app title is updated
     expect(find.text('Spectrum Home Page'), findsOneWidget);
-    
+
     // Verify that the counter UI elements are present
-    expect(find.text('You have pushed the button this many times:'), findsOneWidget);
+    expect(find.text('You have pushed the button this many times:'),
+        findsOneWidget);
   });
 }

@@ -5,6 +5,12 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Project Type
 This is a Flutter project.
 
+## Testing Requirements
+- **IMPORTANT**: After adding or updating any functionality, always add corresponding tests
+- Maintain minimum 75% test coverage
+- If coverage drops below 75%, prioritize adding tests before new features
+- Run `make save` to ensure all quality checks pass before committing
+
 ## Development Guidelines
 
 ### 1. Component Architecture
