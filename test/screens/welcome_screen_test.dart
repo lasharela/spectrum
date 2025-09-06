@@ -98,12 +98,12 @@ void main() {
       expect(find.text('Resources & Support'), findsOneWidget);
     });
 
-    testWidgets('Skip button navigates to home', (WidgetTester tester) async {
+    testWidgets('Skip button navigates to login', (WidgetTester tester) async {
       await tester.pumpWidget(
         MaterialApp(
           home: const WelcomeScreen(),
           routes: {
-            '/home': (context) => const Scaffold(body: Text('Home Screen')),
+            '/login': (context) => const Scaffold(body: Text('Login Screen')),
           },
         ),
       );
@@ -112,18 +112,18 @@ void main() {
       await tester.tap(find.text('Skip'));
       await tester.pumpAndSettle();
 
-      // Should navigate to home
-      expect(find.text('Home Screen'), findsOneWidget);
+      // Should navigate to login
+      expect(find.text('Login Screen'), findsOneWidget);
       expect(find.byType(WelcomeScreen), findsNothing);
     });
 
-    testWidgets('Get Started button navigates to home',
+    testWidgets('Get Started button navigates to login',
         (WidgetTester tester) async {
       await tester.pumpWidget(
         MaterialApp(
           home: const WelcomeScreen(),
           routes: {
-            '/home': (context) => const Scaffold(body: Text('Home Screen')),
+            '/login': (context) => const Scaffold(body: Text('Login Screen')),
           },
         ),
       );
@@ -138,8 +138,8 @@ void main() {
       await tester.tap(find.text('Get Started'));
       await tester.pumpAndSettle();
 
-      // Should navigate to home
-      expect(find.text('Home Screen'), findsOneWidget);
+      // Should navigate to login
+      expect(find.text('Login Screen'), findsOneWidget);
       expect(find.byType(WelcomeScreen), findsNothing);
     });
 

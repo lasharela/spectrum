@@ -67,15 +67,15 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   }
 
   void _skipOnboarding() {
-    _navigateToHome();
+    _navigateToLogin();
   }
 
   void _getStarted() {
-    _navigateToHome();
+    _navigateToLogin();
   }
 
-  void _navigateToHome() {
-    Navigator.of(context).pushReplacementNamed('/home');
+  void _navigateToLogin() {
+    Navigator.of(context).pushReplacementNamed('/login');
   }
 
   void _nextPage() {

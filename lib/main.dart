@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'utils/app_theme.dart';
 import 'screens/welcome_screen.dart';
+import 'screens/login_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -19,6 +20,7 @@ class MyApp extends StatelessWidget {
       initialRoute: '/welcome',
       routes: {
         '/welcome': (context) => const WelcomeScreen(),
+        '/login': (context) => const LoginScreen(),
         '/home': (context) => const MyHomePage(title: 'Spectrum'),
       },
     );
