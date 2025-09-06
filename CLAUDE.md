@@ -11,6 +11,10 @@ This is a Flutter project.
 - If coverage drops below 75%, prioritize adding tests before new features
 - Run `make save` to ensure all quality checks pass before committing
 
+## User Commands
+- When user says "save" → run `make save` command
+- This will format code, run lints, analyze types, run tests, check coverage, and commit
+
 ## Development Guidelines
 
 ### 1. Component Architecture
