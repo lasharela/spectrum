@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'utils/app_theme.dart';
+import 'screens/welcome_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -14,7 +15,12 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Spectrum',
       theme: AppTheme.lightTheme,
-      home: const MyHomePage(title: 'Spectrum Home Page'),
+      debugShowCheckedModeBanner: false,
+      initialRoute: '/welcome',
+      routes: {
+        '/welcome': (context) => const WelcomeScreen(),
+        '/home': (context) => const MyHomePage(title: 'Spectrum'),
+      },
     );
   }
 }
