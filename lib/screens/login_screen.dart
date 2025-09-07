@@ -31,6 +31,10 @@ class _LoginScreenState extends State<LoginScreen> {
         statusBarIconBrightness: Brightness.dark,
       ),
     );
+    
+    // Pre-fill with test credentials for development
+    _emailController.text = 'test@example.com';
+    _passwordController.text = 'password123';
   }
 
   @override

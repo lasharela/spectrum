@@ -5,10 +5,7 @@ import 'screens/login_screen.dart';
 import 'screens/signup_screen.dart';
 import 'screens/forgot_password_screen.dart';
 import 'screens/reset_password_screen.dart';
-import 'screens/home_screen.dart';
-import 'screens/interactive_map_screen.dart';
-import 'screens/resources_screen.dart';
-import 'screens/promotions_screen.dart';
+import 'screens/main_navigation_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -31,10 +28,7 @@ class MyApp extends StatelessWidget {
         '/signup': (context) => const SignupScreen(),
         '/forgot-password': (context) => const ForgotPasswordScreen(),
         '/reset-password': (context) => const ResetPasswordScreen(),
-        '/home': (context) => const HomeScreen(),
-        '/interactive-map': (context) => const InteractiveMapScreen(),
-        '/resources': (context) => const ResourcesScreen(),
-        '/promotions': (context) => const PromotionsScreen(),
+        '/home': (context) => const MainNavigationScreen(),
       },
     );
   }

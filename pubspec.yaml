@@ -38,6 +38,10 @@ dependencies:
   
   # Form validation
   email_validator: ^3.0.0
+  
+  # Map functionality
+  flutter_map: ^6.1.0
+  latlong2: ^0.9.0
 
 dev_dependencies:
   flutter_test:
