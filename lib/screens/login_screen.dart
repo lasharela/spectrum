@@ -82,22 +82,12 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void _handleForgotPassword() {
     // Navigate to forgot password screen
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Forgot password feature coming soon'),
-        backgroundColor: AppColors.info,
-      ),
-    );
+    Navigator.of(context).pushNamed('/forgot-password');
   }
 
   void _handleSignUp() {
     // Navigate to sign up screen
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Sign up feature coming soon'),
-        backgroundColor: AppColors.info,
-      ),
-    );
+    Navigator.of(context).pushReplacementNamed('/signup');
   }
 
   @override
