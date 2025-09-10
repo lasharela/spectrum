@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../utils/app_colors.dart';
 import 'home_screen.dart';
-import 'interactive_map_screen.dart';
+import 'catalog_screen.dart';
 import 'resources_screen.dart';
 import 'promotions_screen.dart';
 import 'profile_screen.dart';
@@ -19,7 +19,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
   final List<Widget> _screens = [
     const HomeScreen(),
     const ResourcesScreen(),
-    const InteractiveMapScreen(),
+    const CatalogScreen(),
     const PromotionsScreen(),
     const ProfileScreen(),
   ];
@@ -27,7 +27,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
   final List<String> _titles = [
     'Spectrum',
     'Resources',
-    'Interactive Map',
+    'Catalogue',
     'Promotions',
     'Profile',
   ];
@@ -150,8 +150,8 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
                 },
               ),
               ListTile(
-                leading: const Icon(Icons.map_outlined),
-                title: const Text('Interactive Map'),
+                leading: const Icon(Icons.place_outlined),
+                title: const Text('Catalogue'),
                 selected: _selectedIndex == 2,
                 selectedTileColor: AppColors.primary.withOpacity(0.1),
                 onTap: () {
@@ -295,7 +295,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
-                  Icons.map_outlined,
+                  Icons.place_outlined,
                   size: 28,
                   color: _selectedIndex == 2 ? Colors.white : AppColors.primary,
                 ),
@@ -314,12 +314,12 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
                   ],
                 ),
                 child: const Icon(
-                  Icons.map,
+                  Icons.place,
                   size: 28,
                   color: Colors.white,
                 ),
               ),
-              label: 'Map',
+              label: 'Catalogue',
             ),
             const BottomNavigationBarItem(
               icon: Icon(Icons.local_offer_outlined, size: 24),
