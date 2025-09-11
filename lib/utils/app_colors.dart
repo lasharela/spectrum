@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class AppColors {
-  // New vibrant color palette from provided image
+  // Previous cyan color palette
   static const Color primary = Color(0xFF6FCFEB); // Cyan/Light Blue
   static const Color secondary = Color(0xFF8FD14F); // Green
   static const Color tertiary = Color(0xFFFEE761); // Yellow
@@ -16,6 +16,7 @@ class AppColors {
   // Neutral backgrounds
   static const Color background = Color(0xFFF8F9FA); // Light grey
   static const Color surface = Colors.white;
+  static const Color surfaceLight = Color(0xFFFAFAFA);
   
   // Status colors
   static const Color error = Color(0xFFFF6B35); // Orange/Red
@@ -27,6 +28,7 @@ class AppColors {
   static const Color textPrimary = Color(0xFF2C3E50);
   static const Color textSecondary = Color(0xFF7F8C8D);
   static const Color textDisabled = Color(0xFFBDC3C7);
+  static const Color textOnPrimary = Colors.white;
 
   // UI elements
   static const Color divider = Color(0xFFECF0F1);
