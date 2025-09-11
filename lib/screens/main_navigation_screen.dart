@@ -4,6 +4,7 @@ import 'home_screen.dart';
 import 'catalog_screen.dart';
 import 'promotions_screen.dart';
 import 'events_screen.dart';
+import 'community_screen.dart';
 import 'settings_screen.dart';
 
 class MainNavigationScreen extends StatefulWidget {
@@ -21,6 +22,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
     const CatalogScreen(),
     const PromotionsScreen(),
     const EventsScreen(),
+    const CommunityScreen(),
   ];
 
   final List<String> _titles = [
@@ -28,6 +30,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
     'Catalogue',
     'Promotions',
     'Events',
+    'Community',
   ];
 
   void _onItemTapped(int index) {
@@ -121,6 +124,11 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
               icon: Icon(Icons.event_outlined, size: 24),
               activeIcon: Icon(Icons.event, size: 24),
               label: 'Events',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.forum_outlined, size: 24),
+              activeIcon: Icon(Icons.forum, size: 24),
+              label: 'Community',
             ),
           ],
         ),
