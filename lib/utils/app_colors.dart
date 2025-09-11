@@ -1,28 +1,44 @@
 import 'package:flutter/material.dart';
 
 class AppColors {
-  static const Color primary = Color(0xFF88BDF2);
-  static const Color secondary = Color(0xFF6A89A7);
-  static const Color tertiary = Color(0xFFBDDDFC);
-  static const Color quaternary = Color(0xFF384959);
+  // New vibrant color palette from provided image
+  static const Color primary = Color(0xFF6FCFEB); // Cyan/Light Blue
+  static const Color secondary = Color(0xFF8FD14F); // Green
+  static const Color tertiary = Color(0xFFFEE761); // Yellow
+  static const Color quaternary = Color(0xFFFF6B35); // Orange/Red
 
-  static const Color accent1 = Color(0xFF88BDF2);
-  static const Color accent2 = Color(0xFF6A89A7);
-  static const Color accent3 = Color(0xFFBDDDFC);
-  static const Color accent4 = Color(0xFF384959);
+  // Additional accent colors
+  static const Color accent1 = Color(0xFFFFBE4F); // Light Orange
+  static const Color accent2 = Color(0xFF6FCFEB); // Cyan
+  static const Color accent3 = Color(0xFF8FD14F); // Green
+  static const Color accent4 = Color(0xFFFEE761); // Yellow
 
-  static const Color background = Color(0xFFF8FBFF);
+  // Neutral backgrounds
+  static const Color background = Color(0xFFF8F9FA); // Light grey
   static const Color surface = Colors.white;
-  static const Color error = Color(0xFFE74C3C);
-  static const Color success = Color(0xFF27AE60);
-  static const Color warning = Color(0xFFFFA726);
-  static const Color info = Color(0xFF3498DB);
+  
+  // Status colors
+  static const Color error = Color(0xFFFF6B35); // Orange/Red
+  static const Color success = Color(0xFF8FD14F); // Green
+  static const Color warning = Color(0xFFFEE761); // Yellow
+  static const Color info = Color(0xFF6FCFEB); // Cyan
 
-  static const Color textPrimary = Color(0xFF1A2332);
-  static const Color textSecondary = Color(0xFF4A5568);
-  static const Color textDisabled = Color(0xFF94A3B8);
+  // Text colors
+  static const Color textPrimary = Color(0xFF2C3E50);
+  static const Color textSecondary = Color(0xFF7F8C8D);
+  static const Color textDisabled = Color(0xFFBDC3C7);
 
-  static const Color divider = Color(0xFFE2E8F0);
-  static const Color disabled = Color(0xFFDFE6E9);
-  static const Color overlay = Color(0x1F384959);
+  // UI elements
+  static const Color divider = Color(0xFFECF0F1);
+  static const Color disabled = Color(0xFFE8EAED);
+  static const Color overlay = Color(0x1F6FCFEB); // Light blue overlay
+  
+  // Card styling
+  static const Color cardBackground = Colors.white;
+  static const Color cardBorder = Color(0xFFE8EAED);
+  static BoxShadow cardShadow = BoxShadow(
+    color: Colors.black.withOpacity(0.05),
+    blurRadius: 10,
+    offset: const Offset(0, 2),
+  );
 }

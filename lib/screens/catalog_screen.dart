@@ -92,7 +92,6 @@ class _CatalogScreenState extends State<CatalogScreen> with SingleTickerProvider
       rating: 4.7,
       tags: ['Sensory-Friendly', 'Educational', 'Family'],
       imageIcon: Icons.museum,
-      color: AppColors.primary,
       ageGroups: [AgeGroup.toddlers, AgeGroup.preschool, AgeGroup.schoolAge, AgeGroup.teens],
       specialNeeds: [SpecialNeed.autism, SpecialNeed.sensoryProcessing, SpecialNeed.wheelchairAccessible],
     ),
@@ -105,7 +104,6 @@ class _CatalogScreenState extends State<CatalogScreen> with SingleTickerProvider
       rating: 4.5,
       tags: ['Quiet Hours', 'Creative', 'Interactive'],
       imageIcon: Icons.palette,
-      color: AppColors.secondary,
       ageGroups: [AgeGroup.toddlers, AgeGroup.preschool, AgeGroup.schoolAge],
       specialNeeds: [SpecialNeed.autism, SpecialNeed.sensoryProcessing],
     ),
@@ -120,7 +118,6 @@ class _CatalogScreenState extends State<CatalogScreen> with SingleTickerProvider
       rating: 4.4,
       tags: ['Indoor', 'Active', 'Special Sessions'],
       imageIcon: Icons.sports_handball,
-      color: AppColors.quaternary,
       ageGroups: [AgeGroup.toddlers, AgeGroup.preschool, AgeGroup.schoolAge],
       specialNeeds: [SpecialNeed.autism, SpecialNeed.sensoryProcessing],
     ),
@@ -133,7 +130,6 @@ class _CatalogScreenState extends State<CatalogScreen> with SingleTickerProvider
       rating: 4.8,
       tags: ['Indoor', 'Sensory', 'Therapeutic'],
       imageIcon: Icons.fitness_center,
-      color: AppColors.tertiary,
       ageGroups: [AgeGroup.infants, AgeGroup.toddlers, AgeGroup.preschool],
       specialNeeds: [SpecialNeed.autism, SpecialNeed.sensoryProcessing, SpecialNeed.nonverbal],
     ),
@@ -148,7 +144,6 @@ class _CatalogScreenState extends State<CatalogScreen> with SingleTickerProvider
       rating: 4.9,
       tags: ['Outdoor', 'Inclusive', 'Wheelchair Accessible'],
       imageIcon: Icons.park,
-      color: AppColors.success,
       ageGroups: [AgeGroup.toddlers, AgeGroup.preschool, AgeGroup.schoolAge, AgeGroup.teens],
       specialNeeds: [SpecialNeed.autism, SpecialNeed.wheelchairAccessible, SpecialNeed.sensoryProcessing],
     ),
@@ -161,7 +156,6 @@ class _CatalogScreenState extends State<CatalogScreen> with SingleTickerProvider
       rating: 4.4,
       tags: ['Outdoor', 'Large', 'Popular'],
       imageIcon: Icons.nature_people,
-      color: AppColors.primary,
       ageGroups: [AgeGroup.toddlers, AgeGroup.preschool, AgeGroup.schoolAge],
       specialNeeds: [SpecialNeed.wheelchairAccessible],
     ),
@@ -176,7 +170,6 @@ class _CatalogScreenState extends State<CatalogScreen> with SingleTickerProvider
       rating: 4.8,
       tags: ['Medical', 'Assessment', 'Treatment'],
       imageIcon: Icons.local_hospital,
-      color: AppColors.error,
       ageGroups: [AgeGroup.infants, AgeGroup.toddlers, AgeGroup.preschool, AgeGroup.schoolAge, AgeGroup.teens, AgeGroup.adults],
       specialNeeds: [SpecialNeed.autism, SpecialNeed.nonverbal, SpecialNeed.sensoryProcessing],
     ),
@@ -189,7 +182,6 @@ class _CatalogScreenState extends State<CatalogScreen> with SingleTickerProvider
       rating: 4.9,
       tags: ['Research', 'Medical', 'Specialized'],
       imageIcon: Icons.medical_services,
-      color: AppColors.tertiary,
       ageGroups: [AgeGroup.toddlers, AgeGroup.preschool, AgeGroup.schoolAge, AgeGroup.teens],
       specialNeeds: [SpecialNeed.autism, SpecialNeed.nonverbal],
     ),
@@ -204,7 +196,6 @@ class _CatalogScreenState extends State<CatalogScreen> with SingleTickerProvider
       rating: 4.7,
       tags: ['Dentist', 'Special Needs', 'Pediatric'],
       imageIcon: Icons.medical_information,
-      color: AppColors.info,
       ageGroups: [AgeGroup.toddlers, AgeGroup.preschool, AgeGroup.schoolAge, AgeGroup.teens],
       specialNeeds: [SpecialNeed.autism, SpecialNeed.sensoryProcessing, SpecialNeed.nonverbal],
     ),
@@ -217,7 +208,6 @@ class _CatalogScreenState extends State<CatalogScreen> with SingleTickerProvider
       rating: 4.6,
       tags: ['Dentist', 'Sensory-Friendly', 'Quiet'],
       imageIcon: Icons.health_and_safety,
-      color: AppColors.secondary,
       ageGroups: [AgeGroup.infants, AgeGroup.toddlers, AgeGroup.preschool, AgeGroup.schoolAge],
       specialNeeds: [SpecialNeed.autism, SpecialNeed.sensoryProcessing],
     ),
@@ -232,7 +222,6 @@ class _CatalogScreenState extends State<CatalogScreen> with SingleTickerProvider
       rating: 4.7,
       tags: ['Speech', 'Language', 'Pediatric'],
       imageIcon: Icons.record_voice_over,
-      color: AppColors.primary,
       ageGroups: [AgeGroup.toddlers, AgeGroup.preschool, AgeGroup.schoolAge],
       specialNeeds: [SpecialNeed.autism, SpecialNeed.nonverbal],
     ),
@@ -245,7 +234,6 @@ class _CatalogScreenState extends State<CatalogScreen> with SingleTickerProvider
       rating: 4.6,
       tags: ['OT', 'Sensory', 'Motor Skills'],
       imageIcon: Icons.accessibility_new,
-      color: AppColors.secondary,
       ageGroups: [AgeGroup.infants, AgeGroup.toddlers, AgeGroup.preschool, AgeGroup.schoolAge],
       specialNeeds: [SpecialNeed.autism, SpecialNeed.sensoryProcessing],
     ),
@@ -260,7 +248,6 @@ class _CatalogScreenState extends State<CatalogScreen> with SingleTickerProvider
       rating: 4.6,
       tags: ['After-School', 'Special Needs', 'Social'],
       imageIcon: Icons.groups,
-      color: AppColors.info,
       ageGroups: [AgeGroup.schoolAge, AgeGroup.teens],
       specialNeeds: [SpecialNeed.autism, SpecialNeed.wheelchairAccessible],
     ),
@@ -275,7 +262,6 @@ class _CatalogScreenState extends State<CatalogScreen> with SingleTickerProvider
       rating: 4.8,
       tags: ['Education', 'Tutoring', 'Specialized'],
       imageIcon: Icons.school,
-      color: AppColors.quaternary,
       ageGroups: [AgeGroup.preschool, AgeGroup.schoolAge, AgeGroup.teens],
       specialNeeds: [SpecialNeed.autism, SpecialNeed.nonverbal],
     ),
@@ -290,7 +276,6 @@ class _CatalogScreenState extends State<CatalogScreen> with SingleTickerProvider
       rating: 4.4,
       tags: ['Restaurant', 'Quiet', 'Family-Friendly'],
       imageIcon: Icons.local_pizza,
-      color: AppColors.secondary,
       ageGroups: [AgeGroup.toddlers, AgeGroup.preschool, AgeGroup.schoolAge, AgeGroup.teens],
       specialNeeds: [SpecialNeed.autism, SpecialNeed.sensoryProcessing],
     ),
@@ -305,7 +290,6 @@ class _CatalogScreenState extends State<CatalogScreen> with SingleTickerProvider
       rating: 4.6,
       tags: ['Museum', 'Sensory Hours', 'Educational'],
       imageIcon: Icons.account_balance,
-      color: AppColors.tertiary,
       ageGroups: [AgeGroup.preschool, AgeGroup.schoolAge, AgeGroup.teens],
       specialNeeds: [SpecialNeed.autism, SpecialNeed.sensoryProcessing, SpecialNeed.wheelchairAccessible],
     ),
@@ -318,7 +302,6 @@ class _CatalogScreenState extends State<CatalogScreen> with SingleTickerProvider
       rating: 4.5,
       tags: ['Museum', 'Quiet Hours', 'Interactive'],
       imageIcon: Icons.explore,
-      color: AppColors.primary,
       ageGroups: [AgeGroup.toddlers, AgeGroup.preschool, AgeGroup.schoolAge],
       specialNeeds: [SpecialNeed.autism, SpecialNeed.sensoryProcessing],
     ),
@@ -333,7 +316,6 @@ class _CatalogScreenState extends State<CatalogScreen> with SingleTickerProvider
       rating: 4.9,
       tags: ['Indoor', 'Sensory Gym', 'Inclusive'],
       imageIcon: Icons.sports_gymnastics,
-      color: AppColors.success,
       ageGroups: [AgeGroup.toddlers, AgeGroup.preschool, AgeGroup.schoolAge],
       specialNeeds: [SpecialNeed.autism, SpecialNeed.sensoryProcessing, SpecialNeed.nonverbal],
     ),
@@ -346,7 +328,6 @@ class _CatalogScreenState extends State<CatalogScreen> with SingleTickerProvider
       rating: 4.3,
       tags: ['Indoor', 'Play Area', 'Birthday Parties'],
       imageIcon: Icons.celebration,
-      color: AppColors.quaternary,
       ageGroups: [AgeGroup.toddlers, AgeGroup.preschool],
       specialNeeds: [SpecialNeed.autism, SpecialNeed.wheelchairAccessible],
     ),
@@ -361,7 +342,6 @@ class _CatalogScreenState extends State<CatalogScreen> with SingleTickerProvider
       rating: 4.5,
       tags: ['Outdoor', 'Historic', 'Large'],
       imageIcon: Icons.castle,
-      color: AppColors.primary,
       ageGroups: [AgeGroup.toddlers, AgeGroup.preschool, AgeGroup.schoolAge],
       specialNeeds: [SpecialNeed.wheelchairAccessible],
     ),
@@ -374,7 +354,6 @@ class _CatalogScreenState extends State<CatalogScreen> with SingleTickerProvider
       rating: 4.7,
       tags: ['Outdoor', 'Inclusive', 'Sensory Elements'],
       imageIcon: Icons.nature,
-      color: AppColors.success,
       ageGroups: [AgeGroup.toddlers, AgeGroup.preschool, AgeGroup.schoolAge],
       specialNeeds: [SpecialNeed.autism, SpecialNeed.wheelchairAccessible, SpecialNeed.sensoryProcessing],
     ),
@@ -389,7 +368,6 @@ class _CatalogScreenState extends State<CatalogScreen> with SingleTickerProvider
       rating: 4.8,
       tags: ['ABA', 'Behavioral', 'Therapy'],
       imageIcon: Icons.psychology_outlined,
-      color: AppColors.primary,
       ageGroups: [AgeGroup.toddlers, AgeGroup.preschool, AgeGroup.schoolAge],
       specialNeeds: [SpecialNeed.autism, SpecialNeed.nonverbal],
     ),
@@ -402,7 +380,6 @@ class _CatalogScreenState extends State<CatalogScreen> with SingleTickerProvider
       rating: 4.7,
       tags: ['OT', 'Sensory Integration', 'Pediatric'],
       imageIcon: Icons.self_improvement,
-      color: AppColors.secondary,
       ageGroups: [AgeGroup.infants, AgeGroup.toddlers, AgeGroup.preschool],
       specialNeeds: [SpecialNeed.autism, SpecialNeed.sensoryProcessing],
     ),
@@ -415,7 +392,6 @@ class _CatalogScreenState extends State<CatalogScreen> with SingleTickerProvider
       rating: 4.6,
       tags: ['Speech', 'AAC', 'Communication'],
       imageIcon: Icons.speaker_phone,
-      color: AppColors.tertiary,
       ageGroups: [AgeGroup.preschool, AgeGroup.schoolAge, AgeGroup.teens],
       specialNeeds: [SpecialNeed.autism, SpecialNeed.nonverbal],
     ),
@@ -430,7 +406,6 @@ class _CatalogScreenState extends State<CatalogScreen> with SingleTickerProvider
       rating: 4.7,
       tags: ['Pediatrics', 'Developmental', 'Medical'],
       imageIcon: Icons.child_care,
-      color: AppColors.error,
       ageGroups: [AgeGroup.infants, AgeGroup.toddlers, AgeGroup.preschool, AgeGroup.schoolAge],
       specialNeeds: [SpecialNeed.autism, SpecialNeed.nonverbal],
     ),
@@ -443,7 +418,6 @@ class _CatalogScreenState extends State<CatalogScreen> with SingleTickerProvider
       rating: 4.8,
       tags: ['Autism', 'Evaluation', 'Treatment'],
       imageIcon: Icons.medical_information,
-      color: AppColors.primary,
       ageGroups: [AgeGroup.toddlers, AgeGroup.preschool, AgeGroup.schoolAge, AgeGroup.teens],
       specialNeeds: [SpecialNeed.autism, SpecialNeed.sensoryProcessing],
     ),
@@ -458,7 +432,6 @@ class _CatalogScreenState extends State<CatalogScreen> with SingleTickerProvider
       rating: 4.9,
       tags: ['Special Education', 'Learning', 'Support'],
       imageIcon: Icons.menu_book,
-      color: AppColors.quaternary,
       ageGroups: [AgeGroup.preschool, AgeGroup.schoolAge],
       specialNeeds: [SpecialNeed.autism, SpecialNeed.nonverbal, SpecialNeed.sensoryProcessing],
     ),
@@ -471,7 +444,6 @@ class _CatalogScreenState extends State<CatalogScreen> with SingleTickerProvider
       rating: 4.6,
       tags: ['Preschool', 'Inclusive', 'Early Education'],
       imageIcon: Icons.abc,
-      color: AppColors.info,
       ageGroups: [AgeGroup.toddlers, AgeGroup.preschool],
       specialNeeds: [SpecialNeed.autism, SpecialNeed.wheelchairAccessible],
     ),
@@ -486,7 +458,6 @@ class _CatalogScreenState extends State<CatalogScreen> with SingleTickerProvider
       rating: 4.5,
       tags: ['Social Skills', 'Group Activities', 'Support'],
       imageIcon: Icons.people,
-      color: AppColors.primary,
       ageGroups: [AgeGroup.schoolAge, AgeGroup.teens],
       specialNeeds: [SpecialNeed.autism, SpecialNeed.nonverbal],
     ),
@@ -499,7 +470,6 @@ class _CatalogScreenState extends State<CatalogScreen> with SingleTickerProvider
       rating: 4.7,
       tags: ['Recreation', 'Sports', 'Activities'],
       imageIcon: Icons.sports_soccer,
-      color: AppColors.success,
       ageGroups: [AgeGroup.schoolAge, AgeGroup.teens],
       specialNeeds: [SpecialNeed.autism, SpecialNeed.wheelchairAccessible, SpecialNeed.sensoryProcessing],
     ),
@@ -514,7 +484,6 @@ class _CatalogScreenState extends State<CatalogScreen> with SingleTickerProvider
       rating: 4.5,
       tags: ['Café', 'Visual Menus', 'Quiet'],
       imageIcon: Icons.coffee,
-      color: AppColors.tertiary,
       ageGroups: [AgeGroup.preschool, AgeGroup.schoolAge, AgeGroup.teens, AgeGroup.adults],
       specialNeeds: [SpecialNeed.autism, SpecialNeed.sensoryProcessing, SpecialNeed.nonverbal],
     ),
@@ -527,7 +496,6 @@ class _CatalogScreenState extends State<CatalogScreen> with SingleTickerProvider
       rating: 4.3,
       tags: ['Family Dining', 'Sensory Area', 'Kids Menu'],
       imageIcon: Icons.restaurant_menu,
-      color: AppColors.secondary,
       ageGroups: [AgeGroup.toddlers, AgeGroup.preschool, AgeGroup.schoolAge],
       specialNeeds: [SpecialNeed.autism, SpecialNeed.sensoryProcessing],
     ),
@@ -542,7 +510,6 @@ class _CatalogScreenState extends State<CatalogScreen> with SingleTickerProvider
       rating: 4.8,
       tags: ['Pediatric', 'Special Needs', 'Sedation'],
       imageIcon: Icons.clean_hands,
-      color: AppColors.info,
       ageGroups: [AgeGroup.toddlers, AgeGroup.preschool, AgeGroup.schoolAge, AgeGroup.teens],
       specialNeeds: [SpecialNeed.autism, SpecialNeed.sensoryProcessing, SpecialNeed.nonverbal],
     ),
@@ -555,7 +522,6 @@ class _CatalogScreenState extends State<CatalogScreen> with SingleTickerProvider
       rating: 4.6,
       tags: ['Kids Dentist', 'Sensory-Adapted', 'Gentle'],
       imageIcon: Icons.sentiment_satisfied,
-      color: AppColors.primary,
       ageGroups: [AgeGroup.infants, AgeGroup.toddlers, AgeGroup.preschool, AgeGroup.schoolAge],
       specialNeeds: [SpecialNeed.autism, SpecialNeed.sensoryProcessing],
     ),
@@ -570,7 +536,6 @@ class _CatalogScreenState extends State<CatalogScreen> with SingleTickerProvider
       rating: 4.9,
       tags: ['Swimming', 'Adaptive', 'Water Therapy'],
       imageIcon: Icons.pool,
-      color: AppColors.info,
       ageGroups: [AgeGroup.toddlers, AgeGroup.preschool, AgeGroup.schoolAge, AgeGroup.teens],
       specialNeeds: [SpecialNeed.autism, SpecialNeed.wheelchairAccessible, SpecialNeed.sensoryProcessing],
     ),
@@ -1052,24 +1017,24 @@ class _CatalogScreenState extends State<CatalogScreen> with SingleTickerProvider
           // Image/Icon Section
           Container(
             height: 120,
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  place.color.withOpacity(0.1),
-                  place.color.withOpacity(0.05),
-                ],
-              ),
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(15)),
+            decoration: const BoxDecoration(
+              color: AppColors.surface,
+              borderRadius: BorderRadius.vertical(top: Radius.circular(15)),
             ),
             child: Stack(
               children: [
                 Center(
-                  child: Icon(
-                    place.imageIcon,
-                    size: 50,
-                    color: place.color.withOpacity(0.3),
+                  child: Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: AppColors.primary.withOpacity(0.1),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(
+                      place.imageIcon,
+                      size: 40,
+                      color: AppColors.primary,
+                    ),
                   ),
                 ),
                 Positioned(
@@ -1078,7 +1043,7 @@ class _CatalogScreenState extends State<CatalogScreen> with SingleTickerProvider
                   child: IconButton(
                     icon: Icon(
                       isSaved ? Icons.bookmark : Icons.bookmark_outline,
-                      color: isSaved ? place.color : Colors.grey,
+                      color: isSaved ? AppColors.primary : Colors.grey,
                     ),
                     onPressed: () => _toggleSavePlace(place.id),
                   ),
@@ -1090,8 +1055,9 @@ class _CatalogScreenState extends State<CatalogScreen> with SingleTickerProvider
                     child: Container(
                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.9),
+                        color: Colors.white.withOpacity(0.95),
                         borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: Colors.grey.shade200),
                       ),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
@@ -1146,14 +1112,14 @@ class _CatalogScreenState extends State<CatalogScreen> with SingleTickerProvider
                   children: place.tags.map((tag) => Container(
                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                     decoration: BoxDecoration(
-                      color: place.color.withOpacity(0.1),
+                      color: AppColors.primary.withOpacity(0.1),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Text(
                       tag,
                       style: TextStyle(
                         fontSize: 11,
-                        color: place.color,
+                        color: AppColors.primary,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -1204,8 +1170,7 @@ class _CatalogScreenState extends State<CatalogScreen> with SingleTickerProvider
                       IconButton(
                         onPressed: () => _toggleSavePlace(place.id),
                         icon: const Icon(Icons.delete_outline),
-                        color: AppColors.error,
-                      ),
+                                        ),
                     ],
                   ],
                 ),
@@ -1269,8 +1234,7 @@ class _CatalogScreenState extends State<CatalogScreen> with SingleTickerProvider
                       child: Container(
                         padding: const EdgeInsets.all(4),
                         decoration: BoxDecoration(
-                          color: AppColors.primary,
-                          shape: BoxShape.circle,
+                                              shape: BoxShape.circle,
                         ),
                         constraints: const BoxConstraints(
                           minWidth: 18,
@@ -1569,7 +1533,6 @@ class Place {
   final double rating;
   final List<String> tags;
   final IconData imageIcon;
-  final Color color;
   final List<AgeGroup> ageGroups;
   final List<SpecialNeed> specialNeeds;
   
@@ -1582,7 +1545,6 @@ class Place {
     required this.rating,
     required this.tags,
     required this.imageIcon,
-    required this.color,
     required this.ageGroups,
     required this.specialNeeds,
   });

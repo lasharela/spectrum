@@ -8,8 +8,22 @@ class PromotionsScreen extends StatefulWidget {
   State<PromotionsScreen> createState() => _PromotionsScreenState();
 }
 
-class _PromotionsScreenState extends State<PromotionsScreen> {
+class _PromotionsScreenState extends State<PromotionsScreen> with SingleTickerProviderStateMixin {
+  late TabController _tabController;
   String _selectedCategory = 'All';
+  final Set<String> _savedPromotionIds = {};
+  
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 2, vsync: this);
+  }
+  
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
   
   final List<String> _categories = [
     'All',
@@ -31,7 +45,6 @@ class _PromotionsScreenState extends State<PromotionsScreen> {
       discount: '20% OFF',
       validUntil: 'Dec 31, 2024',
       imageIcon: Icons.record_voice_over,
-      color: AppColors.primary,
     ),
     Promotion(
       id: '2',
@@ -42,7 +55,6 @@ class _PromotionsScreenState extends State<PromotionsScreen> {
       discount: 'FREE',
       validUntil: 'Nov 30, 2024',
       imageIcon: Icons.accessibility_new,
-      color: AppColors.tertiary,
     ),
     Promotion(
       id: '3',
@@ -53,7 +65,6 @@ class _PromotionsScreenState extends State<PromotionsScreen> {
       discount: '\$500 OFF',
       validUntil: 'Jan 15, 2025',
       imageIcon: Icons.psychology,
-      color: AppColors.secondary,
     ),
     
     // Activities Promotions
@@ -66,7 +77,6 @@ class _PromotionsScreenState extends State<PromotionsScreen> {
       discount: 'FREE ENTRY',
       validUntil: 'Ongoing',
       imageIcon: Icons.museum,
-      color: AppColors.quaternary,
     ),
     Promotion(
       id: '5',
@@ -77,7 +87,6 @@ class _PromotionsScreenState extends State<PromotionsScreen> {
       discount: '15% OFF',
       validUntil: 'Dec 15, 2024',
       imageIcon: Icons.pool,
-      color: AppColors.info,
     ),
     Promotion(
       id: '6',
@@ -88,7 +97,6 @@ class _PromotionsScreenState extends State<PromotionsScreen> {
       discount: '2 FREE',
       validUntil: 'Jan 31, 2025',
       imageIcon: Icons.palette,
-      color: AppColors.primary,
     ),
     
     // Products Promotions
@@ -101,7 +109,6 @@ class _PromotionsScreenState extends State<PromotionsScreen> {
       discount: '30% OFF',
       validUntil: 'Nov 25, 2024',
       imageIcon: Icons.shopping_bag,
-      color: AppColors.tertiary,
     ),
     Promotion(
       id: '8',
@@ -112,7 +119,6 @@ class _PromotionsScreenState extends State<PromotionsScreen> {
       discount: '\$1000 GRANT',
       validUntil: 'Dec 1, 2024',
       imageIcon: Icons.tablet,
-      color: AppColors.secondary,
     ),
     Promotion(
       id: '9',
@@ -123,7 +129,6 @@ class _PromotionsScreenState extends State<PromotionsScreen> {
       discount: 'BUY 2 GET 1',
       validUntil: 'Jan 10, 2025',
       imageIcon: Icons.checkroom,
-      color: AppColors.quaternary,
     ),
     
     // Restaurant Promotions
@@ -136,7 +141,6 @@ class _PromotionsScreenState extends State<PromotionsScreen> {
       discount: 'KIDS FREE',
       validUntil: 'Ongoing',
       imageIcon: Icons.restaurant,
-      color: AppColors.info,
     ),
     Promotion(
       id: '11',
@@ -147,7 +151,6 @@ class _PromotionsScreenState extends State<PromotionsScreen> {
       discount: '25% OFF',
       validUntil: 'Dec 31, 2024',
       imageIcon: Icons.local_pizza,
-      color: AppColors.primary,
     ),
     Promotion(
       id: '12',
@@ -158,7 +161,6 @@ class _PromotionsScreenState extends State<PromotionsScreen> {
       discount: 'BOGO',
       validUntil: 'Jan 20, 2025',
       imageIcon: Icons.local_drink,
-      color: AppColors.secondary,
     ),
     
     // Education Promotions
@@ -171,7 +173,6 @@ class _PromotionsScreenState extends State<PromotionsScreen> {
       discount: '50% OFF',
       validUntil: 'Dec 20, 2024',
       imageIcon: Icons.school,
-      color: AppColors.tertiary,
     ),
     Promotion(
       id: '14',
@@ -182,7 +183,6 @@ class _PromotionsScreenState extends State<PromotionsScreen> {
       discount: 'FREE TRIAL',
       validUntil: 'Nov 30, 2024',
       imageIcon: Icons.groups,
-      color: AppColors.quaternary,
     ),
     Promotion(
       id: '15',
@@ -193,7 +193,6 @@ class _PromotionsScreenState extends State<PromotionsScreen> {
       discount: 'FREE',
       validUntil: 'Ongoing',
       imageIcon: Icons.family_restroom,
-      color: AppColors.info,
     ),
   ];
   
@@ -204,6 +203,18 @@ class _PromotionsScreenState extends State<PromotionsScreen> {
     
     final category = _getCategoryEnum(_selectedCategory);
     return _promotions.where((p) => p.category == category).toList();
+  }
+  
+  List<Promotion> get savedPromotions {
+    return _promotions.where((p) => _savedPromotionIds.contains(p.id)).toList();
+  }
+  
+  Map<PromotionCategory, List<Promotion>> get savedPromotionsByCategory {
+    final Map<PromotionCategory, List<Promotion>> categorized = {};
+    for (final promotion in savedPromotions) {
+      categorized.putIfAbsent(promotion.category, () => []).add(promotion);
+    }
+    return categorized;
   }
   
   PromotionCategory _getCategoryEnum(String category) {
@@ -223,7 +234,78 @@ class _PromotionsScreenState extends State<PromotionsScreen> {
     }
   }
   
+  String _getCategoryName(PromotionCategory category) {
+    switch (category) {
+      case PromotionCategory.therapy:
+        return 'Therapy';
+      case PromotionCategory.activities:
+        return 'Activities';
+      case PromotionCategory.products:
+        return 'Products';
+      case PromotionCategory.restaurants:
+        return 'Restaurants';
+      case PromotionCategory.education:
+        return 'Education';
+    }
+  }
+  
+  IconData _getCategoryIcon(PromotionCategory category) {
+    switch (category) {
+      case PromotionCategory.therapy:
+        return Icons.psychology;
+      case PromotionCategory.activities:
+        return Icons.sports_handball;
+      case PromotionCategory.products:
+        return Icons.shopping_bag;
+      case PromotionCategory.restaurants:
+        return Icons.restaurant;
+      case PromotionCategory.education:
+        return Icons.school;
+    }
+  }
+  
+  Color _getCategoryColor(PromotionCategory category) {
+    switch (category) {
+      case PromotionCategory.therapy:
+        return AppColors.primary;
+      case PromotionCategory.activities:
+        return AppColors.secondary;
+      case PromotionCategory.products:
+        return AppColors.tertiary;
+      case PromotionCategory.restaurants:
+        return AppColors.quaternary;
+      case PromotionCategory.education:
+        return AppColors.info;
+    }
+  }
+  
+  void _toggleSavePromotion(String promotionId) {
+    setState(() {
+      if (_savedPromotionIds.contains(promotionId)) {
+        _savedPromotionIds.remove(promotionId);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Promotion removed from saved'),
+            backgroundColor: AppColors.info,
+            duration: Duration(seconds: 1),
+          ),
+        );
+      } else {
+        _savedPromotionIds.add(promotionId);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Promotion saved!'),
+            backgroundColor: AppColors.success,
+            duration: Duration(seconds: 1),
+          ),
+        );
+      }
+    });
+  }
+  
   void _showPromotionDetails(Promotion promotion) {
+    final isSaved = _savedPromotionIds.contains(promotion.id);
+    
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -252,12 +334,12 @@ class _PromotionsScreenState extends State<PromotionsScreen> {
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: promotion.color.withOpacity(0.1),
+                    color: AppColors.primary.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Icon(
                     promotion.imageIcon,
-                    color: promotion.color,
+                    color: AppColors.primary,
                     size: 28,
                   ),
                 ),
@@ -305,13 +387,13 @@ class _PromotionsScreenState extends State<PromotionsScreen> {
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                         decoration: BoxDecoration(
-                          color: promotion.color.withOpacity(0.1),
+                          color: AppColors.primary.withOpacity(0.1),
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: Text(
                           promotion.discount,
                           style: TextStyle(
-                            color: promotion.color,
+                            color: AppColors.primary,
                             fontWeight: FontWeight.bold,
                             fontSize: 16,
                           ),
@@ -351,15 +433,10 @@ class _PromotionsScreenState extends State<PromotionsScreen> {
                   child: OutlinedButton.icon(
                     onPressed: () {
                       Navigator.pop(context);
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text('Saved ${promotion.title}'),
-                          backgroundColor: AppColors.success,
-                        ),
-                      );
+                      _toggleSavePromotion(promotion.id);
                     },
-                    icon: const Icon(Icons.bookmark_outline),
-                    label: const Text('Save Offer'),
+                    icon: Icon(isSaved ? Icons.bookmark : Icons.bookmark_outline),
+                    label: Text(isSaved ? 'Saved' : 'Save Offer'),
                     style: OutlinedButton.styleFrom(
                       foregroundColor: AppColors.primary,
                       side: BorderSide(color: AppColors.primary),
@@ -375,12 +452,17 @@ class _PromotionsScreenState extends State<PromotionsScreen> {
                   child: ElevatedButton.icon(
                     onPressed: () {
                       Navigator.pop(context);
-                      // TODO: Navigate to business or open website
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('Opening ${promotion.business}'),
+                          backgroundColor: AppColors.info,
+                        ),
+                      );
                     },
                     icon: const Icon(Icons.arrow_forward),
                     label: const Text('Claim Offer'),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: promotion.color,
+                      backgroundColor: AppColors.primary,
                       foregroundColor: Colors.white,
                       padding: const EdgeInsets.symmetric(vertical: 12),
                       shape: RoundedRectangleBorder(
@@ -398,301 +480,416 @@ class _PromotionsScreenState extends State<PromotionsScreen> {
     );
   }
   
+  Widget _buildPromotionCard(Promotion promotion, {bool showRemoveButton = false}) {
+    final isSaved = _savedPromotionIds.contains(promotion.id);
+    
+    return GestureDetector(
+      onTap: () => _showPromotionDetails(promotion),
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 16),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: Colors.grey.shade200,
+            width: 1,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.04),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Image/Icon Section
+            Container(
+              height: 120,
+              decoration: const BoxDecoration(
+                color: AppColors.surface,
+                borderRadius: BorderRadius.vertical(top: Radius.circular(15)),
+              ),
+              child: Stack(
+                children: [
+                  Center(
+                    child: Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: AppColors.primary.withOpacity(0.1),
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(
+                        promotion.imageIcon,
+                        size: 40,
+                        color: AppColors.primary,
+                      ),
+                    ),
+                  ),
+                  Positioned(
+                    top: 12,
+                    right: 12,
+                    child: IconButton(
+                      icon: Icon(
+                        isSaved ? Icons.bookmark : Icons.bookmark_outline,
+                        color: isSaved ? AppColors.primary : Colors.grey,
+                      ),
+                      onPressed: () => _toggleSavePromotion(promotion.id),
+                    ),
+                  ),
+                  Positioned(
+                    top: 12,
+                    left: 12,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                      decoration: BoxDecoration(
+                        color: AppColors.primary,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Text(
+                        promotion.discount,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 12,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            
+            // Content Section
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    promotion.title,
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    promotion.business,
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: AppColors.primary,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    promotion.description,
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: AppColors.textSecondary,
+                      height: 1.3,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 12),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        children: [
+                          Icon(Icons.schedule, size: 14, color: AppColors.textSecondary),
+                          const SizedBox(width: 4),
+                          Text(
+                            promotion.validUntil,
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: AppColors.textSecondary,
+                            ),
+                          ),
+                        ],
+                      ),
+                      if (showRemoveButton)
+                        IconButton(
+                          onPressed: () => _toggleSavePromotion(promotion.id),
+                          icon: const Icon(Icons.delete_outline),
+                          color: AppColors.error,
+                          iconSize: 20,
+                        )
+                      else
+                        TextButton(
+                          onPressed: () => _showPromotionDetails(promotion),
+                          child: Row(
+                            children: [
+                              Text(
+                                'View Details',
+                                style: TextStyle(
+                                  color: AppColors.primary,
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 13,
+                                ),
+                              ),
+                              const SizedBox(width: 4),
+                              Icon(
+                                Icons.arrow_forward,
+                                size: 14,
+                                color: AppColors.primary,
+                              ),
+                            ],
+                          ),
+                        ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+  
+  Widget _buildPromotionsTab() {
+    return Column(
+      children: [
+        // Category Filter
+        Container(
+          color: Colors.white,
+          padding: const EdgeInsets.symmetric(vertical: 12),
+          child: Container(
+            height: 36,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              itemCount: _categories.length,
+              itemBuilder: (context, index) {
+                final category = _categories[index];
+                final isSelected = category == _selectedCategory;
+                
+                return Padding(
+                  padding: const EdgeInsets.only(right: 8),
+                  child: FilterChip(
+                    label: Text(category),
+                    selected: isSelected,
+                    onSelected: (selected) {
+                      setState(() {
+                        _selectedCategory = category;
+                      });
+                    },
+                    selectedColor: AppColors.primary.withOpacity(0.2),
+                    checkmarkColor: AppColors.primary,
+                    labelStyle: TextStyle(
+                      color: isSelected ? AppColors.primary : AppColors.textSecondary,
+                      fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+                    ),
+                    side: BorderSide(
+                      color: isSelected ? AppColors.primary : Colors.grey.shade300,
+                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: 12),
+                  ),
+                );
+              },
+            ),
+          ),
+        ),
+        
+        // Promotions count
+        Container(
+          padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+          alignment: Alignment.centerLeft,
+          child: Text(
+            '${filteredPromotions.length} Offers Available',
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ),
+        
+        // Promotions List
+        Expanded(
+          child: filteredPromotions.isEmpty
+              ? Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.local_offer_outlined,
+                        size: 80,
+                        color: AppColors.textSecondary.withOpacity(0.3),
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        'No promotions in this category',
+                        style: TextStyle(
+                          fontSize: 18,
+                          color: AppColors.textSecondary,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      TextButton(
+                        onPressed: () {
+                          setState(() {
+                            _selectedCategory = 'All';
+                          });
+                        },
+                        child: const Text('View all promotions'),
+                      ),
+                    ],
+                  ),
+                )
+              : ListView.builder(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  itemCount: filteredPromotions.length,
+                  itemBuilder: (context, index) => _buildPromotionCard(filteredPromotions[index]),
+                ),
+        ),
+      ],
+    );
+  }
+  
+  Widget _buildSavedTab() {
+    if (savedPromotions.isEmpty) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.bookmark_outline,
+              size: 80,
+              color: AppColors.textSecondary.withOpacity(0.3),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              'No saved offers yet',
+              style: TextStyle(
+                fontSize: 18,
+                color: AppColors.textSecondary,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Bookmark offers to see them here',
+              style: TextStyle(
+                fontSize: 14,
+                color: AppColors.textSecondary.withOpacity(0.7),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+    
+    return ListView(
+      padding: const EdgeInsets.all(16),
+      children: [
+        ...savedPromotionsByCategory.entries.map((entry) {
+          final category = entry.key;
+          final promotions = entry.value;
+          
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(bottom: 12, top: 8),
+                child: Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: _getCategoryColor(category).withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Icon(
+                        _getCategoryIcon(category),
+                        size: 20,
+                        color: _getCategoryColor(category),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Text(
+                      _getCategoryName(category),
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: _getCategoryColor(category).withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Text(
+                        promotions.length.toString(),
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: _getCategoryColor(category),
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              ...promotions.map((promotion) => _buildPromotionCard(promotion, showRemoveButton: true)),
+              const SizedBox(height: 16),
+            ],
+          );
+        }).toList(),
+      ],
+    );
+  }
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
-      body: CustomScrollView(
-        slivers: [
-          // Header with Categories
-          SliverToBoxAdapter(
-            child: Container(
-              color: Colors.white,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.all(8),
-                              decoration: BoxDecoration(
-                                color: AppColors.primary.withOpacity(0.1),
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: Icon(
-                                Icons.local_offer,
-                                color: AppColors.primary,
-                                size: 20,
-                              ),
-                            ),
-                            const SizedBox(width: 12),
-                            const Text(
-                              'Special Offers',
-                              style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          'Exclusive deals from autism-friendly businesses',
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: AppColors.textSecondary,
-                          ),
-                        ),
-                      ],
-                    ),
+      body: Column(
+        children: [
+          // Compact header with tabs
+          Container(
+            color: Colors.white,
+            child: SafeArea(
+              bottom: false,
+              child: TabBar(
+                controller: _tabController,
+                labelColor: AppColors.primary,
+                unselectedLabelColor: AppColors.textSecondary,
+                indicatorColor: AppColors.primary,
+                indicatorWeight: 3,
+                tabs: const [
+                  Tab(
+                    icon: Icon(Icons.local_offer, size: 24),
+                    text: 'Promotions',
+                    iconMargin: EdgeInsets.only(bottom: 4),
                   ),
-                  
-                  // Category Filter Chips
-                  Container(
-                    height: 50,
-                    padding: const EdgeInsets.symmetric(vertical: 8),
-                    child: ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      itemCount: _categories.length,
-                      itemBuilder: (context, index) {
-                        final category = _categories[index];
-                        final isSelected = category == _selectedCategory;
-                        
-                        return Padding(
-                          padding: const EdgeInsets.only(right: 8),
-                          child: FilterChip(
-                            label: Text(category),
-                            selected: isSelected,
-                            onSelected: (selected) {
-                              setState(() {
-                                _selectedCategory = category;
-                              });
-                            },
-                            selectedColor: AppColors.primary.withOpacity(0.2),
-                            checkmarkColor: AppColors.primary,
-                            labelStyle: TextStyle(
-                              color: isSelected ? AppColors.primary : AppColors.textSecondary,
-                              fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
-                            ),
-                            side: BorderSide(
-                              color: isSelected ? AppColors.primary : Colors.grey.shade300,
-                            ),
-                            padding: const EdgeInsets.symmetric(horizontal: 12),
-                          ),
-                        );
-                      },
-                    ),
+                  Tab(
+                    icon: Icon(Icons.bookmark, size: 24),
+                    text: 'Saved',
+                    iconMargin: EdgeInsets.only(bottom: 4),
                   ),
-                  const SizedBox(height: 8),
                 ],
               ),
             ),
           ),
           
-          // Promotions List
-          SliverPadding(
-            padding: const EdgeInsets.all(16),
-            sliver: SliverList(
-              delegate: SliverChildBuilderDelegate(
-                (context, index) {
-                  final promotion = filteredPromotions[index];
-                  
-                  return GestureDetector(
-                    onTap: () => _showPromotionDetails(promotion),
-                    child: Container(
-                      margin: const EdgeInsets.only(bottom: 16),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(16),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.05),
-                            blurRadius: 10,
-                            offset: const Offset(0, 2),
-                          ),
-                        ],
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          // Image/Icon Section
-                          Container(
-                            height: 140,
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                begin: Alignment.topLeft,
-                                end: Alignment.bottomRight,
-                                colors: [
-                                  promotion.color.withOpacity(0.1),
-                                  promotion.color.withOpacity(0.05),
-                                ],
-                              ),
-                              borderRadius: const BorderRadius.vertical(
-                                top: Radius.circular(16),
-                              ),
-                            ),
-                            child: Stack(
-                              children: [
-                                Center(
-                                  child: Icon(
-                                    promotion.imageIcon,
-                                    size: 60,
-                                    color: promotion.color.withOpacity(0.3),
-                                  ),
-                                ),
-                                Positioned(
-                                  top: 12,
-                                  right: 12,
-                                  child: Container(
-                                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                                    decoration: BoxDecoration(
-                                      color: promotion.color,
-                                      borderRadius: BorderRadius.circular(20),
-                                    ),
-                                    child: Text(
-                                      promotion.discount,
-                                      style: const TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 14,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          
-                          // Content Section
-                          Padding(
-                            padding: const EdgeInsets.all(16),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  promotion.title,
-                                  style: const TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                  maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                                const SizedBox(height: 4),
-                                Text(
-                                  promotion.business,
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    color: AppColors.primary,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                                const SizedBox(height: 8),
-                                Text(
-                                  promotion.description,
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    color: AppColors.textSecondary,
-                                    height: 1.4,
-                                  ),
-                                  maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                                const SizedBox(height: 12),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Row(
-                                      children: [
-                                        Icon(
-                                          Icons.schedule,
-                                          size: 14,
-                                          color: AppColors.textSecondary,
-                                        ),
-                                        const SizedBox(width: 4),
-                                        Text(
-                                          promotion.validUntil,
-                                          style: TextStyle(
-                                            fontSize: 12,
-                                            color: AppColors.textSecondary,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    TextButton(
-                                      onPressed: () => _showPromotionDetails(promotion),
-                                      child: Row(
-                                        children: [
-                                          Text(
-                                            'View Details',
-                                            style: TextStyle(
-                                              color: promotion.color,
-                                              fontWeight: FontWeight.w600,
-                                            ),
-                                          ),
-                                          const SizedBox(width: 4),
-                                          Icon(
-                                            Icons.arrow_forward,
-                                            size: 16,
-                                            color: promotion.color,
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
-                },
-                childCount: filteredPromotions.length,
-              ),
+          // Tab content
+          Expanded(
+            child: TabBarView(
+              controller: _tabController,
+              children: [
+                _buildPromotionsTab(),
+                _buildSavedTab(),
+              ],
             ),
           ),
-          
-          // Empty State
-          if (filteredPromotions.isEmpty)
-            SliverFillRemaining(
-              child: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.local_offer_outlined,
-                      size: 80,
-                      color: AppColors.textSecondary.withOpacity(0.3),
-                    ),
-                    const SizedBox(height: 16),
-                    Text(
-                      'No promotions in this category',
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: AppColors.textSecondary,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    TextButton(
-                      onPressed: () {
-                        setState(() {
-                          _selectedCategory = 'All';
-                        });
-                      },
-                      child: const Text('View all promotions'),
-                    ),
-                  ],
-                ),
-              ),
-            ),
         ],
       ),
     );
@@ -709,7 +906,6 @@ class Promotion {
   final String discount;
   final String validUntil;
   final IconData imageIcon;
-  final Color color;
   
   Promotion({
     required this.id,
@@ -720,7 +916,6 @@ class Promotion {
     required this.discount,
     required this.validUntil,
     required this.imageIcon,
-    required this.color,
   });
 }
 
