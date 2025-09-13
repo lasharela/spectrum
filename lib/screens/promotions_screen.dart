@@ -12,16 +12,44 @@ class _PromotionsScreenState extends State<PromotionsScreen> with SingleTickerPr
   late TabController _tabController;
   String _selectedCategory = 'All';
   final Set<String> _savedPromotionIds = {};
+  final TextEditingController _searchController = TextEditingController();
+  String _searchQuery = '';
+  List<Promotion> _filteredPromotions = [];
   
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
+    _searchController.addListener(_onSearchChanged);
+    _filterPromotions();
+  }
+  
+  void _onSearchChanged() {
+    setState(() {
+      _searchQuery = _searchController.text.toLowerCase();
+      _filterPromotions();
+    });
+  }
+  
+  void _filterPromotions() {
+    _filteredPromotions = _promotions.where((promotion) {
+      final matchesCategory = _selectedCategory == 'All' || 
+          promotion.category.name == _selectedCategory.toLowerCase();
+      
+      final matchesSearch = _searchQuery.isEmpty ||
+          promotion.title.toLowerCase().contains(_searchQuery) ||
+          promotion.business.toLowerCase().contains(_searchQuery) ||
+          promotion.description.toLowerCase().contains(_searchQuery) ||
+          promotion.category.name.toLowerCase().contains(_searchQuery);
+      
+      return matchesCategory && matchesSearch;
+    }).toList();
   }
   
   @override
   void dispose() {
     _tabController.dispose();
+    _searchController.dispose();
     super.dispose();
   }
   
@@ -196,14 +224,6 @@ class _PromotionsScreenState extends State<PromotionsScreen> with SingleTickerPr
     ),
   ];
   
-  List<Promotion> get filteredPromotions {
-    if (_selectedCategory == 'All') {
-      return _promotions;
-    }
-    
-    final category = _getCategoryEnum(_selectedCategory);
-    return _promotions.where((p) => p.category == category).toList();
-  }
   
   List<Promotion> get savedPromotions {
     return _promotions.where((p) => _savedPromotionIds.contains(p.id)).toList();
@@ -657,6 +677,34 @@ class _PromotionsScreenState extends State<PromotionsScreen> with SingleTickerPr
   Widget _buildPromotionsTab() {
     return Column(
       children: [
+        // Search Bar
+        Container(
+          color: AppColors.surface,
+          padding: const EdgeInsets.all(16),
+          child: TextField(
+            controller: _searchController,
+            decoration: InputDecoration(
+              hintText: 'Search promotions...',
+              hintStyle: TextStyle(color: AppColors.textSecondary),
+              filled: true,
+              fillColor: AppColors.background,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(30),
+                borderSide: BorderSide.none,
+              ),
+              contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+              prefixIcon: Icon(Icons.search, color: AppColors.textSecondary),
+              suffixIcon: _searchQuery.isNotEmpty
+                  ? IconButton(
+                      icon: Icon(Icons.clear, color: AppColors.textSecondary),
+                      onPressed: () {
+                        _searchController.clear();
+                      },
+                    )
+                  : null,
+            ),
+          ),
+        ),
         // Category Filter
         Container(
           color: Colors.white,
@@ -679,6 +727,7 @@ class _PromotionsScreenState extends State<PromotionsScreen> with SingleTickerPr
                     onSelected: (selected) {
                       setState(() {
                         _selectedCategory = category;
+                        _filterPromotions();
                       });
                     },
                     selectedColor: AppColors.primary.withOpacity(0.2),
@@ -703,7 +752,7 @@ class _PromotionsScreenState extends State<PromotionsScreen> with SingleTickerPr
           padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
           alignment: Alignment.centerLeft,
           child: Text(
-            '${filteredPromotions.length} Offers Available',
+            '${_filteredPromotions.length} Offers Available',
             style: const TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w600,
@@ -713,7 +762,7 @@ class _PromotionsScreenState extends State<PromotionsScreen> with SingleTickerPr
         
         // Promotions List
         Expanded(
-          child: filteredPromotions.isEmpty
+          child: _filteredPromotions.isEmpty
               ? Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -736,6 +785,7 @@ class _PromotionsScreenState extends State<PromotionsScreen> with SingleTickerPr
                         onPressed: () {
                           setState(() {
                             _selectedCategory = 'All';
+                            _filterPromotions();
                           });
                         },
                         child: const Text('View all promotions'),
@@ -745,8 +795,8 @@ class _PromotionsScreenState extends State<PromotionsScreen> with SingleTickerPr
                 )
               : ListView.builder(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
-                  itemCount: filteredPromotions.length,
-                  itemBuilder: (context, index) => _buildPromotionCard(filteredPromotions[index]),
+                  itemCount: _filteredPromotions.length,
+                  itemBuilder: (context, index) => _buildPromotionCard(_filteredPromotions[index]),
                 ),
         ),
       ],

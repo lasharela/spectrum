@@ -15,6 +15,7 @@ class SignupScreen extends StatefulWidget {
 
 class _SignupScreenState extends State<SignupScreen> {
   final _formKey = GlobalKey<FormState>();
+  final _usernameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
@@ -38,10 +39,27 @@ class _SignupScreenState extends State<SignupScreen> {
 
   @override
   void dispose() {
+    _usernameController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
     _confirmPasswordController.dispose();
     super.dispose();
+  }
+
+  String? _validateUsername(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Please enter a username';
+    }
+    if (value.length < 3) {
+      return 'Username must be at least 3 characters';
+    }
+    if (value.length > 20) {
+      return 'Username must be less than 20 characters';
+    }
+    if (!RegExp(r'^[a-zA-Z0-9_]+$').hasMatch(value)) {
+      return 'Username can only contain letters, numbers, and underscores';
+    }
+    return null;
   }
 
   String? _validateEmail(String? value) {
@@ -101,6 +119,7 @@ class _SignupScreenState extends State<SignupScreen> {
 
       try {
         final result = await _authService.signup(
+          username: _usernameController.text.trim(),
           email: _emailController.text.trim(),
           password: _passwordController.text,
         );
@@ -197,6 +216,18 @@ class _SignupScreenState extends State<SignupScreen> {
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 32),
+
+                  // Username field
+                  CustomTextField(
+                    controller: _usernameController,
+                    labelText: 'Username',
+                    hintText: 'Choose a username',
+                    keyboardType: TextInputType.text,
+                    prefixIcon: const Icon(Icons.person_outline),
+                    validator: _validateUsername,
+                    enabled: !_isLoading,
+                  ),
+                  const SizedBox(height: 20),
 
                   // Email field
                   CustomTextField(

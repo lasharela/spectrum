@@ -12,16 +12,44 @@ class _EventsScreenState extends State<EventsScreen> with SingleTickerProviderSt
   late TabController _tabController;
   String _selectedCategory = 'All';
   final Set<String> _savedEventIds = {};
+  final TextEditingController _searchController = TextEditingController();
+  String _searchQuery = '';
+  List<Event> _filteredEvents = [];
   
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
+    _searchController.addListener(_onSearchChanged);
+    _filterEvents();
+  }
+  
+  void _onSearchChanged() {
+    setState(() {
+      _searchQuery = _searchController.text.toLowerCase();
+      _filterEvents();
+    });
+  }
+  
+  void _filterEvents() {
+    _filteredEvents = _events.where((event) {
+      final matchesCategory = _selectedCategory == 'All' || 
+          event.category.name == _selectedCategory.toLowerCase().replaceAll(' ', '');
+      
+      final matchesSearch = _searchQuery.isEmpty ||
+          event.title.toLowerCase().contains(_searchQuery) ||
+          event.organization.toLowerCase().contains(_searchQuery) ||
+          event.description.toLowerCase().contains(_searchQuery) ||
+          event.location.toLowerCase().contains(_searchQuery);
+      
+      return matchesCategory && matchesSearch;
+    }).toList();
   }
   
   @override
   void dispose() {
     _tabController.dispose();
+    _searchController.dispose();
     super.dispose();
   }
   
@@ -172,16 +200,6 @@ class _EventsScreenState extends State<EventsScreen> with SingleTickerProviderSt
     ),
   ];
   
-  List<Event> get filteredEvents {
-    var events = _events;
-    
-    if (_selectedCategory != 'All') {
-      final category = _getCategoryEnum(_selectedCategory);
-      events = events.where((e) => e.category == category).toList();
-    }
-    
-    return events;
-  }
   
   List<Event> get savedEvents {
     return _events.where((e) => _savedEventIds.contains(e.id)).toList();
@@ -660,6 +678,34 @@ class _EventsScreenState extends State<EventsScreen> with SingleTickerProviderSt
   Widget _buildUpcomingTab() {
     return Column(
       children: [
+        // Search Bar
+        Container(
+          color: AppColors.surface,
+          padding: const EdgeInsets.all(16),
+          child: TextField(
+            controller: _searchController,
+            decoration: InputDecoration(
+              hintText: 'Search events...',
+              hintStyle: TextStyle(color: AppColors.textSecondary),
+              filled: true,
+              fillColor: AppColors.background,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(30),
+                borderSide: BorderSide.none,
+              ),
+              contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+              prefixIcon: Icon(Icons.search, color: AppColors.textSecondary),
+              suffixIcon: _searchQuery.isNotEmpty
+                  ? IconButton(
+                      icon: Icon(Icons.clear, color: AppColors.textSecondary),
+                      onPressed: () {
+                        _searchController.clear();
+                      },
+                    )
+                  : null,
+            ),
+          ),
+        ),
         // Category Filter
         Container(
           color: Colors.white,
@@ -682,6 +728,7 @@ class _EventsScreenState extends State<EventsScreen> with SingleTickerProviderSt
                     onSelected: (selected) {
                       setState(() {
                         _selectedCategory = category;
+                        _filterEvents();
                       });
                     },
                     selectedColor: AppColors.primary.withOpacity(0.2),
@@ -706,7 +753,7 @@ class _EventsScreenState extends State<EventsScreen> with SingleTickerProviderSt
           padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
           alignment: Alignment.centerLeft,
           child: Text(
-            '${filteredEvents.length} Upcoming Events',
+            '${_filteredEvents.length} Upcoming Events',
             style: const TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w600,
@@ -716,7 +763,7 @@ class _EventsScreenState extends State<EventsScreen> with SingleTickerProviderSt
         
         // Events List
         Expanded(
-          child: filteredEvents.isEmpty
+          child: _filteredEvents.isEmpty
               ? Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -739,6 +786,7 @@ class _EventsScreenState extends State<EventsScreen> with SingleTickerProviderSt
                         onPressed: () {
                           setState(() {
                             _selectedCategory = 'All';
+                            _filterEvents();
                           });
                         },
                         child: const Text('View all events'),
@@ -748,8 +796,8 @@ class _EventsScreenState extends State<EventsScreen> with SingleTickerProviderSt
                 )
               : ListView.builder(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
-                  itemCount: filteredEvents.length,
-                  itemBuilder: (context, index) => _buildEventCard(filteredEvents[index]),
+                  itemCount: _filteredEvents.length,
+                  itemBuilder: (context, index) => _buildEventCard(_filteredEvents[index]),
                 ),
         ),
       ],

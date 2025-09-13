@@ -10,18 +10,40 @@ class CommunityScreen extends StatefulWidget {
 
 class _CommunityScreenState extends State<CommunityScreen> with SingleTickerProviderStateMixin {
   late TabController _tabController;
-  final List<Discussion> _discussions = _generateDiscussions();
+  final List<Discussion> _allDiscussions = _generateDiscussions();
+  List<Discussion> _filteredDiscussions = [];
   final List<Discussion> _myDiscussions = [];
+  final TextEditingController _searchController = TextEditingController();
+  String _searchQuery = '';
   
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
+    _filteredDiscussions = List.from(_allDiscussions);
+    _searchController.addListener(_onSearchChanged);
+  }
+  
+  void _onSearchChanged() {
+    setState(() {
+      _searchQuery = _searchController.text.toLowerCase();
+      if (_searchQuery.isEmpty) {
+        _filteredDiscussions = List.from(_allDiscussions);
+      } else {
+        _filteredDiscussions = _allDiscussions.where((discussion) {
+          return discussion.title.toLowerCase().contains(_searchQuery) ||
+                 discussion.content.toLowerCase().contains(_searchQuery) ||
+                 discussion.category.toLowerCase().contains(_searchQuery) ||
+                 discussion.author.toLowerCase().contains(_searchQuery);
+        }).toList();
+      }
+    });
   }
   
   @override
   void dispose() {
     _tabController.dispose();
+    _searchController.dispose();
     super.dispose();
   }
   
@@ -33,6 +55,7 @@ class _CommunityScreenState extends State<CommunityScreen> with SingleTickerProv
         author: 'Sarah M.',
         category: 'Sensory',
         content: 'I\'ve found that noise-canceling headphones really help...',
+        imageUrl: 'placeholder_sensory',
         replies: 23,
         likes: 45,
         timestamp: DateTime.now().subtract(const Duration(hours: 2)),
@@ -107,6 +130,7 @@ class _CommunityScreenState extends State<CommunityScreen> with SingleTickerProv
         author: 'Anna K.',
         category: 'Daily Life',
         content: 'We\'ve been struggling with bedtime routines. Any tips?',
+        imageUrl: 'placeholder_sleep',
         replies: 41,
         likes: 56,
         timestamp: DateTime.now().subtract(const Duration(days: 2)),
@@ -160,7 +184,8 @@ class _CommunityScreenState extends State<CommunityScreen> with SingleTickerProv
       builder: (context) => CreateDiscussionModal(
         onSubmit: (discussion) {
           setState(() {
-            _discussions.insert(0, discussion);
+            _allDiscussions.insert(0, discussion);
+            _filteredDiscussions.insert(0, discussion);
             _myDiscussions.insert(0, discussion);
           });
         },
@@ -203,7 +228,43 @@ class _CommunityScreenState extends State<CommunityScreen> with SingleTickerProv
             child: TabBarView(
               controller: _tabController,
               children: [
-                _buildDiscussionsList(_discussions),
+                // All Discussions with Search
+                Column(
+                  children: [
+                    // Search Bar for All Discussions only
+                    Container(
+                      color: AppColors.surface,
+                      padding: const EdgeInsets.all(16),
+                      child: TextField(
+                        controller: _searchController,
+                        decoration: InputDecoration(
+                          hintText: 'Search discussions...',
+                          hintStyle: TextStyle(color: AppColors.textSecondary),
+                          filled: true,
+                          fillColor: AppColors.background,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(30),
+                            borderSide: BorderSide.none,
+                          ),
+                          contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+                          prefixIcon: Icon(Icons.search, color: AppColors.textSecondary),
+                          suffixIcon: _searchQuery.isNotEmpty
+                              ? IconButton(
+                                  icon: Icon(Icons.clear, color: AppColors.textSecondary),
+                                  onPressed: () {
+                                    _searchController.clear();
+                                  },
+                                )
+                              : null,
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: _buildDiscussionsList(_filteredDiscussions),
+                    ),
+                  ],
+                ),
+                // My Discussions without Search
                 _buildDiscussionsList(_myDiscussions, isMyDiscussions: true),
               ],
             ),
@@ -354,6 +415,60 @@ class _CommunityScreenState extends State<CommunityScreen> with SingleTickerProv
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
               ),
+              if (discussion.imageUrl != null) ...[
+                const SizedBox(height: 12),
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: Container(
+                    height: 150,
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      color: AppColors.primary.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Stack(
+                      children: [
+                        Center(
+                          child: Icon(
+                            Icons.image,
+                            size: 50,
+                            color: AppColors.primary.withOpacity(0.3),
+                          ),
+                        ),
+                        Positioned(
+                          bottom: 8,
+                          right: 8,
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                            decoration: BoxDecoration(
+                              color: Colors.black.withOpacity(0.6),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: const Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  Icons.photo,
+                                  size: 14,
+                                  color: Colors.white,
+                                ),
+                                SizedBox(width: 4),
+                                Text(
+                                  'Image',
+                                  style: TextStyle(
+                                    fontSize: 11,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
               const SizedBox(height: 12),
               Row(
                 children: [
@@ -774,6 +889,7 @@ class Discussion {
   final String author;
   final String category;
   final String content;
+  final String? imageUrl;
   int replies;
   int likes;
   final DateTime timestamp;
@@ -786,6 +902,7 @@ class Discussion {
     required this.author,
     required this.category,
     required this.content,
+    this.imageUrl,
     required this.replies,
     required this.likes,
     required this.timestamp,
@@ -828,6 +945,7 @@ class _CreateDiscussionModalState extends State<CreateDiscussionModal> {
   final _titleController = TextEditingController();
   final _contentController = TextEditingController();
   String _selectedCategory = 'General';
+  bool _hasImage = false;
   
   final List<String> _categories = [
     'General',
@@ -865,6 +983,7 @@ class _CreateDiscussionModalState extends State<CreateDiscussionModal> {
       author: 'Alex',  // Using the name from home screen
       category: _selectedCategory,
       content: _contentController.text.trim(),
+      imageUrl: _hasImage ? 'user_uploaded_image' : null,
       replies: 0,
       likes: 0,
       timestamp: DateTime.now(),
@@ -1028,6 +1147,175 @@ class _CreateDiscussionModalState extends State<CreateDiscussionModal> {
                     maxLines: 8,
                     textCapitalization: TextCapitalization.sentences,
                   ),
+                  const SizedBox(height: 20),
+                  
+                  // Image Upload Section
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Add Image',
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: AppColors.textSecondary,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      if (_hasImage)
+                        TextButton(
+                          onPressed: () {
+                            setState(() {
+                              _hasImage = false;
+                            });
+                          },
+                          child: Text(
+                            'Remove',
+                            style: TextStyle(
+                              color: AppColors.error,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  
+                  if (!_hasImage)
+                    InkWell(
+                      onTap: () {
+                        showModalBottomSheet(
+                          context: context,
+                          backgroundColor: Colors.transparent,
+                          builder: (context) => Container(
+                            padding: const EdgeInsets.all(20),
+                            decoration: const BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(20),
+                                topRight: Radius.circular(20),
+                              ),
+                            ),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                ListTile(
+                                  leading: Container(
+                                    padding: const EdgeInsets.all(10),
+                                    decoration: BoxDecoration(
+                                      color: AppColors.primary.withOpacity(0.1),
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    child: Icon(Icons.camera_alt, color: AppColors.primary),
+                                  ),
+                                  title: const Text('Take Photo'),
+                                  onTap: () {
+                                    Navigator.pop(context);
+                                    setState(() {
+                                      _hasImage = true;
+                                    });
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text('Photo added to discussion'),
+                                        backgroundColor: AppColors.success,
+                                      ),
+                                    );
+                                  },
+                                ),
+                                ListTile(
+                                  leading: Container(
+                                    padding: const EdgeInsets.all(10),
+                                    decoration: BoxDecoration(
+                                      color: AppColors.secondary.withOpacity(0.1),
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    child: Icon(Icons.photo_library, color: AppColors.secondary),
+                                  ),
+                                  title: const Text('Choose from Gallery'),
+                                  onTap: () {
+                                    Navigator.pop(context);
+                                    setState(() {
+                                      _hasImage = true;
+                                    });
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text('Image added to discussion'),
+                                        backgroundColor: AppColors.success,
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                      child: Container(
+                        height: 100,
+                        decoration: BoxDecoration(
+                          color: AppColors.background,
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                            color: AppColors.primary.withOpacity(0.3),
+                            width: 2,
+                            style: BorderStyle.solid,
+                          ),
+                        ),
+                        child: Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.add_photo_alternate,
+                                size: 32,
+                                color: AppColors.primary,
+                              ),
+                              const SizedBox(height: 8),
+                              Text(
+                                'Tap to add image',
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  color: AppColors.textSecondary,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    )
+                  else
+                    Container(
+                      height: 150,
+                      decoration: BoxDecoration(
+                        color: AppColors.primary.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Stack(
+                        children: [
+                          Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.image,
+                                  size: 50,
+                                  color: AppColors.primary.withOpacity(0.5),
+                                ),
+                                const SizedBox(height: 8),
+                                Text(
+                                  'Image attached',
+                                  style: TextStyle(
+                                    fontSize: 13,
+                                    color: AppColors.primary,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  
                   const SizedBox(height: 20),
                 ],
               ),

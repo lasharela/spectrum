@@ -17,15 +17,18 @@ class AuthService {
   AuthService._internal();
   
   bool _isAuthenticated = false;
+  String? _username;
   String? _userEmail;
   String? _authToken;
   
   bool get isAuthenticated => _isAuthenticated;
+  String? get username => _username;
   String? get userEmail => _userEmail;
   String? get authToken => _authToken;
   
   /// Signup method that sends data to /signup endpoint
   Future<Map<String, dynamic>> signup({
+    required String username,
     required String email,
     required String password,
   }) async {
@@ -38,6 +41,7 @@ class AuthService {
           'Content-Type': 'application/json',
         },
         body: jsonEncode({
+          'username': username,
           'email': email,
           'password': password,
         }),
@@ -47,6 +51,7 @@ class AuthService {
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         _isAuthenticated = true;
+        _username = username;
         _userEmail = email;
         _authToken = responseData['token'];
         
@@ -69,8 +74,9 @@ class AuthService {
       await Future.delayed(const Duration(seconds: 2));
       
       // Simulate successful signup
-      if (email.isNotEmpty && password.length >= 8) {
+      if (username.isNotEmpty && email.isNotEmpty && password.length >= 8) {
         _isAuthenticated = true;
+        _username = username;
         _userEmail = email;
         _authToken = 'mock_token_${DateTime.now().millisecondsSinceEpoch}';
         
@@ -78,6 +84,7 @@ class AuthService {
           'success': true,
           'message': 'Account created successfully',
           'data': {
+            'username': username,
             'email': email,
             'token': _authToken,
           },
