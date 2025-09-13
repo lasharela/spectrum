@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../utils/app_colors.dart';
 
 class CustomTextField extends StatelessWidget {
   final TextEditingController? controller;
@@ -55,27 +56,30 @@ class CustomTextField extends StatelessWidget {
 
   OutlineInputBorder _buildBorder() {
     return OutlineInputBorder(
-      borderRadius: BorderRadius.circular(8.0),
-      borderSide: BorderSide(color: Colors.grey[300]!),
+      borderRadius: BorderRadius.circular(16.0),
+      borderSide: BorderSide(
+        color: AppColors.blackBorder,
+        width: 2.5,
+      ),
     );
   }
 
   OutlineInputBorder _buildFocusedBorder(BuildContext context) {
     return OutlineInputBorder(
-      borderRadius: BorderRadius.circular(8.0),
+      borderRadius: BorderRadius.circular(16.0),
       borderSide: BorderSide(
-        color: Theme.of(context).primaryColor,
-        width: 2.0,
+        color: AppColors.primary,
+        width: 2.5,
       ),
     );
   }
 
   OutlineInputBorder _buildErrorBorder() {
     return OutlineInputBorder(
-      borderRadius: BorderRadius.circular(8.0),
-      borderSide: const BorderSide(
-        color: Colors.red,
-        width: 1.0,
+      borderRadius: BorderRadius.circular(16.0),
+      borderSide: BorderSide(
+        color: AppColors.error,
+        width: 2.5,
       ),
     );
   }

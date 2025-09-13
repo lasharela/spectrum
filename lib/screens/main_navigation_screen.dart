@@ -86,13 +86,12 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
           color: AppColors.surface,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.1),
-              blurRadius: 10,
-              offset: const Offset(0, -5),
+          border: Border(
+            top: BorderSide(
+              color: AppColors.blackBorder,
+              width: 2.5,
             ),
-          ],
+          ),
         ),
         child: BottomNavigationBar(
           type: BottomNavigationBarType.fixed,

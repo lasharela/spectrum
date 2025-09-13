@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../utils/app_colors.dart';
+import '../widgets/decorative_shapes.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -14,11 +15,22 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       backgroundColor: AppColors.background,
       body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
+        child: Stack(
+          children: [
+            // Decorative shapes in background
+            const RandomShapesBackground(
+              shapeCount: 6,
+              colors: [
+                AppColors.secondary,
+                AppColors.tertiary,
+                AppColors.accent2,
+              ],
+            ),
+            SingleChildScrollView(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
               // Greeting Section
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -210,9 +222,11 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ],
               ),
-              const SizedBox(height: 80), // Space for bottom navigation
-            ],
-          ),
+                  const SizedBox(height: 80), // Space for bottom navigation
+                ],
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -229,6 +243,7 @@ class _HomeScreenState extends State<HomeScreen> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(20),
+        border: AppColors.cardBorderStyle,
         boxShadow: [AppColors.cardShadow],
       ),
       child: Column(
@@ -278,6 +293,7 @@ class _HomeScreenState extends State<HomeScreen> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
+        border: AppColors.cardBorderStyle,
         boxShadow: [AppColors.cardShadow],
       ),
       child: Row(
@@ -375,6 +391,7 @@ class _HomeScreenState extends State<HomeScreen> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
+        border: AppColors.cardBorderStyle,
         boxShadow: [AppColors.cardShadow],
       ),
       child: Column(

@@ -5,6 +5,7 @@ import '../widgets/custom_button.dart';
 import '../widgets/custom_text_field.dart';
 import '../utils/app_colors.dart';
 import '../services/auth_service.dart';
+import '../widgets/decorative_shapes.dart';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
@@ -171,34 +172,39 @@ class _SignupScreenState extends State<SignupScreen> {
     return Scaffold(
       backgroundColor: AppColors.background,
       body: SafeArea(
-        child: Center(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(24.0),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  // Logo/Icon
-                  Container(
-                    height: 80,
-                    width: 80,
-                    decoration: BoxDecoration(
-                      color: AppColors.primary.withOpacity(0.1),
-                      shape: BoxShape.circle,
-                    ),
-                    child: const Icon(
-                      Icons.person_add_outlined,
-                      size: 50,
-                      color: AppColors.primary,
-                    ),
-                  ),
-                  const SizedBox(height: 24),
-
-                  // Title
-                  const Text(
-                    'Create Account',
+        child: Stack(
+          children: [
+            // Simple decorative shapes
+            Positioned(
+              top: 80,
+              left: 30,
+              child: DecorativeShapes(
+                type: ShapeType.diamond,
+                size: 35,
+                color: AppColors.tertiary.withOpacity(0.3),
+              ),
+            ),
+            Positioned(
+              top: 200,
+              right: 25,
+              child: DecorativeShapes(
+                type: ShapeType.burst,
+                size: 40,
+                color: AppColors.secondary.withOpacity(0.3),
+              ),
+            ),
+            Center(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(24.0),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      // Title
+                      const Text(
+                        'Create Account',
                     style: TextStyle(
                       fontSize: 32,
                       fontWeight: FontWeight.bold,
@@ -385,12 +391,15 @@ class _SignupScreenState extends State<SignupScreen> {
                       ),
                     ],
                   ),
+                    ],
+                  ),
                 ],
               ),
             ),
           ),
-        ),
+        ],
       ),
-    );
+    ),
+  );
   }
 }

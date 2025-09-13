@@ -326,10 +326,11 @@ class _CommunityScreenState extends State<CommunityScreen> with SingleTickerProv
   
   Widget _buildDiscussionCard(Discussion discussion) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 12),
+      margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(20),
+        border: AppColors.cardBorderStyle,
         boxShadow: [AppColors.cardShadow],
       ),
       child: InkWell(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../utils/app_colors.dart';
 
 class CustomButton extends StatelessWidget {
   final String text;
@@ -18,24 +19,29 @@ class CustomButton extends StatelessWidget {
     this.backgroundColor,
     this.textColor,
     this.width,
-    this.height = 48.0,
+    this.height = 56.0,
     this.borderRadius,
   });
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
     return SizedBox(
       width: width,
       height: height,
       child: ElevatedButton(
         onPressed: isLoading ? null : onPressed,
         style: ElevatedButton.styleFrom(
-          backgroundColor: backgroundColor ?? theme.primaryColor,
+          backgroundColor: backgroundColor ?? AppColors.primary,
+          foregroundColor: textColor ?? Colors.white,
           shape: RoundedRectangleBorder(
-            borderRadius: borderRadius ?? BorderRadius.circular(8.0),
+            borderRadius: borderRadius ?? BorderRadius.circular(16.0),
+            side: BorderSide(
+              color: AppColors.blackBorder,
+              width: 2.5,
+            ),
           ),
+          elevation: 0,
+          shadowColor: Colors.transparent,
         ),
         child:
             isLoading ? _buildLoader() : _buildText(textColor ?? Colors.white),
