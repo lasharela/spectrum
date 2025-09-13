@@ -19,18 +19,18 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
   
   final List<Widget> _screens = [
     const HomeScreen(),
+    const CommunityScreen(),
     const CatalogScreen(),
     const PromotionsScreen(),
     const EventsScreen(),
-    const CommunityScreen(),
   ];
 
   final List<String> _titles = [
     'Spectrum',
+    'Community',
     'Catalogue',
     'Promotions',
     'Events',
-    'Community',
   ];
 
   void _onItemTapped(int index) {
@@ -111,6 +111,11 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
               label: 'Home',
             ),
             BottomNavigationBarItem(
+              icon: Icon(Icons.forum_outlined, size: 24),
+              activeIcon: Icon(Icons.forum, size: 24),
+              label: 'Community',
+            ),
+            BottomNavigationBarItem(
               icon: Icon(Icons.category_outlined, size: 24),
               activeIcon: Icon(Icons.category, size: 24),
               label: 'Catalogue',
@@ -124,11 +129,6 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
               icon: Icon(Icons.event_outlined, size: 24),
               activeIcon: Icon(Icons.event, size: 24),
               label: 'Events',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.forum_outlined, size: 24),
-              activeIcon: Icon(Icons.forum, size: 24),
-              label: 'Community',
             ),
           ],
         ),

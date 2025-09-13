@@ -37,6 +37,24 @@ class _CommunityScreenState extends State<CommunityScreen> with SingleTickerProv
         likes: 45,
         timestamp: DateTime.now().subtract(const Duration(hours: 2)),
         isLiked: false,
+        replyList: [
+          Reply(
+            id: 'r1',
+            author: 'John D.',
+            content: 'Great tips! I also find that having a quiet space to retreat to helps a lot.',
+            timestamp: DateTime.now().subtract(const Duration(hours: 1)),
+            likes: 12,
+            isLiked: false,
+          ),
+          Reply(
+            id: 'r2',
+            author: 'Maria L.',
+            content: 'We use a sensory kit with fidget toys and it works wonders!',
+            timestamp: DateTime.now().subtract(const Duration(minutes: 45)),
+            likes: 8,
+            isLiked: true,
+          ),
+        ],
       ),
       Discussion(
         id: '2',
@@ -48,6 +66,16 @@ class _CommunityScreenState extends State<CommunityScreen> with SingleTickerProv
         likes: 67,
         timestamp: DateTime.now().subtract(const Duration(hours: 5)),
         isLiked: true,
+        replyList: [
+          Reply(
+            id: 'r3',
+            author: 'Patricia K.',
+            content: 'Thank you for sharing! We\'ve been looking for good educational apps.',
+            timestamp: DateTime.now().subtract(const Duration(hours: 3)),
+            likes: 5,
+            isLiked: false,
+          ),
+        ],
       ),
       Discussion(
         id: '3',
@@ -59,6 +87,7 @@ class _CommunityScreenState extends State<CommunityScreen> with SingleTickerProv
         likes: 89,
         timestamp: DateTime.now().subtract(const Duration(days: 1)),
         isLiked: false,
+        replyList: [],
       ),
       Discussion(
         id: '4',
@@ -70,6 +99,7 @@ class _CommunityScreenState extends State<CommunityScreen> with SingleTickerProv
         likes: 28,
         timestamp: DateTime.now().subtract(const Duration(days: 1, hours: 6)),
         isLiked: false,
+        replyList: [],
       ),
       Discussion(
         id: '5',
@@ -81,6 +111,7 @@ class _CommunityScreenState extends State<CommunityScreen> with SingleTickerProv
         likes: 56,
         timestamp: DateTime.now().subtract(const Duration(days: 2)),
         isLiked: true,
+        replyList: [],
       ),
       Discussion(
         id: '6',
@@ -92,6 +123,7 @@ class _CommunityScreenState extends State<CommunityScreen> with SingleTickerProv
         likes: 34,
         timestamp: DateTime.now().subtract(const Duration(days: 2, hours: 12)),
         isLiked: false,
+        replyList: [],
       ),
       Discussion(
         id: '7',
@@ -103,6 +135,7 @@ class _CommunityScreenState extends State<CommunityScreen> with SingleTickerProv
         likes: 71,
         timestamp: DateTime.now().subtract(const Duration(days: 3)),
         isLiked: false,
+        replyList: [],
       ),
       Discussion(
         id: '8',
@@ -114,6 +147,7 @@ class _CommunityScreenState extends State<CommunityScreen> with SingleTickerProv
         likes: 93,
         timestamp: DateTime.now().subtract(const Duration(days: 4)),
         isLiked: true,
+        replyList: [],
       ),
     ];
   }
@@ -373,185 +407,326 @@ class _CommunityScreenState extends State<CommunityScreen> with SingleTickerProv
   }
   
   void _showDiscussionDetails(Discussion discussion) {
+    final TextEditingController replyController = TextEditingController();
+    
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (context) => Container(
-        height: MediaQuery.of(context).size.height * 0.85,
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(20),
-            topRight: Radius.circular(20),
+      builder: (context) => StatefulBuilder(
+        builder: (context, setModalState) => Container(
+          height: MediaQuery.of(context).size.height * 0.85,
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(20),
+              topRight: Radius.circular(20),
+            ),
+          ),
+          child: Column(
+            children: [
+              Container(
+                margin: const EdgeInsets.only(top: 8),
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: Colors.grey[300],
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              Expanded(
+                child: ListView(
+                  padding: const EdgeInsets.all(20),
+                  children: [
+                    Row(
+                      children: [
+                        CircleAvatar(
+                          radius: 25,
+                          backgroundColor: AppColors.primary.withOpacity(0.1),
+                          child: Text(
+                            discussion.author[0].toUpperCase(),
+                            style: TextStyle(
+                              color: AppColors.primary,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 18,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                discussion.author,
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              Text(
+                                _formatTimestamp(discussion.timestamp),
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  color: AppColors.textSecondary,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                          decoration: BoxDecoration(
+                            color: _getCategoryColor(discussion.category).withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Text(
+                            discussion.category,
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: _getCategoryColor(discussion.category),
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 20),
+                    Text(
+                      discussion.title,
+                      style: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      discussion.content,
+                      style: const TextStyle(
+                        fontSize: 15,
+                        height: 1.5,
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    const Divider(),
+                    const SizedBox(height: 20),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text(
+                          'Replies',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Text(
+                          '${discussion.replyList.length} replies',
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: AppColors.textSecondary,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+                    if (discussion.replyList.isEmpty)
+                      Center(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 20),
+                          child: Text(
+                            'No replies yet. Be the first to reply!',
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: AppColors.textSecondary,
+                            ),
+                          ),
+                        ),
+                      )
+                    else
+                      ...discussion.replyList.map((reply) => _buildReplyCard(reply, setModalState)),
+                  ],
+                ),
+              ),
+              Container(
+                padding: EdgeInsets.only(
+                  left: 16,
+                  right: 16,
+                  bottom: MediaQuery.of(context).viewInsets.bottom + 16,
+                  top: 16,
+                ),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.05),
+                      blurRadius: 10,
+                      offset: const Offset(0, -5),
+                    ),
+                  ],
+                ),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: TextField(
+                        controller: replyController,
+                        decoration: InputDecoration(
+                          hintText: 'Add a reply...',
+                          hintStyle: TextStyle(color: AppColors.textSecondary),
+                          filled: true,
+                          fillColor: AppColors.background,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(25),
+                            borderSide: BorderSide.none,
+                          ),
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 20,
+                            vertical: 12,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Container(
+                      decoration: BoxDecoration(
+                        color: AppColors.primary,
+                        shape: BoxShape.circle,
+                      ),
+                      child: IconButton(
+                        onPressed: () {
+                          if (replyController.text.trim().isNotEmpty) {
+                            final newReply = Reply(
+                              id: DateTime.now().millisecondsSinceEpoch.toString(),
+                              author: 'Alex',
+                              content: replyController.text.trim(),
+                              timestamp: DateTime.now(),
+                              likes: 0,
+                              isLiked: false,
+                            );
+                            
+                            setModalState(() {
+                              discussion.replyList.add(newReply);
+                              discussion.replies = discussion.replyList.length;
+                            });
+                            
+                            setState(() {});
+                            
+                            replyController.clear();
+                            FocusScope.of(context).unfocus();
+                            
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Reply added successfully'),
+                                backgroundColor: AppColors.success,
+                              ),
+                            );
+                          }
+                        },
+                        icon: const Icon(
+                          Icons.send,
+                          color: Colors.white,
+                          size: 20,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
         ),
-        child: Column(
-          children: [
-            Container(
-              margin: const EdgeInsets.only(top: 8),
-              width: 40,
-              height: 4,
-              decoration: BoxDecoration(
-                color: Colors.grey[300],
-                borderRadius: BorderRadius.circular(2),
+      ),
+    );
+  }
+  
+  Widget _buildReplyCard(Reply reply, StateSetter setModalState) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: AppColors.background,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              CircleAvatar(
+                radius: 16,
+                backgroundColor: AppColors.secondary.withOpacity(0.1),
+                child: Text(
+                  reply.author[0].toUpperCase(),
+                  style: TextStyle(
+                    color: AppColors.secondary,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 12,
+                  ),
+                ),
               ),
-            ),
-            Expanded(
-              child: ListView(
-                padding: const EdgeInsets.all(20),
-                children: [
-                  Row(
-                    children: [
-                      CircleAvatar(
-                        radius: 25,
-                        backgroundColor: AppColors.primary.withOpacity(0.1),
-                        child: Text(
-                          discussion.author[0].toUpperCase(),
-                          style: TextStyle(
-                            color: AppColors.primary,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              discussion.author,
-                              style: const TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                            Text(
-                              _formatTimestamp(discussion.timestamp),
-                              style: TextStyle(
-                                fontSize: 13,
-                                color: AppColors.textSecondary,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                        decoration: BoxDecoration(
-                          color: _getCategoryColor(discussion.category).withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Text(
-                          discussion.category,
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: _getCategoryColor(discussion.category),
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 20),
-                  Text(
-                    discussion.title,
-                    style: const TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    discussion.content,
-                    style: const TextStyle(
-                      fontSize: 15,
-                      height: 1.5,
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  const Divider(),
-                  const SizedBox(height: 20),
-                  const Text(
-                    'Replies',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  Center(
-                    child: Text(
-                      'Reply functionality coming soon',
-                      style: TextStyle(
+              const SizedBox(width: 8),
+              Expanded(
+                child: Row(
+                  children: [
+                    Text(
+                      reply.author,
+                      style: const TextStyle(
                         fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      _formatTimestamp(reply.timestamp),
+                      style: TextStyle(
+                        fontSize: 12,
                         color: AppColors.textSecondary,
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
-                    blurRadius: 10,
-                    offset: const Offset(0, -5),
-                  ),
-                ],
-              ),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: TextField(
-                      decoration: InputDecoration(
-                        hintText: 'Add a reply...',
-                        hintStyle: TextStyle(color: AppColors.textSecondary),
-                        filled: true,
-                        fillColor: AppColors.background,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(25),
-                          borderSide: BorderSide.none,
-                        ),
-                        contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 20,
-                          vertical: 12,
-                        ),
+              InkWell(
+                onTap: () {
+                  setModalState(() {
+                    reply.isLiked = !reply.isLiked;
+                    if (reply.isLiked) {
+                      reply.likes++;
+                    } else {
+                      reply.likes--;
+                    }
+                  });
+                  setState(() {});
+                },
+                child: Row(
+                  children: [
+                    Icon(
+                      reply.isLiked ? Icons.favorite : Icons.favorite_border,
+                      size: 16,
+                      color: reply.isLiked ? AppColors.error : AppColors.textSecondary,
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      '${reply.likes}',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: AppColors.textSecondary,
                       ),
                     ),
-                  ),
-                  const SizedBox(width: 8),
-                  Container(
-                    decoration: BoxDecoration(
-                      color: AppColors.primary,
-                      shape: BoxShape.circle,
-                    ),
-                    child: IconButton(
-                      onPressed: () {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Reply feature coming soon'),
-                            backgroundColor: AppColors.info,
-                          ),
-                        );
-                      },
-                      icon: const Icon(
-                        Icons.send,
-                        color: Colors.white,
-                        size: 20,
-                      ),
-                    ),
-                  ),
-                ],
+                  ],
+                ),
               ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Text(
+            reply.content,
+            style: const TextStyle(
+              fontSize: 14,
+              height: 1.4,
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -603,6 +778,7 @@ class Discussion {
   int likes;
   final DateTime timestamp;
   bool isLiked;
+  final List<Reply> replyList;
   
   Discussion({
     required this.id,
@@ -613,6 +789,25 @@ class Discussion {
     required this.replies,
     required this.likes,
     required this.timestamp,
+    required this.isLiked,
+    List<Reply>? replyList,
+  }) : replyList = replyList ?? [];
+}
+
+class Reply {
+  final String id;
+  final String author;
+  final String content;
+  final DateTime timestamp;
+  int likes;
+  bool isLiked;
+  
+  Reply({
+    required this.id,
+    required this.author,
+    required this.content,
+    required this.timestamp,
+    required this.likes,
     required this.isLiked,
   });
 }
