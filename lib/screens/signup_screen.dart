@@ -172,39 +172,18 @@ class _SignupScreenState extends State<SignupScreen> {
     return Scaffold(
       backgroundColor: AppColors.background,
       body: SafeArea(
-        child: Stack(
-          children: [
-            // Simple decorative shapes
-            Positioned(
-              top: 80,
-              left: 30,
-              child: DecorativeShapes(
-                type: ShapeType.diamond,
-                size: 35,
-                color: AppColors.tertiary.withOpacity(0.3),
-              ),
-            ),
-            Positioned(
-              top: 200,
-              right: 25,
-              child: DecorativeShapes(
-                type: ShapeType.burst,
-                size: 40,
-                color: AppColors.secondary.withOpacity(0.3),
-              ),
-            ),
-            Center(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.all(24.0),
-                child: Form(
-                  key: _formKey,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      // Title
-                      const Text(
-                        'Create Account',
+        child: Center(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(24.0),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  // Title
+                  const Text(
+                    'Create Account',
                     style: TextStyle(
                       fontSize: 32,
                       fontWeight: FontWeight.bold,
@@ -391,15 +370,12 @@ class _SignupScreenState extends State<SignupScreen> {
                       ),
                     ],
                   ),
-                    ],
-                  ),
                 ],
               ),
             ),
           ),
-        ],
+        ),
       ),
-    ),
-  );
+    );
   }
 }

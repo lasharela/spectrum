@@ -100,55 +100,25 @@ class _LoginScreenState extends State<LoginScreen> {
     return Scaffold(
       backgroundColor: AppColors.background,
       body: SafeArea(
-        child: Stack(
-          children: [
-            // Simple decorative shapes - not too many
-            Positioned(
-              top: 50,
-              right: 30,
-              child: DecorativeShapes(
-                type: ShapeType.star,
-                size: 40,
-                color: AppColors.secondary.withOpacity(0.3),
-              ),
-            ),
-            Positioned(
-              top: 150,
-              left: 20,
-              child: DecorativeShapes(
-                type: ShapeType.circle,
-                size: 30,
-                color: AppColors.tertiary.withOpacity(0.3),
-              ),
-            ),
-            Positioned(
-              bottom: 100,
-              right: 40,
-              child: DecorativeShapes(
-                type: ShapeType.sparkle,
-                size: 35,
-                color: AppColors.accent2.withOpacity(0.3),
-              ),
-            ),
-            Center(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.all(24.0),
-                child: Form(
-                  key: _formKey,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      // App name with simple style
-                      const Text(
-                        'Spectrum',
-                        style: TextStyle(
-                          fontSize: 40,
-                          fontWeight: FontWeight.w900,
-                          color: AppColors.textPrimary,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
+        child: Center(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(24.0),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  // App name with simple style
+                  const Text(
+                    'Spectrum',
+                    style: TextStyle(
+                      fontSize: 40,
+                      fontWeight: FontWeight.w900,
+                      color: AppColors.textPrimary,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
                   const SizedBox(height: 32),
                   
                   // Welcome text
@@ -348,15 +318,12 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     ],
                   ),
-                    ],
-                  ),
                 ],
               ),
             ),
           ),
-        ],
+        ),
       ),
-    ),
-  );
+    );
   }
 }

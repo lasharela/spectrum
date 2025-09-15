@@ -92,7 +92,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.background,
       body: SafeArea(
         child: Column(
           children: [
@@ -137,8 +137,19 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                               minWidth: 150,
                             ),
                             decoration: BoxDecoration(
-                              color: slide.backgroundColor,
+                              color: Colors.white,
                               shape: BoxShape.circle,
+                              border: Border.all(
+                                color: AppColors.blackBorder,
+                                width: 2.5,
+                              ),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.1),
+                                  blurRadius: 0,
+                                  offset: const Offset(3, 3),
+                                ),
+                              ],
                             ),
                             child: FractionallySizedBox(
                               widthFactor: 0.5,

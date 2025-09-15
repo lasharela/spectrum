@@ -35,18 +35,18 @@ class AppColors {
   static const Color overlay = Color(0x1F6FC2FF); // Light blue overlay
   static const Color blackBorder = Color(0xFF383838); // For card borders
   
-  // Card styling - Updated with black borders
+  // Card styling - Simple and clean
   static const Color cardBackground = Colors.white;
-  static const Color cardBorder = Color(0xFF383838); // Black border
+  static const Color cardBorder = Color(0xFFE8EAED); // Light border
   static BoxShadow cardShadow = BoxShadow(
-    color: Colors.black.withOpacity(0.15),
-    blurRadius: 0,
-    offset: const Offset(3, 3),
+    color: Colors.black.withOpacity(0.05),
+    blurRadius: 8,
+    offset: const Offset(0, 2),
   );
   
-  // Bold card border style
-  static Border cardBorderStyle = Border.all(
-    color: blackBorder,
-    width: 2.5,
+  // Simple card border style
+  static BoxBorder cardBorderStyle = Border.all(
+    color: cardBorder,
+    width: 1,
   );
 }

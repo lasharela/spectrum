@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../utils/app_colors.dart';
+import '../widgets/custom_text_field.dart';
 
 class PromotionsScreen extends StatefulWidget {
   const PromotionsScreen({super.key});
@@ -21,7 +22,10 @@ class _PromotionsScreenState extends State<PromotionsScreen> with SingleTickerPr
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
     _searchController.addListener(_onSearchChanged);
-    _filterPromotions();
+    // Initialize filtered promotions after widget is built
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _filterPromotions();
+    });
   }
   
   void _onSearchChanged() {
@@ -32,18 +36,20 @@ class _PromotionsScreenState extends State<PromotionsScreen> with SingleTickerPr
   }
   
   void _filterPromotions() {
-    _filteredPromotions = _promotions.where((promotion) {
-      final matchesCategory = _selectedCategory == 'All' || 
-          promotion.category.name == _selectedCategory.toLowerCase();
-      
-      final matchesSearch = _searchQuery.isEmpty ||
-          promotion.title.toLowerCase().contains(_searchQuery) ||
-          promotion.business.toLowerCase().contains(_searchQuery) ||
-          promotion.description.toLowerCase().contains(_searchQuery) ||
-          promotion.category.name.toLowerCase().contains(_searchQuery);
-      
-      return matchesCategory && matchesSearch;
-    }).toList();
+    setState(() {
+      _filteredPromotions = _promotions.where((promotion) {
+        final matchesCategory = _selectedCategory == 'All' || 
+            promotion.category.name == _selectedCategory.toLowerCase();
+        
+        final matchesSearch = _searchQuery.isEmpty ||
+            promotion.title.toLowerCase().contains(_searchQuery) ||
+            promotion.business.toLowerCase().contains(_searchQuery) ||
+            promotion.description.toLowerCase().contains(_searchQuery) ||
+            promotion.category.name.toLowerCase().contains(_searchQuery);
+        
+        return matchesCategory && matchesSearch;
+      }).toList();
+    });
   }
   
   @override
@@ -679,30 +685,20 @@ class _PromotionsScreenState extends State<PromotionsScreen> with SingleTickerPr
       children: [
         // Search Bar
         Container(
-          color: AppColors.surface,
+          color: AppColors.background,
           padding: const EdgeInsets.all(16),
-          child: TextField(
+          child: CustomTextField(
             controller: _searchController,
-            decoration: InputDecoration(
-              hintText: 'Search promotions...',
-              hintStyle: TextStyle(color: AppColors.textSecondary),
-              filled: true,
-              fillColor: AppColors.background,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(30),
-                borderSide: BorderSide.none,
-              ),
-              contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
-              prefixIcon: Icon(Icons.search, color: AppColors.textSecondary),
-              suffixIcon: _searchQuery.isNotEmpty
-                  ? IconButton(
-                      icon: Icon(Icons.clear, color: AppColors.textSecondary),
-                      onPressed: () {
-                        _searchController.clear();
-                      },
-                    )
-                  : null,
-            ),
+            hintText: 'Search promotions...',
+            prefixIcon: const Icon(Icons.search),
+            suffixIcon: _searchQuery.isNotEmpty
+                ? IconButton(
+                    icon: Icon(Icons.clear, color: AppColors.textSecondary),
+                    onPressed: () {
+                      _searchController.clear();
+                    },
+                  )
+                : null,
           ),
         ),
         // Category Filter

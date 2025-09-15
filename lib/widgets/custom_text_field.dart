@@ -56,30 +56,30 @@ class CustomTextField extends StatelessWidget {
 
   OutlineInputBorder _buildBorder() {
     return OutlineInputBorder(
-      borderRadius: BorderRadius.circular(16.0),
+      borderRadius: BorderRadius.circular(12.0),
       borderSide: BorderSide(
-        color: AppColors.blackBorder,
-        width: 2.5,
+        color: AppColors.divider,
+        width: 1,
       ),
     );
   }
 
   OutlineInputBorder _buildFocusedBorder(BuildContext context) {
     return OutlineInputBorder(
-      borderRadius: BorderRadius.circular(16.0),
+      borderRadius: BorderRadius.circular(12.0),
       borderSide: BorderSide(
         color: AppColors.primary,
-        width: 2.5,
+        width: 1.5,
       ),
     );
   }
 
   OutlineInputBorder _buildErrorBorder() {
     return OutlineInputBorder(
-      borderRadius: BorderRadius.circular(16.0),
+      borderRadius: BorderRadius.circular(12.0),
       borderSide: BorderSide(
         color: AppColors.error,
-        width: 2.5,
+        width: 1,
       ),
     );
   }

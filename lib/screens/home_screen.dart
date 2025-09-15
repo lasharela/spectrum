@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../utils/app_colors.dart';
-import '../widgets/decorative_shapes.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -15,157 +14,123 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       backgroundColor: AppColors.background,
       body: SafeArea(
-        child: Stack(
-          children: [
-            // Decorative shapes in background
-            const RandomShapesBackground(
-              shapeCount: 6,
-              colors: [
-                AppColors.secondary,
-                AppColors.tertiary,
-                AppColors.accent2,
-              ],
-            ),
-            SingleChildScrollView(
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
               // Greeting Section
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Welcome back',
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: AppColors.textSecondary,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      const Text(
-                        'Alex',
-                        style: TextStyle(
-                          fontSize: 28,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
-                  Container(
-                    width: 50,
-                    height: 50,
-                    decoration: BoxDecoration(
-                      color: AppColors.primary.withOpacity(0.1),
-                      shape: BoxShape.circle,
-                    ),
-                    child: Icon(
-                      Icons.person,
-                      color: AppColors.primary,
-                      size: 24,
-                    ),
-                  ),
-                ],
-              ),
-              
-              const SizedBox(height: 30),
-              
-              // Saved Items Section
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text(
-                    'Your Saved Items',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  TextButton(
-                    onPressed: () {},
-                    child: Text(
-                      'View all',
+              Container(
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(20),
+                  border: AppColors.cardBorderStyle,
+                  boxShadow: [AppColors.cardShadow],
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'Welcome back, Alex!',
                       style: TextStyle(
-                        color: AppColors.primary,
-                        fontWeight: FontWeight.w600,
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.textPrimary,
                       ),
                     ),
-                  ),
-                ],
+                    const SizedBox(height: 8),
+                    Text(
+                      'What special activities should we plan today?',
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: AppColors.textSecondary,
+                        height: 1.3,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              
+              const SizedBox(height: 25),
+              
+              // Hottest Promotions Section
+              const Text(
+                'Hottest Promotions',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
               const SizedBox(height: 15),
               
-              Row(
-                children: [
-                  Expanded(
-                    child: _buildSavedCard(
-                      icon: Icons.place,
-                      label: 'Saved Places',
-                      count: '12',
-                      color: AppColors.primary,
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: [
+                    _buildPromotionCard(
+                      title: '50% Off Sensory Toys',
+                      store: 'Learning Express',
+                      discount: '50%',
+                      color: AppColors.accent1,
                     ),
-                  ),
-                  const SizedBox(width: 15),
-                  Expanded(
-                    child: _buildSavedCard(
-                      icon: Icons.local_offer,
-                      label: 'Saved Offers',
-                      count: '8',
-                      color: AppColors.secondary,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 15),
-              Row(
-                children: [
-                  Expanded(
-                    child: _buildSavedCard(
-                      icon: Icons.event,
-                      label: 'Saved Events',
-                      count: '5',
-                      color: AppColors.tertiary,
-                    ),
-                  ),
-                  const SizedBox(width: 15),
-                  Expanded(
-                    child: _buildSavedCard(
-                      icon: Icons.article,
-                      label: 'Resources',
-                      count: '23',
+                    const SizedBox(width: 12),
+                    _buildPromotionCard(
+                      title: 'Free Therapy Session',
+                      store: 'Wellness Center',
+                      discount: 'FREE',
                       color: AppColors.quaternary,
                     ),
-                  ),
-                ],
+                    const SizedBox(width: 12),
+                    _buildPromotionCard(
+                      title: 'Buy 1 Get 1 Books',
+                      store: 'Barnes & Noble',
+                      discount: 'BOGO',
+                      color: AppColors.secondary,
+                    ),
+                  ],
+                ),
+              ),
+              
+              const SizedBox(height: 25),
+              
+              // Recent Places Section
+              const Text(
+                'Recent Places',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 15),
+              
+              _buildPlaceCard(
+                name: 'Sensory Garden Park',
+                address: '123 Oak Street',
+                distance: '0.5 miles',
+              ),
+              const SizedBox(height: 12),
+              _buildPlaceCard(
+                name: 'Quiet Library Zone',
+                address: '456 Main Avenue',
+                distance: '1.2 miles',
+              ),
+              const SizedBox(height: 12),
+              _buildPlaceCard(
+                name: 'Therapy Center',
+                address: '789 Wellness Blvd',
+                distance: '2.0 miles',
               ),
               
               const SizedBox(height: 25),
               
               // Upcoming Events
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text(
-                    'Upcoming Events',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  TextButton(
-                    onPressed: () {},
-                    child: Text(
-                      'See all',
-                      style: TextStyle(
-                        color: AppColors.primary,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-                ],
+              const Text(
+                'Upcoming Events',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
               const SizedBox(height: 15),
               
@@ -222,60 +187,172 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ],
               ),
-                  const SizedBox(height: 80), // Space for bottom navigation
-                ],
-              ),
-            ),
-          ],
+              const SizedBox(height: 80), // Space for bottom navigation
+            ],
+          ),
         ),
       ),
     );
   }
   
-  Widget _buildSavedCard({
-    required IconData icon,
-    required String label,
-    required String count,
+  Widget _buildPromotionCard({
+    required String title,
+    required String store,
+    required String discount,
     required Color color,
   }) {
     return Container(
-      padding: const EdgeInsets.all(20),
+      width: 160,
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(16),
         border: AppColors.cardBorderStyle,
         boxShadow: [AppColors.cardShadow],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: color.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Icon(icon, color: color, size: 20),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            decoration: BoxDecoration(
+              color: color.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Text(
+              discount,
+              style: TextStyle(
+                fontSize: 12,
+                color: color,
+                fontWeight: FontWeight.bold,
               ),
-              Text(
-                count,
-                style: const TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
+            ),
           ),
           const SizedBox(height: 12),
           Text(
-            label,
+            title,
+            style: const TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+              color: AppColors.textPrimary,
+            ),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+          ),
+          const SizedBox(height: 4),
+          Text(
+            store,
             style: TextStyle(
-              fontSize: 13,
+              fontSize: 12,
               color: AppColors.textSecondary,
             ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPlaceCard({
+    required String name,
+    required String address,
+    required String distance,
+  }) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: AppColors.cardBorderStyle,
+        boxShadow: [AppColors.cardShadow],
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 50,
+            height: 50,
+            decoration: BoxDecoration(
+              color: AppColors.primary.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Icon(
+              Icons.place,
+              color: AppColors.primary,
+              size: 24,
+            ),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  name,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.textPrimary,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Row(
+                  children: [
+                    Icon(
+                      Icons.location_on,
+                      size: 14,
+                      color: AppColors.textSecondary,
+                    ),
+                    const SizedBox(width: 4),
+                    Expanded(
+                      child: Text(
+                        address,
+                        style: TextStyle(
+                          fontSize: 13,
+                          color: AppColors.textSecondary,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  distance,
+                  style: TextStyle(
+                    fontSize: 13,
+                    color: AppColors.textSecondary,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 12),
+          Column(
+            children: [
+              Container(
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
+                  color: AppColors.primary.withOpacity(0.1),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  Icons.directions,
+                  color: AppColors.primary,
+                  size: 20,
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                'Get directions',
+                style: TextStyle(
+                  fontSize: 10,
+                  color: AppColors.primary,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ],
           ),
         ],
       ),

@@ -88,8 +88,8 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
           color: AppColors.surface,
           border: Border(
             top: BorderSide(
-              color: AppColors.blackBorder,
-              width: 2.5,
+              color: AppColors.divider,
+              width: 1,
             ),
           ),
         ),

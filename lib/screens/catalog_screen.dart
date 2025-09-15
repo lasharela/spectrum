@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../utils/app_colors.dart';
+import '../widgets/custom_text_field.dart';
 
 class CatalogScreen extends StatefulWidget {
   const CatalogScreen({super.key});
@@ -999,17 +1000,8 @@ class _CatalogScreenState extends State<CatalogScreen> with SingleTickerProvider
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: Colors.grey.shade200,
-          width: 1,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.04),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
+        border: AppColors.cardBorderStyle,
+        boxShadow: [AppColors.cardShadow],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1187,25 +1179,16 @@ class _CatalogScreenState extends State<CatalogScreen> with SingleTickerProvider
       children: [
         // Search bar with filter
         Container(
-          color: Colors.white,
+          color: AppColors.background,
           padding: const EdgeInsets.all(16),
           child: Row(
             children: [
               Expanded(
-                child: TextField(
+                child: CustomTextField(
                   controller: _searchController,
                   onChanged: (value) => setState(() {}),
-                  decoration: InputDecoration(
-                    hintText: 'Search places...',
-                    prefixIcon: const Icon(Icons.search),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide(color: Colors.grey.shade300),
-                    ),
-                    filled: true,
-                    fillColor: AppColors.surface,
-                    contentPadding: const EdgeInsets.symmetric(vertical: 12),
-                  ),
+                  hintText: 'Search places...',
+                  prefixIcon: const Icon(Icons.search),
                 ),
               ),
               const SizedBox(width: 12),
@@ -1213,10 +1196,11 @@ class _CatalogScreenState extends State<CatalogScreen> with SingleTickerProvider
                 children: [
                   Container(
                     decoration: BoxDecoration(
-                      color: activeFilterCount > 0 ? AppColors.primary.withOpacity(0.1) : AppColors.surface,
+                      color: activeFilterCount > 0 ? AppColors.primary.withOpacity(0.1) : Colors.white,
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
-                        color: activeFilterCount > 0 ? AppColors.primary : Colors.grey.shade300,
+                        color: activeFilterCount > 0 ? AppColors.primary : AppColors.divider,
+                        width: 1,
                       ),
                     ),
                     child: IconButton(
@@ -1234,7 +1218,8 @@ class _CatalogScreenState extends State<CatalogScreen> with SingleTickerProvider
                       child: Container(
                         padding: const EdgeInsets.all(4),
                         decoration: BoxDecoration(
-                                              shape: BoxShape.circle,
+                          color: AppColors.primary,
+                          shape: BoxShape.circle,
                         ),
                         constraints: const BoxConstraints(
                           minWidth: 18,

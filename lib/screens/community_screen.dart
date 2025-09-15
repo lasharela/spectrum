@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../utils/app_colors.dart';
+import '../widgets/custom_text_field.dart';
 
 class CommunityScreen extends StatefulWidget {
   const CommunityScreen({super.key});
@@ -233,30 +234,20 @@ class _CommunityScreenState extends State<CommunityScreen> with SingleTickerProv
                   children: [
                     // Search Bar for All Discussions only
                     Container(
-                      color: AppColors.surface,
+                      color: AppColors.background,
                       padding: const EdgeInsets.all(16),
-                      child: TextField(
+                      child: CustomTextField(
                         controller: _searchController,
-                        decoration: InputDecoration(
-                          hintText: 'Search discussions...',
-                          hintStyle: TextStyle(color: AppColors.textSecondary),
-                          filled: true,
-                          fillColor: AppColors.background,
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(30),
-                            borderSide: BorderSide.none,
-                          ),
-                          contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
-                          prefixIcon: Icon(Icons.search, color: AppColors.textSecondary),
-                          suffixIcon: _searchQuery.isNotEmpty
-                              ? IconButton(
-                                  icon: Icon(Icons.clear, color: AppColors.textSecondary),
-                                  onPressed: () {
-                                    _searchController.clear();
-                                  },
-                                )
-                              : null,
-                        ),
+                        hintText: 'Search discussions...',
+                        prefixIcon: const Icon(Icons.search),
+                        suffixIcon: _searchQuery.isNotEmpty
+                            ? IconButton(
+                                icon: Icon(Icons.clear, color: AppColors.textSecondary),
+                                onPressed: () {
+                                  _searchController.clear();
+                                },
+                              )
+                            : null,
                       ),
                     ),
                     Expanded(
@@ -862,7 +853,7 @@ class _CommunityScreenState extends State<CommunityScreen> with SingleTickerProv
       case 'News':
         return AppColors.accent2;
       case 'Social':
-        return AppColors.accent3;
+        return AppColors.tertiary;
       default:
         return AppColors.primary;
     }

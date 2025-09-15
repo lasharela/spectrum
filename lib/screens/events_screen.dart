@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../utils/app_colors.dart';
+import '../widgets/custom_text_field.dart';
 
 class EventsScreen extends StatefulWidget {
   const EventsScreen({super.key});
@@ -21,7 +22,10 @@ class _EventsScreenState extends State<EventsScreen> with SingleTickerProviderSt
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
     _searchController.addListener(_onSearchChanged);
-    _filterEvents();
+    // Initialize filtered events after widget is built
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _filterEvents();
+    });
   }
   
   void _onSearchChanged() {
@@ -32,18 +36,20 @@ class _EventsScreenState extends State<EventsScreen> with SingleTickerProviderSt
   }
   
   void _filterEvents() {
-    _filteredEvents = _events.where((event) {
-      final matchesCategory = _selectedCategory == 'All' || 
-          event.category.name == _selectedCategory.toLowerCase().replaceAll(' ', '');
-      
-      final matchesSearch = _searchQuery.isEmpty ||
-          event.title.toLowerCase().contains(_searchQuery) ||
-          event.organization.toLowerCase().contains(_searchQuery) ||
-          event.description.toLowerCase().contains(_searchQuery) ||
-          event.location.toLowerCase().contains(_searchQuery);
-      
-      return matchesCategory && matchesSearch;
-    }).toList();
+    setState(() {
+      _filteredEvents = _events.where((event) {
+        final matchesCategory = _selectedCategory == 'All' || 
+            event.category.name == _selectedCategory.toLowerCase().replaceAll(' ', '');
+        
+        final matchesSearch = _searchQuery.isEmpty ||
+            event.title.toLowerCase().contains(_searchQuery) ||
+            event.organization.toLowerCase().contains(_searchQuery) ||
+            event.description.toLowerCase().contains(_searchQuery) ||
+            event.location.toLowerCase().contains(_searchQuery);
+        
+        return matchesCategory && matchesSearch;
+      }).toList();
+    });
   }
   
   @override
@@ -680,30 +686,20 @@ class _EventsScreenState extends State<EventsScreen> with SingleTickerProviderSt
       children: [
         // Search Bar
         Container(
-          color: AppColors.surface,
+          color: AppColors.background,
           padding: const EdgeInsets.all(16),
-          child: TextField(
+          child: CustomTextField(
             controller: _searchController,
-            decoration: InputDecoration(
-              hintText: 'Search events...',
-              hintStyle: TextStyle(color: AppColors.textSecondary),
-              filled: true,
-              fillColor: AppColors.background,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(30),
-                borderSide: BorderSide.none,
-              ),
-              contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
-              prefixIcon: Icon(Icons.search, color: AppColors.textSecondary),
-              suffixIcon: _searchQuery.isNotEmpty
-                  ? IconButton(
-                      icon: Icon(Icons.clear, color: AppColors.textSecondary),
-                      onPressed: () {
-                        _searchController.clear();
-                      },
-                    )
-                  : null,
-            ),
+            hintText: 'Search events...',
+            prefixIcon: const Icon(Icons.search),
+            suffixIcon: _searchQuery.isNotEmpty
+                ? IconButton(
+                    icon: Icon(Icons.clear, color: AppColors.textSecondary),
+                    onPressed: () {
+                      _searchController.clear();
+                    },
+                  )
+                : null,
           ),
         ),
         // Category Filter
