@@ -13,6 +13,7 @@ class _EventsScreenState extends State<EventsScreen> with SingleTickerProviderSt
   late TabController _tabController;
   String _selectedCategory = 'All';
   final Set<String> _savedEventIds = {};
+  final Set<String> _myEventIds = {}; // Track user-created events
   final TextEditingController _searchController = TextEditingController();
   String _searchQuery = '';
   List<Event> _filteredEvents = [];
@@ -20,7 +21,7 @@ class _EventsScreenState extends State<EventsScreen> with SingleTickerProviderSt
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 2, vsync: this);
+    _tabController = TabController(length: 3, vsync: this);
     _searchController.addListener(_onSearchChanged);
     // Initialize filtered events after widget is built
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -68,7 +69,7 @@ class _EventsScreenState extends State<EventsScreen> with SingleTickerProviderSt
     'Recreation',
   ];
   
-  final List<Event> _events = [
+  List<Event> _events = [
     Event(
       id: '1',
       title: 'Parent Support Group Meeting',
@@ -455,8 +456,9 @@ class _EventsScreenState extends State<EventsScreen> with SingleTickerProviderSt
     );
   }
   
-  Widget _buildEventCard(Event event, {bool showRemoveButton = false}) {
+  Widget _buildEventCard(Event event, {bool showRemoveButton = false, bool showEditButton = false}) {
     final isSaved = _savedEventIds.contains(event.id);
+    final isMyEvent = _myEventIds.contains(event.id);
     
     return GestureDetector(
       onTap: () => _showEventDetails(event),
@@ -506,12 +508,26 @@ class _EventsScreenState extends State<EventsScreen> with SingleTickerProviderSt
                   Positioned(
                     top: 12,
                     right: 12,
-                    child: IconButton(
-                      icon: Icon(
-                        isSaved ? Icons.bookmark : Icons.bookmark_outline,
-                        color: isSaved ? AppColors.primary : Colors.grey,
-                      ),
-                      onPressed: () => _toggleSaveEvent(event.id),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        if (showEditButton && isMyEvent)
+                          IconButton(
+                            icon: const Icon(
+                              Icons.edit,
+                              color: AppColors.primary,
+                              size: 22,
+                            ),
+                            onPressed: () => _editEvent(event),
+                          ),
+                        IconButton(
+                          icon: Icon(
+                            isSaved ? Icons.bookmark : Icons.bookmark_outline,
+                            color: isSaved ? AppColors.primary : Colors.grey,
+                          ),
+                          onPressed: () => _toggleSaveEvent(event.id),
+                        ),
+                      ],
                     ),
                   ),
                   if (event.isOnline)
@@ -800,6 +816,838 @@ class _EventsScreenState extends State<EventsScreen> with SingleTickerProviderSt
     );
   }
   
+  void _editEvent(Event event) {
+    final titleController = TextEditingController(text: event.title);
+    final organizationController = TextEditingController(text: event.organization);
+    final descriptionController = TextEditingController(text: event.description);
+    final dateController = TextEditingController(text: event.date);
+    final timeController = TextEditingController(text: event.time);
+    final locationController = TextEditingController(text: event.location);
+    String selectedCategory = event.category.name;
+    bool isOnline = event.isOnline;
+    bool isFree = event.isFree;
+    final priceController = TextEditingController(
+      text: event.price != null ? event.price!.replaceAll('\$', '') : '',
+    );
+    
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setModalState) => Container(
+          height: MediaQuery.of(context).size.height * 0.9,
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(20),
+              topRight: Radius.circular(20),
+            ),
+          ),
+          child: Column(
+            children: [
+              // Handle bar
+              Container(
+                margin: const EdgeInsets.only(top: 12),
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: Colors.grey[300],
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              // Header
+              Padding(
+                padding: const EdgeInsets.all(20),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text(
+                      'Edit Event',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Row(
+                      children: [
+                        IconButton(
+                          icon: const Icon(Icons.delete, color: AppColors.error),
+                          onPressed: () {
+                            showDialog(
+                              context: context,
+                              builder: (context) => AlertDialog(
+                                title: const Text('Delete Event'),
+                                content: const Text('Are you sure you want to delete this event?'),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () => Navigator.pop(context),
+                                    child: const Text('Cancel'),
+                                  ),
+                                  TextButton(
+                                    onPressed: () {
+                                      setState(() {
+                                        _events.removeWhere((e) => e.id == event.id);
+                                        _myEventIds.remove(event.id);
+                                        _savedEventIds.remove(event.id);
+                                        _filterEvents();
+                                      });
+                                      Navigator.pop(context); // Close dialog
+                                      Navigator.pop(context); // Close bottom sheet
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        const SnackBar(
+                                          content: Text('Event deleted'),
+                                          backgroundColor: AppColors.info,
+                                        ),
+                                      );
+                                    },
+                                    child: const Text('Delete', style: TextStyle(color: AppColors.error)),
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.close),
+                          onPressed: () => Navigator.pop(context),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              // Form (same as create but with pre-filled values)
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.all(20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Title
+                      const Text('Event Title *', style: TextStyle(fontWeight: FontWeight.w600)),
+                      const SizedBox(height: 8),
+                      TextField(
+                        controller: titleController,
+                        decoration: InputDecoration(
+                          hintText: 'Enter event title',
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      
+                      // Organization
+                      const Text('Organization *', style: TextStyle(fontWeight: FontWeight.w600)),
+                      const SizedBox(height: 8),
+                      TextField(
+                        controller: organizationController,
+                        decoration: InputDecoration(
+                          hintText: 'Enter organization name',
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      
+                      // Description
+                      const Text('Description *', style: TextStyle(fontWeight: FontWeight.w600)),
+                      const SizedBox(height: 8),
+                      TextField(
+                        controller: descriptionController,
+                        maxLines: 3,
+                        decoration: InputDecoration(
+                          hintText: 'Enter event description',
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      
+                      // Category
+                      const Text('Category *', style: TextStyle(fontWeight: FontWeight.w600)),
+                      const SizedBox(height: 8),
+                      DropdownButtonFormField<String>(
+                        value: selectedCategory,
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        items: const [
+                          DropdownMenuItem(value: 'workshop', child: Text('Workshop')),
+                          DropdownMenuItem(value: 'supportGroup', child: Text('Support Group')),
+                          DropdownMenuItem(value: 'social', child: Text('Social')),
+                          DropdownMenuItem(value: 'educational', child: Text('Educational')),
+                          DropdownMenuItem(value: 'recreation', child: Text('Recreation')),
+                        ],
+                        onChanged: (value) {
+                          setModalState(() {
+                            selectedCategory = value!;
+                          });
+                        },
+                      ),
+                      const SizedBox(height: 16),
+                      
+                      // Date and Time
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text('Date *', style: TextStyle(fontWeight: FontWeight.w600)),
+                                const SizedBox(height: 8),
+                                TextField(
+                                  controller: dateController,
+                                  readOnly: true,
+                                  decoration: InputDecoration(
+                                    hintText: 'Select date',
+                                    suffixIcon: const Icon(Icons.calendar_today),
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                  ),
+                                  onTap: () async {
+                                    final date = await showDatePicker(
+                                      context: context,
+                                      initialDate: DateTime.now(),
+                                      firstDate: DateTime.now(),
+                                      lastDate: DateTime.now().add(const Duration(days: 365)),
+                                    );
+                                    if (date != null) {
+                                      dateController.text = '${date.month}/${date.day}/${date.year}';
+                                    }
+                                  },
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text('Time *', style: TextStyle(fontWeight: FontWeight.w600)),
+                                const SizedBox(height: 8),
+                                TextField(
+                                  controller: timeController,
+                                  readOnly: true,
+                                  decoration: InputDecoration(
+                                    hintText: 'Select time',
+                                    suffixIcon: const Icon(Icons.access_time),
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                  ),
+                                  onTap: () async {
+                                    final time = await showTimePicker(
+                                      context: context,
+                                      initialTime: TimeOfDay.now(),
+                                    );
+                                    if (time != null) {
+                                      timeController.text = time.format(context);
+                                    }
+                                  },
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                      
+                      // Location
+                      const Text('Location *', style: TextStyle(fontWeight: FontWeight.w600)),
+                      const SizedBox(height: 8),
+                      TextField(
+                        controller: locationController,
+                        decoration: InputDecoration(
+                          hintText: isOnline ? 'Enter meeting link' : 'Enter venue address',
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      
+                      // Online toggle
+                      SwitchListTile(
+                        title: const Text('Online Event'),
+                        value: isOnline,
+                        onChanged: (value) {
+                          setModalState(() {
+                            isOnline = value;
+                          });
+                        },
+                        activeColor: AppColors.primary,
+                        contentPadding: EdgeInsets.zero,
+                      ),
+                      
+                      // Free toggle
+                      SwitchListTile(
+                        title: const Text('Free Event'),
+                        value: isFree,
+                        onChanged: (value) {
+                          setModalState(() {
+                            isFree = value;
+                            if (isFree) {
+                              priceController.clear();
+                            }
+                          });
+                        },
+                        activeColor: AppColors.primary,
+                        contentPadding: EdgeInsets.zero,
+                      ),
+                      
+                      // Price field (if not free)
+                      if (!isFree) ...[
+                        const Text('Price *', style: TextStyle(fontWeight: FontWeight.w600)),
+                        const SizedBox(height: 8),
+                        TextField(
+                          controller: priceController,
+                          keyboardType: TextInputType.number,
+                          decoration: InputDecoration(
+                            hintText: 'Enter price',
+                            prefixText: '\$',
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                      ],
+                    ],
+                  ),
+                ),
+              ),
+              // Update button
+              Container(
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.05),
+                      blurRadius: 10,
+                      offset: const Offset(0, -3),
+                    ),
+                  ],
+                ),
+                child: SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      // Validate all required fields
+                      if (titleController.text.isEmpty ||
+                          organizationController.text.isEmpty ||
+                          descriptionController.text.isEmpty ||
+                          dateController.text.isEmpty ||
+                          timeController.text.isEmpty ||
+                          locationController.text.isEmpty ||
+                          (!isFree && priceController.text.isEmpty)) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Please fill in all required fields'),
+                            backgroundColor: AppColors.error,
+                          ),
+                        );
+                        return;
+                      }
+                      
+                      // Update event
+                      final updatedEvent = Event(
+                        id: event.id,
+                        title: titleController.text,
+                        organization: organizationController.text,
+                        description: descriptionController.text,
+                        category: _getCategoryFromString(selectedCategory),
+                        date: dateController.text,
+                        time: timeController.text,
+                        location: locationController.text,
+                        imageIcon: _getIconForCategory(selectedCategory),
+                        isOnline: isOnline,
+                        isFree: isFree,
+                        price: isFree ? null : '\$${priceController.text}',
+                      );
+                      
+                      setState(() {
+                        final index = _events.indexWhere((e) => e.id == event.id);
+                        if (index != -1) {
+                          _events[index] = updatedEvent;
+                          _filterEvents();
+                        }
+                      });
+                      
+                      Navigator.pop(context);
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Event updated successfully!'),
+                          backgroundColor: AppColors.success,
+                        ),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.primary,
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    child: const Text(
+                      'Update Event',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _createEvent() {
+    final titleController = TextEditingController();
+    final organizationController = TextEditingController();
+    final descriptionController = TextEditingController();
+    final dateController = TextEditingController();
+    final timeController = TextEditingController();
+    final locationController = TextEditingController();
+    String selectedCategory = 'workshop';
+    bool isOnline = false;
+    bool isFree = true;
+    final priceController = TextEditingController();
+    
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setModalState) => Container(
+          height: MediaQuery.of(context).size.height * 0.9,
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(20),
+              topRight: Radius.circular(20),
+            ),
+          ),
+          child: Column(
+            children: [
+              // Handle bar
+              Container(
+                margin: const EdgeInsets.only(top: 12),
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: Colors.grey[300],
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              // Header
+              Padding(
+                padding: const EdgeInsets.all(20),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text(
+                      'Create New Event',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.close),
+                      onPressed: () => Navigator.pop(context),
+                    ),
+                  ],
+                ),
+              ),
+              // Form
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.all(20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Title
+                      const Text('Event Title *', style: TextStyle(fontWeight: FontWeight.w600)),
+                      const SizedBox(height: 8),
+                      TextField(
+                        controller: titleController,
+                        decoration: InputDecoration(
+                          hintText: 'Enter event title',
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      
+                      // Organization
+                      const Text('Organization *', style: TextStyle(fontWeight: FontWeight.w600)),
+                      const SizedBox(height: 8),
+                      TextField(
+                        controller: organizationController,
+                        decoration: InputDecoration(
+                          hintText: 'Enter organization name',
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      
+                      // Description
+                      const Text('Description *', style: TextStyle(fontWeight: FontWeight.w600)),
+                      const SizedBox(height: 8),
+                      TextField(
+                        controller: descriptionController,
+                        maxLines: 3,
+                        decoration: InputDecoration(
+                          hintText: 'Enter event description',
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      
+                      // Category
+                      const Text('Category *', style: TextStyle(fontWeight: FontWeight.w600)),
+                      const SizedBox(height: 8),
+                      DropdownButtonFormField<String>(
+                        value: selectedCategory,
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        items: const [
+                          DropdownMenuItem(value: 'workshop', child: Text('Workshop')),
+                          DropdownMenuItem(value: 'supportGroup', child: Text('Support Group')),
+                          DropdownMenuItem(value: 'social', child: Text('Social')),
+                          DropdownMenuItem(value: 'educational', child: Text('Educational')),
+                          DropdownMenuItem(value: 'recreation', child: Text('Recreation')),
+                        ],
+                        onChanged: (value) {
+                          setModalState(() {
+                            selectedCategory = value!;
+                          });
+                        },
+                      ),
+                      const SizedBox(height: 16),
+                      
+                      // Date and Time
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text('Date *', style: TextStyle(fontWeight: FontWeight.w600)),
+                                const SizedBox(height: 8),
+                                TextField(
+                                  controller: dateController,
+                                  readOnly: true,
+                                  decoration: InputDecoration(
+                                    hintText: 'Select date',
+                                    suffixIcon: const Icon(Icons.calendar_today),
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                  ),
+                                  onTap: () async {
+                                    final date = await showDatePicker(
+                                      context: context,
+                                      initialDate: DateTime.now(),
+                                      firstDate: DateTime.now(),
+                                      lastDate: DateTime.now().add(const Duration(days: 365)),
+                                    );
+                                    if (date != null) {
+                                      dateController.text = '${date.month}/${date.day}/${date.year}';
+                                    }
+                                  },
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text('Time *', style: TextStyle(fontWeight: FontWeight.w600)),
+                                const SizedBox(height: 8),
+                                TextField(
+                                  controller: timeController,
+                                  readOnly: true,
+                                  decoration: InputDecoration(
+                                    hintText: 'Select time',
+                                    suffixIcon: const Icon(Icons.access_time),
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                  ),
+                                  onTap: () async {
+                                    final time = await showTimePicker(
+                                      context: context,
+                                      initialTime: TimeOfDay.now(),
+                                    );
+                                    if (time != null) {
+                                      timeController.text = time.format(context);
+                                    }
+                                  },
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                      
+                      // Location
+                      const Text('Location *', style: TextStyle(fontWeight: FontWeight.w600)),
+                      const SizedBox(height: 8),
+                      TextField(
+                        controller: locationController,
+                        decoration: InputDecoration(
+                          hintText: isOnline ? 'Enter meeting link' : 'Enter venue address',
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      
+                      // Online toggle
+                      SwitchListTile(
+                        title: const Text('Online Event'),
+                        value: isOnline,
+                        onChanged: (value) {
+                          setModalState(() {
+                            isOnline = value;
+                            locationController.clear();
+                          });
+                        },
+                        activeColor: AppColors.primary,
+                        contentPadding: EdgeInsets.zero,
+                      ),
+                      
+                      // Free toggle
+                      SwitchListTile(
+                        title: const Text('Free Event'),
+                        value: isFree,
+                        onChanged: (value) {
+                          setModalState(() {
+                            isFree = value;
+                            if (isFree) {
+                              priceController.clear();
+                            }
+                          });
+                        },
+                        activeColor: AppColors.primary,
+                        contentPadding: EdgeInsets.zero,
+                      ),
+                      
+                      // Price field (if not free)
+                      if (!isFree) ...[
+                        const Text('Price *', style: TextStyle(fontWeight: FontWeight.w600)),
+                        const SizedBox(height: 8),
+                        TextField(
+                          controller: priceController,
+                          keyboardType: TextInputType.number,
+                          decoration: InputDecoration(
+                            hintText: 'Enter price',
+                            prefixText: '\$',
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                      ],
+                    ],
+                  ),
+                ),
+              ),
+              // Submit button
+              Container(
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.05),
+                      blurRadius: 10,
+                      offset: const Offset(0, -3),
+                    ),
+                  ],
+                ),
+                child: SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      // Validate all required fields
+                      if (titleController.text.isEmpty ||
+                          organizationController.text.isEmpty ||
+                          descriptionController.text.isEmpty ||
+                          dateController.text.isEmpty ||
+                          timeController.text.isEmpty ||
+                          locationController.text.isEmpty ||
+                          (!isFree && priceController.text.isEmpty)) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Please fill in all required fields'),
+                            backgroundColor: AppColors.error,
+                          ),
+                        );
+                        return;
+                      }
+                      
+                      // Create event
+                      final newEvent = Event(
+                        id: DateTime.now().millisecondsSinceEpoch.toString(),
+                        title: titleController.text,
+                        organization: organizationController.text,
+                        description: descriptionController.text,
+                        category: _getCategoryFromString(selectedCategory),
+                        date: dateController.text,
+                        time: timeController.text,
+                        location: locationController.text,
+                        imageIcon: _getIconForCategory(selectedCategory),
+                        isOnline: isOnline,
+                        isFree: isFree,
+                        price: isFree ? null : '\$${priceController.text}',
+                      );
+                      
+                      setState(() {
+                        _events.insert(0, newEvent);
+                        _myEventIds.add(newEvent.id); // Track as user's event
+                        _filterEvents();
+                      });
+                      
+                      Navigator.pop(context);
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Event created successfully!'),
+                          backgroundColor: AppColors.success,
+                        ),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.primary,
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    child: const Text(
+                      'Create Event',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+  
+  EventCategory _getCategoryFromString(String category) {
+    switch (category) {
+      case 'workshop':
+        return EventCategory.workshop;
+      case 'supportGroup':
+        return EventCategory.supportGroup;
+      case 'social':
+        return EventCategory.social;
+      case 'educational':
+        return EventCategory.educational;
+      case 'recreation':
+        return EventCategory.recreation;
+      default:
+        return EventCategory.workshop;
+    }
+  }
+  
+  IconData _getIconForCategory(String category) {
+    switch (category) {
+      case 'workshop':
+        return Icons.build;
+      case 'supportGroup':
+        return Icons.groups;
+      case 'social':
+        return Icons.people;
+      case 'educational':
+        return Icons.school;
+      case 'recreation':
+        return Icons.sports_soccer;
+      default:
+        return Icons.event;
+    }
+  }
+  
+  Widget _buildMyEventsTab() {
+    final myEvents = _events.where((e) => _myEventIds.contains(e.id)).toList();
+    
+    if (myEvents.isEmpty) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.event_note,
+              size: 80,
+              color: AppColors.textSecondary.withOpacity(0.3),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              'No events created yet',
+              style: TextStyle(
+                fontSize: 18,
+                color: AppColors.textSecondary,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Tap the + button to create your first event',
+              style: TextStyle(
+                fontSize: 14,
+                color: AppColors.textSecondary.withOpacity(0.7),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+    
+    return ListView.builder(
+      padding: const EdgeInsets.all(16),
+      itemCount: myEvents.length,
+      itemBuilder: (context, index) => _buildEventCard(
+        myEvents[index],
+        showEditButton: true,
+      ),
+    );
+  }
+
   Widget _buildSavedTab() {
     if (savedEvents.isEmpty) {
       return Center(
@@ -846,6 +1694,12 @@ class _EventsScreenState extends State<EventsScreen> with SingleTickerProviderSt
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
+      floatingActionButton: FloatingActionButton(
+        onPressed: _createEvent,
+        backgroundColor: AppColors.primary,
+        child: const Icon(Icons.add, color: Colors.white, size: 28),
+        elevation: 6,
+      ),
       body: Column(
         children: [
           // Compact header with tabs
@@ -861,14 +1715,19 @@ class _EventsScreenState extends State<EventsScreen> with SingleTickerProviderSt
                 indicatorWeight: 3,
                 tabs: const [
                   Tab(
-                    icon: Icon(Icons.event, size: 24),
+                    icon: Icon(Icons.event, size: 20),
                     text: 'Upcoming',
-                    iconMargin: EdgeInsets.only(bottom: 4),
+                    iconMargin: EdgeInsets.only(bottom: 2),
                   ),
                   Tab(
-                    icon: Icon(Icons.bookmark, size: 24),
+                    icon: Icon(Icons.person, size: 20),
+                    text: 'My Events',
+                    iconMargin: EdgeInsets.only(bottom: 2),
+                  ),
+                  Tab(
+                    icon: Icon(Icons.bookmark, size: 20),
                     text: 'Saved',
-                    iconMargin: EdgeInsets.only(bottom: 4),
+                    iconMargin: EdgeInsets.only(bottom: 2),
                   ),
                 ],
               ),
@@ -881,6 +1740,7 @@ class _EventsScreenState extends State<EventsScreen> with SingleTickerProviderSt
               controller: _tabController,
               children: [
                 _buildUpcomingTab(),
+                _buildMyEventsTab(),
                 _buildSavedTab(),
               ],
             ),

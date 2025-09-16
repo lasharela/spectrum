@@ -88,15 +88,22 @@ class _HomeScreenState extends State<HomeScreen> {
                       discount: 'BOGO',
                       color: AppColors.secondary,
                     ),
+                    const SizedBox(width: 12),
+                    _buildPromotionCard(
+                      title: '30% Off Art Supplies',
+                      store: 'Creative Kids',
+                      discount: '30%',
+                      color: AppColors.tertiary,
+                    ),
                   ],
                 ),
               ),
               
               const SizedBox(height: 25),
               
-              // Recent Places Section
+              // Popular Places Section
               const Text(
-                'Recent Places',
+                'Popular Places',
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
@@ -180,8 +187,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   const SizedBox(width: 12),
                   Expanded(
                     child: _buildResourceCard(
-                      icon: Icons.groups,
-                      label: 'Community',
+                      icon: Icons.language,
+                      label: 'Website',
                       color: AppColors.tertiary,
                     ),
                   ),
@@ -203,6 +210,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }) {
     return Container(
       width: 160,
+      height: 140,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
@@ -212,34 +220,39 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-            decoration: BoxDecoration(
-              color: color.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Text(
-              discount,
-              style: TextStyle(
-                fontSize: 12,
-                color: color,
-                fontWeight: FontWeight.bold,
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: color.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Text(
+                  discount,
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: color,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
               ),
-            ),
+              const SizedBox(height: 12),
+              Text(
+                title,
+                style: const TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.textPrimary,
+                ),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ],
           ),
-          const SizedBox(height: 12),
-          Text(
-            title,
-            style: const TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w600,
-              color: AppColors.textPrimary,
-            ),
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-          ),
-          const SizedBox(height: 4),
           Text(
             store,
             style: TextStyle(
