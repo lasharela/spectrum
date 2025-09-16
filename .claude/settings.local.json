@@ -5,7 +5,8 @@
       "Bash(git commit:*)",
       "Bash(source:*)",
       "Bash(make:*)",
-      "Bash(flutter test:*)"
+      "Bash(flutter test:*)",
+      "Bash(flutter analyze:*)"
     ],
     "deny": [],
     "ask": []
