@@ -1700,6 +1700,7 @@ class _EventsScreenState extends State<EventsScreen> with SingleTickerProviderSt
         backgroundColor: AppColors.primary,
         child: const Icon(Icons.add, color: Colors.white, size: 28),
         elevation: 6,
+        shape: const CircleBorder(),
       ),
       body: Column(
         children: [
