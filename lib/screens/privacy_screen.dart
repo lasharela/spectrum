@@ -28,6 +28,9 @@ class _PrivacyScreenState extends State<PrivacyScreen> {
   
   // Loading state
   bool _isLoading = false;
+  
+  // Expand/collapse state for password section
+  bool _isPasswordExpanded = false;
 
   @override
   void dispose() {
@@ -192,82 +195,123 @@ class _PrivacyScreenState extends State<PrivacyScreen> {
               
               const SizedBox(height: 40),
               
-              // Password Section
-              const Text(
-                'Change Password',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.textPrimary,
-                ),
-              ),
-              const SizedBox(height: 20),
-              
-              CustomTextField(
-                controller: _currentPasswordController,
-                labelText: 'Current Password',
-                hintText: 'Enter current password',
-                prefixIcon: const Icon(Icons.lock_outline),
-                obscureText: !_showCurrentPassword,
-                suffixIcon: IconButton(
-                  icon: Icon(
-                    _showCurrentPassword ? Icons.visibility : Icons.visibility_off,
-                    color: AppColors.textSecondary,
+              // Password Section Header
+              InkWell(
+                onTap: () {
+                  setState(() {
+                    _isPasswordExpanded = !_isPasswordExpanded;
+                  });
+                },
+                child: Container(
+                  padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: AppColors.divider,
+                      width: 1,
+                    ),
                   ),
-                  onPressed: () {
-                    setState(() {
-                      _showCurrentPassword = !_showCurrentPassword;
-                    });
-                  },
-                ),
-              ),
-              const SizedBox(height: 16),
-              
-              CustomTextField(
-                controller: _newPasswordController,
-                labelText: 'New Password',
-                hintText: 'Enter new password (min 8 characters)',
-                prefixIcon: const Icon(Icons.lock_outline),
-                obscureText: !_showNewPassword,
-                suffixIcon: IconButton(
-                  icon: Icon(
-                    _showNewPassword ? Icons.visibility : Icons.visibility_off,
-                    color: AppColors.textSecondary,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.lock_outline,
+                            color: AppColors.primary,
+                            size: 24,
+                          ),
+                          const SizedBox(width: 12),
+                          const Text(
+                            'Change Password',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                              color: AppColors.textPrimary,
+                            ),
+                          ),
+                        ],
+                      ),
+                      Icon(
+                        _isPasswordExpanded ? Icons.expand_less : Icons.expand_more,
+                        color: AppColors.textSecondary,
+                      ),
+                    ],
                   ),
-                  onPressed: () {
-                    setState(() {
-                      _showNewPassword = !_showNewPassword;
-                    });
-                  },
                 ),
               ),
-              const SizedBox(height: 16),
               
-              CustomTextField(
-                controller: _confirmPasswordController,
-                labelText: 'Confirm New Password',
-                hintText: 'Re-enter new password',
-                prefixIcon: const Icon(Icons.lock_outline),
-                obscureText: !_showConfirmPassword,
-                suffixIcon: IconButton(
-                  icon: Icon(
-                    _showConfirmPassword ? Icons.visibility : Icons.visibility_off,
-                    color: AppColors.textSecondary,
+              // Password Fields (Expandable)
+              if (_isPasswordExpanded) ...[
+                const SizedBox(height: 20),
+                
+                CustomTextField(
+                  controller: _currentPasswordController,
+                  labelText: 'Current Password',
+                  hintText: 'Enter current password',
+                  prefixIcon: const Icon(Icons.lock_outline),
+                  obscureText: !_showCurrentPassword,
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      _showCurrentPassword ? Icons.visibility : Icons.visibility_off,
+                      color: AppColors.textSecondary,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        _showCurrentPassword = !_showCurrentPassword;
+                      });
+                    },
                   ),
-                  onPressed: () {
-                    setState(() {
-                      _showConfirmPassword = !_showConfirmPassword;
-                    });
-                  },
                 ),
-              ),
-              const SizedBox(height: 24),
-              
-              CustomButton(
-                text: 'Change Password',
-                onPressed: _changePassword,
-                isLoading: _isLoading,
-              ),
+                const SizedBox(height: 16),
+                
+                CustomTextField(
+                  controller: _newPasswordController,
+                  labelText: 'New Password',
+                  hintText: 'Enter new password (min 8 characters)',
+                  prefixIcon: const Icon(Icons.lock_outline),
+                  obscureText: !_showNewPassword,
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      _showNewPassword ? Icons.visibility : Icons.visibility_off,
+                      color: AppColors.textSecondary,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        _showNewPassword = !_showNewPassword;
+                      });
+                    },
+                  ),
+                ),
+                const SizedBox(height: 16),
+                
+                CustomTextField(
+                  controller: _confirmPasswordController,
+                  labelText: 'Confirm New Password',
+                  hintText: 'Re-enter new password',
+                  prefixIcon: const Icon(Icons.lock_outline),
+                  obscureText: !_showConfirmPassword,
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      _showConfirmPassword ? Icons.visibility : Icons.visibility_off,
+                      color: AppColors.textSecondary,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        _showConfirmPassword = !_showConfirmPassword;
+                      });
+                    },
+                  ),
+                ),
+                const SizedBox(height: 24),
+                
+                CustomButton(
+                  text: 'Change Password',
+                  onPressed: _changePassword,
+                  isLoading: _isLoading,
+                ),
+              ],
               
               const SizedBox(height: 40),
               
