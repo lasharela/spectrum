@@ -280,7 +280,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     label: const Text('Continue with Google'),
                     style: OutlinedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 16),
-                      side: BorderSide(color: AppColors.blackBorder, width: 2.5),
+                      side: BorderSide(color: Colors.grey.shade300, width: 1),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(16),
                       ),

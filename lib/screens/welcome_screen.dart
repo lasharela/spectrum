@@ -137,17 +137,13 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                               minWidth: 150,
                             ),
                             decoration: BoxDecoration(
-                              color: Colors.white,
+                              color: AppColors.primary.withOpacity(0.1),
                               shape: BoxShape.circle,
-                              border: Border.all(
-                                color: AppColors.blackBorder,
-                                width: 2.5,
-                              ),
                               boxShadow: [
                                 BoxShadow(
-                                  color: Colors.black.withOpacity(0.1),
-                                  blurRadius: 0,
-                                  offset: const Offset(3, 3),
+                                  color: Colors.black.withOpacity(0.05),
+                                  blurRadius: 10,
+                                  offset: const Offset(0, 2),
                                 ),
                               ],
                             ),
