@@ -1695,6 +1695,7 @@ class _EventsScreenState extends State<EventsScreen> with SingleTickerProviderSt
     return Scaffold(
       backgroundColor: AppColors.background,
       floatingActionButton: FloatingActionButton(
+        heroTag: "events_fab",
         onPressed: _createEvent,
         backgroundColor: AppColors.primary,
         child: const Icon(Icons.add, color: Colors.white, size: 28),

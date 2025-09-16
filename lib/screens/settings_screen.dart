@@ -99,7 +99,7 @@ class SettingsScreen extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const NotificationsScreen(),
+                        builder: (context) => const NotificationSettingsScreen(),
                       ),
                     );
                   },
@@ -586,14 +586,14 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
 }
 
 // Notifications Screen
-class NotificationsScreen extends StatefulWidget {
-  const NotificationsScreen({super.key});
+class NotificationSettingsScreen extends StatefulWidget {
+  const NotificationSettingsScreen({super.key});
 
   @override
-  State<NotificationsScreen> createState() => _NotificationsScreenState();
+  State<NotificationSettingsScreen> createState() => _NotificationSettingsScreenState();
 }
 
-class _NotificationsScreenState extends State<NotificationsScreen> {
+class _NotificationSettingsScreenState extends State<NotificationSettingsScreen> {
   bool _pushNotifications = true;
   bool _emailNotifications = false;
   bool _promotionAlerts = true;

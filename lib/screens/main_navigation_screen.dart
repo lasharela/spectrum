@@ -6,6 +6,7 @@ import 'promotions_screen.dart';
 import 'events_screen.dart';
 import 'community_screen.dart';
 import 'settings_screen.dart';
+import 'notifications_screen.dart';
 
 class MainNavigationScreen extends StatefulWidget {
   const MainNavigationScreen({super.key});
@@ -47,10 +48,10 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
         leading: IconButton(
           icon: const Icon(Icons.notifications_outlined),
           onPressed: () {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Notifications coming soon'),
-                backgroundColor: AppColors.info,
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const NotificationsScreen(),
               ),
             );
           },

@@ -263,6 +263,7 @@ class _CommunityScreenState extends State<CommunityScreen> with SingleTickerProv
         ],
       ),
       floatingActionButton: FloatingActionButton(
+        heroTag: "community_fab",
         onPressed: _createNewDiscussion,
         backgroundColor: AppColors.primary,
         child: const Icon(Icons.add, color: Colors.white),
