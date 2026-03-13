@@ -4,25 +4,91 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Spectrum is a Flutter mobile application designed as a social network for people with autism and their parents/caregivers. The app aims to create a supportive community platform with resources, communication tools, and social features tailored to the autism community's needs.
+Spectrum is a mobile application designed as a social network for people with autism and their parents/caregivers. The app aims to create a supportive community platform with resources, communication tools, and social features tailored to the autism community's needs.
 
 ## Tech Stack
 
 - **Frontend**: Flutter 3.32.5 / Dart 3.8.1
-- **Backend**: Firebase (Firestore, Auth, Storage, Messaging, Analytics)
-- **State Management**: Provider
+- **Backend**: Hono (TypeScript) on Cloudflare Workers
+- **Database**: Neon Postgres with Prisma (edge-compatible)
+- **Auth**: Better Auth
+- **State Management**: Riverpod
+- **HTTP Client**: Dio
 - **Navigation**: go_router
 - **Forms**: flutter_form_builder with form_builder_validators
+- **API Contracts**: OpenAPI 3.1.0 specs in `contracts/`
+- **Testing**: Vitest (backend), flutter test (frontend)
+
+## Monorepo Structure
+
+```
+spectrum/
+├── frontend/             # Flutter mobile app
+│   ├── lib/
+│   │   ├── core/         # Core functionality shared across features
+│   │   │   ├── constants/
+│   │   │   ├── router/
+│   │   │   ├── themes/
+│   │   │   └── utils/
+│   │   ├── features/     # Feature modules (auth, home, community, etc.)
+│   │   │   └── [feature]/
+│   │   │       ├── data/
+│   │   │       ├── domain/
+│   │   │       └── presentation/
+│   │   └── shared/
+│   │       ├── services/
+│   │       └── widgets/
+│   ├── test/
+│   ├── pubspec.yaml
+│   └── analysis_options.yaml
+├── backend/              # Hono API on Cloudflare Workers
+│   ├── src/
+│   ├── test/
+│   ├── package.json
+│   ├── tsconfig.json
+│   └── wrangler.toml
+├── contracts/            # OpenAPI specs (shared API contracts)
+│   ├── auth.yaml
+│   └── community.yaml
+├── docs/                 # Documentation
+├── package.json          # Root workspace config
+├── pnpm-workspace.yaml
+└── CLAUDE.md
+```
 
 ## Commands
 
-### Development
+### Backend Development
+```bash
+# Start backend dev server
+pnpm dev:backend
+
+# Run backend tests
+pnpm test:backend
+
+# Generate Prisma client
+pnpm --filter backend db:generate
+
+# Run Prisma migrations
+pnpm --filter backend db:migrate
+
+# Push schema to database (no migration)
+pnpm --filter backend db:push
+
+# Open Prisma Studio
+pnpm --filter backend db:studio
+
+# Deploy to Cloudflare Workers
+pnpm --filter backend deploy
+```
+
+### Frontend Development
 ```bash
 # Run the app
-flutter run
+cd frontend && flutter run
 
 # Run on specific device
-flutter run -d [device_id]
+cd frontend && flutter run -d [device_id]
 
 # Hot reload (while app is running)
 r
@@ -34,84 +100,85 @@ R
 flutter devices
 ```
 
-### Dependencies
+### Frontend Dependencies
 ```bash
 # Get dependencies
-flutter pub get
+cd frontend && flutter pub get
 
 # Upgrade dependencies
-flutter pub upgrade
+cd frontend && flutter pub upgrade
 
 # Check outdated packages
-flutter pub outdated
+cd frontend && flutter pub outdated
 ```
 
-### Build
+### Frontend Build
 ```bash
 # Build for iOS
-flutter build ios
+cd frontend && flutter build ios
 
 # Build for Android
-flutter build apk
-flutter build appbundle
+cd frontend && flutter build apk
+cd frontend && flutter build appbundle
 
 # Clean build artifacts
-flutter clean
+cd frontend && flutter clean
 ```
 
-### Testing
+### Frontend Testing
 ```bash
 # Run all tests
-flutter test
+cd frontend && flutter test
 
 # Run specific test file
-flutter test test/[test_file.dart]
+cd frontend && flutter test test/[test_file.dart]
 
 # Run tests with coverage
-flutter test --coverage
+cd frontend && flutter test --coverage
 ```
 
-### Firebase Setup
+### Workspace
 ```bash
-# Configure Firebase (requires Firebase project)
-flutterfire configure
+# Install all dependencies (root)
+pnpm install
 
-# Select platforms and link to Firebase project
-# This generates lib/firebase_options.dart
+# Clean all
+pnpm clean
 ```
 
 ## Architecture
 
-The project follows a feature-based clean architecture pattern:
+### Backend (Hono + Cloudflare Workers)
 
-```
-lib/
-├── core/               # Core functionality shared across features
-│   ├── constants/      # App-wide constants (colors, strings)
-│   ├── router/         # Navigation configuration (go_router)
-│   ├── themes/         # Material theme definitions
-│   └── utils/          # Utility functions
-├── features/           # Feature modules (auth, home, community, etc.)
-│   └── [feature]/
-│       ├── data/       # Data layer (models, repositories, datasources)
-│       ├── domain/     # Domain layer (entities, repositories, usecases)
-│       └── presentation/ # Presentation layer (screens, widgets)
-└── shared/             # Shared components
-    ├── services/       # Shared services (Firebase, API)
-    └── widgets/        # Reusable widgets
+The backend follows a layered architecture:
+- **Routes**: HTTP endpoint definitions (Hono routes)
+- **Handlers**: Request/response handling logic
+- **Services**: Business logic
+- **Prisma Models**: Database schema and queries via Prisma (edge)
+- **Auth**: Better Auth handles authentication (sessions, tokens)
+
+### Frontend (Flutter + Riverpod)
+
+The frontend follows a feature-based clean architecture pattern:
 
 Each feature module is self-contained with its own:
 - **Screens**: Full page views
 - **Widgets**: Feature-specific components
 - **Models**: Data structures
-- **Services**: Feature-specific business logic
-```
+- **Providers**: Riverpod state management
+- **Repositories**: Data access via Dio HTTP client
+
+### API Contracts
+
+OpenAPI 3.1.0 specs in `contracts/` define the interface between frontend and backend:
+- `auth.yaml` - Authentication endpoints (sign-up, sign-in, sign-out, session)
+- `community.yaml` - Community feed endpoints (posts, comments, reactions)
 
 ## Key Features to Implement
 
 1. **Authentication System**
-   - Email/password authentication
-   - User type selection (person with autism, parent, professional, supporter)
+   - Email/password authentication via Better Auth
+   - User type selection (parent, autistic_individual, professional, educator, therapist, supporter)
    - Profile management
 
 2. **Community Features**
@@ -132,21 +199,9 @@ Each feature module is self-contained with its own:
    - Communication aids
    - Sensory-friendly color schemes
 
-## Firebase Integration Notes
-
-To complete Firebase setup:
-1. Create a Firebase project at https://console.firebase.google.com
-2. Run `flutterfire configure` to link the app
-3. Uncomment Firebase initialization in `lib/main.dart`
-4. Enable required Firebase services in console:
-   - Authentication
-   - Cloud Firestore
-   - Cloud Storage
-   - Cloud Messaging
-
 ## UI/UX Considerations
 
-- Use calm, muted colors (already defined in AppColors)
+- Use calm, muted colors (defined in AppColors)
 - Clear navigation with consistent patterns
 - Large touch targets for better accessibility
 - Visual feedback for all actions
