@@ -1,0 +1,11 @@
+name = "spectrum-api"
+main = "src/index.ts"
+compatibility_date = "2026-03-12"
+compatibility_flags = ["nodejs_compat"]
+
+[vars]
+ENVIRONMENT = "development"
+
+# Secrets (set via `wrangler secret put`):
+# DATABASE_URL - Neon connection string
+# BETTER_AUTH_SECRET - Secret for signing auth tokens
