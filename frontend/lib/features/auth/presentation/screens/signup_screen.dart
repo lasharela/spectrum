@@ -2,17 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/constants/app_colors.dart';
+import '../providers/auth_provider.dart';
 
-class SignupScreen extends StatefulWidget {
+class SignupScreen extends ConsumerStatefulWidget {
   const SignupScreen({super.key});
 
   @override
-  State<SignupScreen> createState() => _SignupScreenState();
+  ConsumerState<SignupScreen> createState() => _SignupScreenState();
 }
 
-class _SignupScreenState extends State<SignupScreen> {
+class _SignupScreenState extends ConsumerState<SignupScreen> {
   final _formKey = GlobalKey<FormBuilderState>();
   bool _isLoading = false;
   bool _obscurePassword = true;
@@ -20,26 +22,33 @@ class _SignupScreenState extends State<SignupScreen> {
   String? _selectedUserType;
 
   final List<Map<String, dynamic>> _userTypes = [
+    {'value': 'autistic_individual', 'label': 'Person with Autism', 'icon': Icons.accessibility_new},
     {'value': 'parent', 'label': 'Parent/Caregiver', 'icon': Icons.family_restroom},
     {'value': 'professional', 'label': 'Professional', 'icon': Icons.medical_services},
     {'value': 'educator', 'label': 'Educator', 'icon': Icons.school},
     {'value': 'therapist', 'label': 'Therapist', 'icon': Icons.psychology},
+    {'value': 'supporter', 'label': 'Supporter', 'icon': Icons.volunteer_activism},
   ];
 
   void _handleSignup() async {
-    if (_formKey.currentState?.saveAndValidate() ?? false) {
-      setState(() => _isLoading = true);
-      
-      // TODO: Implement Firebase authentication
-      // final values = _formKey.currentState!.value;
-      // Temporary: Navigate directly to home
-      
-      // Simulate signup delay
-      await Future.delayed(const Duration(seconds: 2));
-      
+    if (!(_formKey.currentState?.saveAndValidate() ?? false)) return;
+    if (_selectedUserType == null) return;
+    final values = _formKey.currentState!.value;
+    setState(() => _isLoading = true);
+    try {
+      await ref.read(authProvider.notifier).signUp(
+        email: values['email'] as String,
+        password: values['password'] as String,
+        name: values['name'] as String,
+        userType: _selectedUserType!,
+      );
+      if (mounted) context.go('/home');
+    } catch (e) {
       if (mounted) {
         setState(() => _isLoading = false);
-        context.go('/home');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Sign up failed: ${e.toString()}')),
+        );
       }
     }
   }

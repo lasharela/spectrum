@@ -1,0 +1,54 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../data/auth_repository.dart';
+import '../../domain/user.dart';
+import '../../../../shared/providers/api_provider.dart';
+
+final authRepositoryProvider = Provider<AuthRepository>((ref) {
+  return AuthRepository(ref.read(apiClientProvider));
+});
+
+final authProvider =
+    AsyncNotifierProvider<AuthNotifier, User?>(AuthNotifier.new);
+
+class AuthNotifier extends AsyncNotifier<User?> {
+  @override
+  Future<User?> build() async {
+    final repo = ref.read(authRepositoryProvider);
+    return repo.getCurrentUser();
+  }
+
+  Future<void> signUp({
+    required String email,
+    required String password,
+    required String name,
+    required String userType,
+  }) async {
+    state = const AsyncLoading();
+    state = await AsyncValue.guard(() {
+      final repo = ref.read(authRepositoryProvider);
+      return repo.signUp(
+        email: email,
+        password: password,
+        name: name,
+        userType: userType,
+      );
+    });
+  }
+
+  Future<void> signIn({
+    required String email,
+    required String password,
+  }) async {
+    state = const AsyncLoading();
+    state = await AsyncValue.guard(() {
+      final repo = ref.read(authRepositoryProvider);
+      return repo.signIn(email: email, password: password);
+    });
+  }
+
+  Future<void> signOut() async {
+    final repo = ref.read(authRepositoryProvider);
+    await repo.signOut();
+    state = const AsyncData(null);
+  }
+}

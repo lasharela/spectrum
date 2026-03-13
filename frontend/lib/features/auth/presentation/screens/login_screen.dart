@@ -1,33 +1,39 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/constants/app_colors.dart';
+import '../providers/auth_provider.dart';
 
-class LoginScreen extends StatefulWidget {
+class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  ConsumerState<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _LoginScreenState extends ConsumerState<LoginScreen> {
   final _formKey = GlobalKey<FormBuilderState>();
   bool _isLoading = false;
   bool _obscurePassword = true;
 
-  // Fake credentials
-  final String _fakeEmail = 'demo@spectrum.com';
-  final String _fakePassword = 'password123';
-
   void _handleLogin() async {
+    if (!(_formKey.currentState?.saveAndValidate() ?? false)) return;
+    final values = _formKey.currentState!.value;
     setState(() => _isLoading = true);
-    
-    // Simulate login delay
-    await Future.delayed(const Duration(seconds: 1));
-    
-    if (mounted) {
-      setState(() => _isLoading = false);
-      context.go('/home');
+    try {
+      await ref.read(authProvider.notifier).signIn(
+        email: values['email'] as String,
+        password: values['password'] as String,
+      );
+      if (mounted) context.go('/home');
+    } catch (e) {
+      if (mounted) {
+        setState(() => _isLoading = false);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Login failed: ${e.toString()}')),
+        );
+      }
     }
   }
 
@@ -156,7 +162,6 @@ class _LoginScreenState extends State<LoginScreen> {
                 const SizedBox(height: 8),
                 FormBuilderTextField(
                   name: 'email',
-                  initialValue: _fakeEmail,
                   decoration: InputDecoration(
                     hintText: 'Enter your email',
                     hintStyle: TextStyle(color: AppColors.textGray.withValues(alpha: 0.5)),
@@ -193,7 +198,6 @@ class _LoginScreenState extends State<LoginScreen> {
                 const SizedBox(height: 8),
                 FormBuilderTextField(
                   name: 'password',
-                  initialValue: _fakePassword,
                   decoration: InputDecoration(
                     hintText: 'Enter your password',
                     hintStyle: TextStyle(color: AppColors.textGray.withValues(alpha: 0.5)),
@@ -238,37 +242,6 @@ class _LoginScreenState extends State<LoginScreen> {
                         color: AppColors.cyan,
                         fontWeight: FontWeight.w600,
                       ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 16),
-          Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: AppColors.yellow.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(
-                color: AppColors.yellow.withValues(alpha: 0.3),
-              ),
-            ),
-            child: Row(
-              children: [
-                Icon(
-                  Icons.info_outline,
-                  color: AppColors.orange,
-                  size: 20,
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Text(
-                    'Demo credentials:\nEmail: $_fakeEmail\nPassword: $_fakePassword',
-                    style: TextStyle(
-                      color: AppColors.textDark,
-                      fontSize: 12,
-                      height: 1.4,
                     ),
                   ),
                 ),
