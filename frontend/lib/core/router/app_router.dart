@@ -4,7 +4,8 @@ import '../../features/auth/presentation/screens/login_screen.dart';
 import '../../features/auth/presentation/screens/signup_screen.dart';
 import '../../features/auth/presentation/screens/onboarding_screen.dart';
 import '../../features/home/presentation/screens/home_screen.dart';
-import '../../features/community/presentation/screens/community_screen.dart';
+import '../../features/community/presentation/screens/feed_screen.dart';
+import '../../features/community/presentation/screens/post_detail_screen.dart';
 import '../../features/resources/presentation/screens/resources_screen.dart';
 import '../../features/profile/presentation/screens/profile_screen.dart';
 import '../../features/organizations/presentation/screens/organizations_screen.dart';
@@ -45,7 +46,15 @@ class AppRouter {
           GoRoute(
             path: '/community',
             name: 'community',
-            builder: (context, state) => const CommunityScreen(),
+            builder: (context, state) => const FeedScreen(),
+            routes: [
+              GoRoute(
+                path: 'post/:postId',
+                builder: (context, state) => PostDetailScreen(
+                  postId: state.pathParameters['postId']!,
+                ),
+              ),
+            ],
           ),
           GoRoute(
             path: '/resources',
