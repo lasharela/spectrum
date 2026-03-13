@@ -1,18 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'core/router/app_router.dart';
 import 'core/themes/app_theme.dart';
 import 'core/constants/app_strings.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
-  // TODO: Initialize Firebase
-  // await Firebase.initializeApp(
-  //   options: DefaultFirebaseOptions.currentPlatform,
-  // );
-  
-  runApp(const SpectrumApp());
+  runApp(const ProviderScope(child: SpectrumApp()));
 }
 
 class SpectrumApp extends StatelessWidget {
@@ -20,7 +14,6 @@ class SpectrumApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Temporarily remove MultiProvider until we have providers to add
     return MaterialApp.router(
       title: AppStrings.appName,
       debugShowCheckedModeBanner: false,
