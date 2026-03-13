@@ -55,7 +55,7 @@ export function communityRoutes() {
       posts: results.map((p) => ({
         id: p.id,
         content: p.content,
-        tags: p.tags,
+        tags: JSON.parse(p.tags),
         authorId: p.authorId,
         author: p.author,
         createdAt: p.createdAt.toISOString(),
@@ -74,7 +74,7 @@ export function communityRoutes() {
     const prisma = c.get("prisma");
 
     const post = await prisma.post.create({
-      data: { content, tags, authorId: user.id },
+      data: { content, tags: JSON.stringify(tags), authorId: user.id },
       include: {
         author: { select: { id: true, name: true, image: true, userType: true } },
       },
@@ -85,7 +85,7 @@ export function communityRoutes() {
         post: {
           id: post.id,
           content: post.content,
-          tags: post.tags,
+          tags: JSON.parse(post.tags),
           authorId: post.authorId,
           author: post.author,
           createdAt: post.createdAt.toISOString(),
@@ -120,7 +120,7 @@ export function communityRoutes() {
       post: {
         id: post.id,
         content: post.content,
-        tags: post.tags,
+        tags: JSON.parse(post.tags),
         authorId: post.authorId,
         author: post.author,
         createdAt: post.createdAt.toISOString(),

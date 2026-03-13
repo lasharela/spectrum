@@ -3,7 +3,7 @@ import '../api/api_client.dart';
 
 const _baseUrl = String.fromEnvironment(
   'API_BASE_URL',
-  defaultValue: 'http://localhost:8787',
+  defaultValue: 'https://spectrum-api.lasharela.workers.dev',
 );
 
 final apiClientProvider = Provider<ApiClient>((ref) {

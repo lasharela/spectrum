@@ -6,6 +6,10 @@ compatibility_flags = ["nodejs_compat"]
 [vars]
 ENVIRONMENT = "development"
 
+[[d1_databases]]
+binding = "DB"
+database_name = "spectrum-db"
+database_id = "9774695e-969d-4a78-87a7-61eda6d6992f"
+
 # Secrets (set via `wrangler secret put`):
-# DATABASE_URL - Neon connection string
 # BETTER_AUTH_SECRET - Secret for signing auth tokens

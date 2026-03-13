@@ -1,4 +1,4 @@
-import type { PrismaClient } from "@prisma/client/edge";
+import type { PrismaClient } from "@prisma/client";
 import type { Auth } from "../auth/auth.js";
 
 export type UserContext = {
@@ -10,7 +10,7 @@ export type UserContext = {
 };
 
 export type AppBindings = {
-  DATABASE_URL: string;
+  DB: D1Database;
   BETTER_AUTH_SECRET: string;
   ENVIRONMENT: string;
 };

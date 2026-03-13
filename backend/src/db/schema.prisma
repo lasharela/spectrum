@@ -3,8 +3,8 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider = "sqlite"
+  url      = "file:./dev.db"
 }
 
 model User {
@@ -67,7 +67,7 @@ model Verification {
 model Post {
   id            String     @id @default(cuid())
   content       String
-  tags          String[]
+  tags          String    @default("[]")
   authorId      String
   createdAt     DateTime   @default(now())
   updatedAt     DateTime   @updatedAt

@@ -1,12 +1,12 @@
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
-import type { PrismaClient } from "@prisma/client/edge";
+import type { PrismaClient } from "@prisma/client";
 
 export function createAuth(prisma: PrismaClient, secret: string) {
   return betterAuth({
     secret,
     database: prismaAdapter(prisma, {
-      provider: "postgresql",
+      provider: "sqlite",
     }),
     emailAndPassword: {
       enabled: true,
