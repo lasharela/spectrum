@@ -5,8 +5,8 @@ import '../constants/app_colors.dart';
 
 /// Forui theme configuration for Spectrum.
 ///
-/// Uses Forui's built-in zinc theme as the base, only overriding the
-/// primary color to match Spectrum's brand.
+/// Uses Forui's built-in zinc theme as the base, overriding
+/// colors to match Spectrum's soft purple palette.
 class AppForuiTheme {
   static FThemeData get light => FThemeData(
         touch: true,
@@ -14,9 +14,7 @@ class AppForuiTheme {
         colors: FColors.zincLight.copyWith(
           primary: AppColors.primary,
           primaryForeground: const Color(0xFFFFFFFF),
-          secondary: const Color(0xFFDDE3F8), // Light primary blue
-          secondaryForeground: AppColors.primary,
-          background: const Color(0xFFF3F6FA), // Soft blue tint
+          background: AppColors.background,
         ),
       );
 
