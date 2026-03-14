@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/constants/app_strings.dart';
+import '../../../auth/presentation/providers/auth_provider.dart';
 
-class ProfileScreen extends StatelessWidget {
+class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final user = ref.watch(authProvider).valueOrNull;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Profile'),
@@ -29,12 +32,12 @@ class ProfileScreen extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             Text(
-              'User Name',
+              user?.name ?? 'User',
               style: Theme.of(context).textTheme.headlineSmall,
             ),
             const SizedBox(height: 8),
             Text(
-              'user@example.com',
+              user?.email ?? '',
               style: Theme.of(context).textTheme.bodyMedium,
             ),
             const SizedBox(height: 32),
@@ -73,9 +76,8 @@ class ProfileScreen extends StatelessWidget {
                 AppStrings.logout,
                 style: TextStyle(color: Colors.red),
               ),
-              onTap: () {
-                // TODO: Implement logout
-                context.go('/onboarding');
+              onTap: () async {
+                await ref.read(authProvider.notifier).signOut();
               },
             ),
           ],

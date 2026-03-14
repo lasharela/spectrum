@@ -12,27 +12,24 @@ void main() async {
   runApp(const ProviderScope(child: SpectrumApp()));
 }
 
-class SpectrumApp extends StatelessWidget {
+class SpectrumApp extends ConsumerWidget {
   const SpectrumApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final router = ref.watch(routerProvider);
+
     return MaterialApp.router(
       title: AppStrings.appName,
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
-      darkTheme: AppTheme.darkTheme,
-      themeMode: ThemeMode.system,
+      themeMode: ThemeMode.light,
       localizationsDelegates: FLocalizations.localizationsDelegates,
       supportedLocales: FLocalizations.supportedLocales,
-      routerConfig: AppRouter.router,
+      routerConfig: router,
       builder: (context, child) {
-        final brightness = Theme.of(context).brightness;
-        final foruiTheme = brightness == Brightness.dark
-            ? AppForuiTheme.dark
-            : AppForuiTheme.light;
         return FTheme(
-          data: foruiTheme,
+          data: AppForuiTheme.light,
           child: child!,
         );
       },

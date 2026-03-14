@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../features/auth/presentation/screens/login_screen.dart';
 import '../../features/auth/presentation/screens/signup_screen.dart';
@@ -10,14 +11,43 @@ import '../../features/community/presentation/screens/feed_screen.dart';
 import '../../features/community/presentation/screens/post_detail_screen.dart';
 import '../../features/profile/presentation/screens/profile_screen.dart';
 import '../../shared/widgets/main_navigation_shell.dart';
+import '../../features/auth/presentation/providers/auth_provider.dart';
 
-class AppRouter {
-  static final _rootNavigatorKey = GlobalKey<NavigatorState>();
-  static final _shellNavigatorKey = GlobalKey<NavigatorState>();
+/// Auth routes that don't require authentication
+const _publicPaths = {
+  '/onboarding',
+  '/login',
+  '/signup',
+  '/forgot-password',
+  '/reset-password',
+};
 
-  static final GoRouter router = GoRouter(
-    navigatorKey: _rootNavigatorKey,
+final routerProvider = Provider<GoRouter>((ref) {
+  final authState = ref.watch(authProvider);
+
+  return GoRouter(
     initialLocation: '/onboarding',
+    redirect: (context, state) {
+      final path = state.uri.path;
+      final isPublicRoute = _publicPaths.contains(path);
+
+      // While auth is loading, don't redirect
+      if (authState.isLoading) return null;
+
+      final isLoggedIn = authState.valueOrNull != null;
+
+      // Not logged in and trying to access protected route → go to onboarding
+      if (!isLoggedIn && !isPublicRoute) {
+        return '/onboarding';
+      }
+
+      // Logged in and on a public route → go to home
+      if (isLoggedIn && isPublicRoute) {
+        return '/home';
+      }
+
+      return null;
+    },
     routes: [
       GoRoute(
         path: '/onboarding',
@@ -49,7 +79,6 @@ class AppRouter {
         },
       ),
       ShellRoute(
-        navigatorKey: _shellNavigatorKey,
         builder: (context, state, child) => MainNavigationShell(child: child),
         routes: [
           GoRoute(
@@ -105,4 +134,4 @@ class AppRouter {
       ),
     ),
   );
-}
+});
