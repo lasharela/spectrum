@@ -17,10 +17,16 @@ class CommunityRepository {
   Future<PaginatedResult<Post>> getPosts({
     String? cursor,
     int limit = 20,
+    String? query,
+    String? category,
+    String? authorId,
   }) async {
     final response = await _api.get('/api/posts', queryParameters: {
       if (cursor != null) 'cursor': cursor,
       'limit': limit,
+      if (query != null && query.isNotEmpty) 'q': query,
+      if (category != null) 'category': category,
+      if (authorId != null) 'authorId': authorId,
     });
     final data = response.data as Map<String, dynamic>;
     final posts = (data['posts'] as List)
@@ -35,10 +41,12 @@ class CommunityRepository {
   Future<Post> createPost({
     required String content,
     List<String> tags = const [],
+    String category = 'General',
   }) async {
     final response = await _api.post('/api/posts', data: {
       'content': content,
       'tags': tags,
+      'category': category,
     });
     final data = response.data as Map<String, dynamic>;
     return Post.fromJson(data['post'] as Map<String, dynamic>);
@@ -46,6 +54,21 @@ class CommunityRepository {
 
   Future<Post> getPost(String id) async {
     final response = await _api.get('/api/posts/$id');
+    final data = response.data as Map<String, dynamic>;
+    return Post.fromJson(data['post'] as Map<String, dynamic>);
+  }
+
+  Future<Post> updatePost(
+    String id, {
+    String? content,
+    List<String>? tags,
+    String? category,
+  }) async {
+    final response = await _api.put('/api/posts/$id', data: {
+      if (content != null) 'content': content,
+      if (tags != null) 'tags': tags,
+      if (category != null) 'category': category,
+    });
     final data = response.data as Map<String, dynamic>;
     return Post.fromJson(data['post'] as Map<String, dynamic>);
   }
