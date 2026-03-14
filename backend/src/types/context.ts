@@ -9,6 +9,8 @@ export type UserContext = {
   middleName: string | null;
   lastName: string;
   userType: string;
+  state: string | null;
+  city: string | null;
   image: string | null;
 };
 

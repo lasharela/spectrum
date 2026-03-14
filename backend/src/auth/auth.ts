@@ -41,6 +41,16 @@ export function createAuth(prisma: PrismaClient, secret: string) {
           required: true,
           input: true,
         },
+        state: {
+          type: "string",
+          required: false,
+          input: true,
+        },
+        city: {
+          type: "string",
+          required: false,
+          input: true,
+        },
       },
     },
   });

@@ -17,6 +17,8 @@ model User {
   lastName      String    @default("")
   image         String?
   userType      String
+  state         String?
+  city          String?
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 

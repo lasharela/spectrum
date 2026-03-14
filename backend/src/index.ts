@@ -1,5 +1,7 @@
 import { Hono } from "hono";
 import { cors } from "hono/cors";
+import { zValidator } from "@hono/zod-validator";
+import { z } from "zod";
 import { createPrismaClient } from "./db/client.js";
 import { createAuth } from "./auth/auth.js";
 import { sessionMiddleware } from "./middleware/session.js";
@@ -48,10 +50,80 @@ app.on(["GET", "POST"], "/api/auth/**", async (c) => {
   }
 });
 
-// Profile endpoint
+// Profile endpoints
 app.get("/api/me", sessionMiddleware, async (c) => {
   const user = c.get("user");
   return c.json({ user });
+});
+
+const updateProfileSchema = z.object({
+  firstName: z.string().min(1).max(100).optional(),
+  lastName: z.string().min(1).max(100).optional(),
+  middleName: z.string().max(100).nullable().optional(),
+  state: z.string().max(100).nullable().optional(),
+  city: z.string().max(100).nullable().optional(),
+});
+
+app.put("/api/me", sessionMiddleware, zValidator("json", updateProfileSchema), async (c) => {
+  const user = c.get("user");
+  const prisma = c.get("prisma");
+  const body = c.req.valid("json");
+
+  const data: Record<string, unknown> = {};
+  if (body.firstName !== undefined) data.firstName = body.firstName;
+  if (body.lastName !== undefined) data.lastName = body.lastName;
+  if (body.middleName !== undefined) data.middleName = body.middleName;
+  if (body.state !== undefined) {
+    data.state = body.state;
+    // Clear city when state changes
+    if (body.city === undefined) data.city = null;
+  }
+  if (body.city !== undefined) data.city = body.city;
+
+  // Update name if first/last name changed
+  if (body.firstName !== undefined || body.lastName !== undefined) {
+    const currentUser = await prisma.user.findUnique({ where: { id: user.id } });
+    const first = body.firstName ?? currentUser!.firstName;
+    const middle = body.middleName !== undefined ? body.middleName : currentUser!.middleName;
+    const last = body.lastName ?? currentUser!.lastName;
+    data.name = [first, middle, last].filter(Boolean).join(" ");
+  }
+
+  const updated = await prisma.user.update({
+    where: { id: user.id },
+    data,
+  });
+
+  return c.json({
+    user: {
+      id: updated.id,
+      email: updated.email,
+      name: updated.name,
+      firstName: updated.firstName,
+      middleName: updated.middleName,
+      lastName: updated.lastName,
+      userType: updated.userType,
+      state: updated.state,
+      city: updated.city,
+      image: updated.image,
+      createdAt: updated.createdAt.toISOString(),
+    },
+  });
+});
+
+// Cities endpoint — returns distinct cities from user profiles for a given state
+app.get("/api/cities", sessionMiddleware, async (c) => {
+  const state = c.req.query("state");
+  if (!state) return c.json({ cities: [] });
+
+  const prisma = c.get("prisma");
+  const users = await prisma.user.findMany({
+    where: { state, city: { not: null } },
+    select: { city: true },
+  });
+
+  const cities = [...new Set(users.map((u: { city: string | null }) => u.city).filter(Boolean))].sort();
+  return c.json({ cities });
 });
 
 // Community routes

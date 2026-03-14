@@ -33,6 +33,8 @@ const paginationSchema = z.object({
   q: z.string().optional(),
   category: z.string().optional(),
   authorId: z.string().optional(),
+  state: z.string().max(100).optional(),
+  city: z.string().max(100).optional(),
 });
 
 export function communityRoutes() {
@@ -41,25 +43,36 @@ export function communityRoutes() {
   // GET / - list posts (paginated, public read)
   app.get("/", optionalSessionMiddleware, async (c) => {
     const prisma = c.get("prisma");
-    const { cursor, limit, q, category, authorId } = paginationSchema.parse({
+    const { cursor, limit, q, category, authorId, state, city } = paginationSchema.parse({
       cursor: c.req.query("cursor"),
       limit: c.req.query("limit"),
       q: c.req.query("q"),
       category: c.req.query("category"),
       authorId: c.req.query("authorId"),
+      state: c.req.query("state"),
+      city: c.req.query("city"),
     });
 
     const user = c.get("user") as any;
 
     const where: Record<string, unknown> = {};
     if (q) {
-      where.content = { contains: q };
+      where.OR = [
+        { title: { contains: q } },
+        { content: { contains: q } },
+      ];
     }
     if (category) {
       where.category = category;
     }
     if (authorId) {
       where.authorId = authorId;
+    }
+    if (state) {
+      where.author = { is: { state } };
+    }
+    if (city) {
+      where.author = { is: { ...(where.author as any)?.is, city } };
     }
 
     const posts = await prisma.post.findMany({

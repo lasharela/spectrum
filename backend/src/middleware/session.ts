@@ -10,6 +10,8 @@ function setUserFromSession(c: any, session: any) {
     middleName: (session.user as any).middleName ?? null,
     lastName: (session.user as any).lastName,
     userType: (session.user as any).userType,
+    state: (session.user as any).state ?? null,
+    city: (session.user as any).city ?? null,
     image: session.user.image,
   });
 }
