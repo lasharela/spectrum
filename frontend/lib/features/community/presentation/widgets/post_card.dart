@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/constants/app_spacing.dart';
 import '../../domain/post.dart';
 
 class PostCard extends StatelessWidget {
@@ -18,30 +19,39 @@ class PostCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+    return Container(
+      margin: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.lg,
+        vertical: AppSpacing.xs,
+      ),
+      decoration: BoxDecoration(
+        color: AppColors.cardBackground,
+        borderRadius: BorderRadius.circular(AppSpacing.cardRadiusLarge),
+        border: AppColors.cardBorderStyle,
+        boxShadow: [AppColors.cardShadow],
+      ),
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(AppSpacing.cardRadiusLarge),
         child: Padding(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(AppSpacing.cardPadding),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _buildHeader(context),
-              const SizedBox(height: 8),
-              // Category tag
-              CategoryTag(category: post.category),
-              const SizedBox(height: 8),
-              // Content preview (max 3 lines)
+              const SizedBox(height: AppSpacing.sm),
+              // Content preview
               Text(
                 post.content,
-                maxLines: 3,
+                maxLines: 2,
                 overflow: TextOverflow.ellipsis,
-                style: Theme.of(context).textTheme.bodyMedium,
+                style: const TextStyle(
+                  fontSize: 14,
+                  color: AppColors.textSecondary,
+                  height: 1.4,
+                ),
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: AppSpacing.md),
               _buildActions(context),
             ],
           ),
@@ -55,36 +65,46 @@ class PostCard extends StatelessWidget {
       children: [
         CircleAvatar(
           radius: 20,
-          backgroundColor: AppColors.cyan,
+          backgroundColor: AppColors.primary.withValues(alpha: 0.1),
           child: Text(
             post.author.name[0].toUpperCase(),
             style: const TextStyle(
-              color: Colors.white,
+              color: AppColors.primary,
               fontWeight: FontWeight.bold,
             ),
           ),
         ),
-        const SizedBox(width: 12),
+        const SizedBox(width: AppSpacing.md),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 post.author.name,
-                style: const TextStyle(fontWeight: FontWeight.w600),
+                style: const TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
               Text(
                 _formatTimestamp(post.createdAt),
-                style: TextStyle(fontSize: 12, color: AppColors.textGray),
+                style: const TextStyle(
+                  fontSize: 12,
+                  color: AppColors.textSecondary,
+                ),
               ),
             ],
           ),
         ),
+        // Category badge — right-aligned
+        CategoryTag(category: post.category),
         if (onDelete != null)
           IconButton(
             icon: const Icon(Icons.more_vert, size: 20),
             onPressed: onDelete,
-            color: AppColors.textGray,
+            color: AppColors.textSecondary,
+            padding: const EdgeInsets.only(left: AppSpacing.xs),
+            constraints: const BoxConstraints(),
           ),
       ],
     );
@@ -96,20 +116,20 @@ class PostCard extends StatelessWidget {
         _ActionButton(
           icon: post.liked ? Icons.favorite : Icons.favorite_border,
           label: '${post.likesCount}',
-          color: post.liked ? AppColors.coral : AppColors.textGray,
+          color: post.liked ? AppColors.accent1 : AppColors.textSecondary,
           onTap: onLike,
         ),
         const SizedBox(width: 20),
         _ActionButton(
           icon: Icons.comment_outlined,
           label: '${post.commentsCount}',
-          color: AppColors.textGray,
+          color: AppColors.textSecondary,
         ),
-        const SizedBox(width: 20),
+        const Spacer(),
         _ActionButton(
           icon: Icons.share_outlined,
           label: 'Share',
-          color: AppColors.textGray,
+          color: AppColors.textSecondary,
         ),
       ],
     );
@@ -123,21 +143,20 @@ class PostCard extends StatelessWidget {
     if (diff.inDays < 7) return '${diff.inDays}d ago';
     return DateFormat.yMMMd().format(dt);
   }
-
 }
 
 /// Shared category color mapping — used by PostCard and PostDetailScreen
 Color categoryColor(String category) {
   return switch (category) {
-    'General' => AppColors.cyan,
-    'Sensory' => AppColors.purple,
-    'Education' => AppColors.navy,
-    'Support' => AppColors.coral,
-    'Resources' => AppColors.success,
-    'Daily Life' => AppColors.orange,
-    'News' => AppColors.yellow,
-    'Social' => AppColors.cyan,
-    _ => AppColors.textGray,
+    'Sensory' => AppColors.secondary,
+    'Education' => AppColors.tertiary,
+    'Support' => AppColors.accent1,
+    'Resources' => AppColors.quaternary,
+    'Daily Life' => AppColors.accent2,
+    'News' => AppColors.accent2,
+    'Social' => AppColors.primary,
+    'General' => AppColors.textSecondary,
+    _ => AppColors.textSecondary,
   };
 }
 
@@ -154,7 +173,7 @@ class CategoryTag extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.15),
-        borderRadius: BorderRadius.circular(4),
+        borderRadius: BorderRadius.circular(AppSpacing.badgeRadius),
       ),
       child: Text(
         category,
