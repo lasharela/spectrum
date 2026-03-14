@@ -109,12 +109,14 @@ class DashboardPlace {
   final String name;
   final String address;
   final String distance;
+  final String? imageUrl;
 
   const DashboardPlace({
     required this.id,
     required this.name,
     required this.address,
     required this.distance,
+    this.imageUrl,
   });
 
   factory DashboardPlace.fromJson(Map<String, dynamic> json) {
@@ -123,6 +125,7 @@ class DashboardPlace {
       name: json['name'] as String,
       address: json['address'] as String,
       distance: json['distance'] as String,
+      imageUrl: json['imageUrl'] as String?,
     );
   }
 }
@@ -133,6 +136,7 @@ class DashboardEvent {
   final String time;
   final String location;
   final String category;
+  final String? imageUrl;
 
   const DashboardEvent({
     required this.id,
@@ -140,6 +144,7 @@ class DashboardEvent {
     required this.time,
     required this.location,
     required this.category,
+    this.imageUrl,
   });
 
   factory DashboardEvent.fromJson(Map<String, dynamic> json) {
@@ -149,6 +154,7 @@ class DashboardEvent {
       time: json['time'] as String,
       location: json['location'] as String,
       category: json['category'] as String,
+      imageUrl: json['imageUrl'] as String?,
     );
   }
 }

@@ -43,13 +43,13 @@ export function dashboardRoutes() {
         { id: "p3", title: "Buy 1 Get 1 Books", store: "Barnes & Noble", discount: "BOGO" },
       ],
       places: [
-        { id: "pl1", name: "Sensory Garden Park", address: "123 Oak Street", distance: "0.5 miles" },
-        { id: "pl2", name: "Quiet Library Zone", address: "456 Main Avenue", distance: "1.2 miles" },
-        { id: "pl3", name: "Therapy Center", address: "789 Wellness Blvd", distance: "2.0 miles" },
+        { id: "pl1", name: "Sensory Garden Park", address: "123 Oak Street", distance: "0.5 miles", imageUrl: "https://placehold.co/160x160/e2e8f0/64748b?text=Park" },
+        { id: "pl2", name: "Quiet Library Zone", address: "456 Main Avenue", distance: "1.2 miles", imageUrl: "https://placehold.co/160x160/e2e8f0/64748b?text=Library" },
+        { id: "pl3", name: "Therapy Center", address: "789 Wellness Blvd", distance: "2.0 miles", imageUrl: "https://placehold.co/160x160/e2e8f0/64748b?text=Therapy" },
       ],
       upcomingEvents: [
-        { id: "e1", title: "Parent Support Group", time: "10:00 AM", location: "Community Center", category: "Support" },
-        { id: "e2", title: "Art Therapy Session", time: "2:00 PM", location: "Creative Studio", category: "Therapy" },
+        { id: "e1", title: "Parent Support Group", time: "10:00 AM", location: "Community Center", category: "Support", imageUrl: "https://placehold.co/160x160/e2e8f0/64748b?text=Support" },
+        { id: "e2", title: "Art Therapy Session", time: "2:00 PM", location: "Creative Studio", category: "Therapy", imageUrl: "https://placehold.co/160x160/e2e8f0/64748b?text=Art" },
       ],
       stats: {
         postsCount,
