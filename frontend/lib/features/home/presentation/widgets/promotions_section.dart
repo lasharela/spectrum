@@ -7,32 +7,24 @@ class PromotionsSection extends StatelessWidget {
 
   const PromotionsSection({super.key, required this.promotions});
 
+  static const _badgeColors = [
+    AppColors.accent1,
+    AppColors.accent2,
+    AppColors.primary,
+  ];
+
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              'Hottest Promotions',
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.textDark,
-                  ),
-            ),
-            TextButton(
-              onPressed: () {},
-              child: Text(
-                'View All',
-                style: TextStyle(
-                  color: AppColors.cyan,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ),
-          ],
+        const Text(
+          'Hottest Promotions',
+          style: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+            color: AppColors.textPrimary,
+          ),
         ),
         const SizedBox(height: 12),
         if (promotions.isEmpty)
@@ -45,7 +37,8 @@ class PromotionsSection extends StatelessWidget {
               itemCount: promotions.length,
               itemBuilder: (context, index) {
                 final promo = promotions[index];
-                return _buildPromoCard(promo);
+                final badgeColor = _badgeColors[index % _badgeColors.length];
+                return _buildPromoCard(promo, badgeColor);
               },
             ),
           ),
@@ -60,79 +53,76 @@ class PromotionsSection extends StatelessWidget {
       decoration: BoxDecoration(
         color: AppColors.cardBackground,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.border),
+        border: Border.all(color: AppColors.cardBorder),
       ),
       child: Column(
         children: [
-          Icon(Icons.local_offer_outlined, size: 32, color: AppColors.textGray),
+          const Icon(
+            Icons.local_offer_outlined,
+            size: 32,
+            color: AppColors.textSecondary,
+          ),
           const SizedBox(height: 8),
-          Text(
+          const Text(
             'No promotions yet',
-            style: TextStyle(color: AppColors.textGray, fontSize: 14),
+            style: TextStyle(color: AppColors.textSecondary, fontSize: 14),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildPromoCard(DashboardPromotion promo) {
+  Widget _buildPromoCard(DashboardPromotion promo, Color badgeColor) {
     return Container(
-      width: 200,
+      width: 160,
+      height: 140,
       margin: const EdgeInsets.only(right: 12),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            AppColors.coral.withValues(alpha: 0.8),
-            AppColors.coral,
-          ],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
+        color: AppColors.cardBackground,
         borderRadius: BorderRadius.circular(16),
+        border: AppColors.cardBorderStyle,
+        boxShadow: [AppColors.cardShadow],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           if (promo.discount != null)
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.2),
+                color: badgeColor.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Text(
                 promo.discount!,
-                style: const TextStyle(
-                  color: Colors.white,
+                style: TextStyle(
+                  color: badgeColor,
                   fontSize: 12,
                   fontWeight: FontWeight.bold,
                 ),
               ),
             ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                promo.title,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 15,
-                ),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-              ),
-              const SizedBox(height: 4),
-              Text(
-                promo.storeName,
-                style: TextStyle(
-                  color: Colors.white.withValues(alpha: 0.9),
-                  fontSize: 12,
-                ),
-              ),
-            ],
+          const SizedBox(height: 8),
+          Text(
+            promo.title,
+            style: const TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+              color: AppColors.textPrimary,
+            ),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+          ),
+          const SizedBox(height: 4),
+          Text(
+            promo.storeName,
+            style: const TextStyle(
+              fontSize: 12,
+              color: AppColors.textSecondary,
+            ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
           ),
         ],
       ),
