@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import '../../core/constants/app_strings.dart';
 import '../../core/constants/app_colors.dart';
 
 class MainNavigationShell extends StatefulWidget {
   final Widget child;
-  
+
   const MainNavigationShell({super.key, required this.child});
 
   @override
@@ -13,22 +12,26 @@ class MainNavigationShell extends StatefulWidget {
 }
 
 class _MainNavigationShellState extends State<MainNavigationShell> {
-  int _selectedIndex = 0;
-  
-  final List<Map<String, dynamic>> _destinations = [
-    {'icon': Icons.home, 'label': 'Home', 'route': '/home'},
-    {'icon': Icons.people, 'label': AppStrings.community, 'route': '/community'},
-    {'icon': Icons.storefront, 'label': 'Catalog', 'route': '/catalog'},
-    {'icon': Icons.person, 'label': AppStrings.profile, 'route': '/profile'},
+  static const _destinations = [
+    _NavDestination(Icons.home, 'Home', '/home'),
+    _NavDestination(Icons.people, 'Community', '/community'),
+    _NavDestination(Icons.storefront, 'Catalogue', '/catalog'),
+    _NavDestination(Icons.local_offer, 'Promotions', '/promotions'),
+    _NavDestination(Icons.event, 'Events', '/events'),
   ];
 
-  void _onItemTapped(int index) {
-    setState(() => _selectedIndex = index);
-    context.go(_destinations[index]['route']);
+  int _indexFromLocation(String location) {
+    for (var i = 0; i < _destinations.length; i++) {
+      if (location.startsWith(_destinations[i].route)) return i;
+    }
+    return 0;
   }
 
   @override
   Widget build(BuildContext context) {
+    final location = GoRouterState.of(context).uri.path;
+    final selectedIndex = _indexFromLocation(location);
+
     return Scaffold(
       body: widget.child,
       bottomNavigationBar: Container(
@@ -46,18 +49,18 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
           top: false,
           child: Container(
             height: 65,
-            padding: const EdgeInsets.symmetric(horizontal: 8),
+            padding: const EdgeInsets.symmetric(horizontal: 4),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: _destinations.asMap().entries.map((entry) {
                 final index = entry.key;
                 final dest = entry.value;
-                final isSelected = _selectedIndex == index;
-                
+                final isSelected = selectedIndex == index;
+
                 return Expanded(
                   child: InkWell(
-                    onTap: () => _onItemTapped(index),
+                    onTap: () => context.go(dest.route),
                     borderRadius: BorderRadius.circular(12),
                     child: Padding(
                       padding: const EdgeInsets.only(top: 8),
@@ -65,18 +68,25 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           Icon(
-                            dest['icon'],
-                            color: isSelected ? AppColors.cyan : AppColors.textGray,
-                            size: 24,
+                            dest.icon,
+                            color: isSelected
+                                ? AppColors.cyan
+                                : AppColors.textGray,
+                            size: 22,
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            dest['label'],
+                            dest.label,
                             style: TextStyle(
-                              fontSize: 12,
-                              color: isSelected ? AppColors.cyan : AppColors.textGray,
-                              fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+                              fontSize: 11,
+                              color: isSelected
+                                  ? AppColors.cyan
+                                  : AppColors.textGray,
+                              fontWeight: isSelected
+                                  ? FontWeight.w600
+                                  : FontWeight.normal,
                             ),
+                            overflow: TextOverflow.ellipsis,
                           ),
                         ],
                       ),
@@ -90,4 +100,12 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
       ),
     );
   }
+}
+
+class _NavDestination {
+  final IconData icon;
+  final String label;
+  final String route;
+
+  const _NavDestination(this.icon, this.label, this.route);
 }
