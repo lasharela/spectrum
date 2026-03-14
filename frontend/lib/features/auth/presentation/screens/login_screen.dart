@@ -162,6 +162,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 const SizedBox(height: 8),
                 FormBuilderTextField(
                   name: 'email',
+                  style: TextStyle(color: AppColors.textDark),
                   decoration: InputDecoration(
                     hintText: 'Enter your email',
                     hintStyle: TextStyle(color: AppColors.textGray.withValues(alpha: 0.5)),
@@ -198,6 +199,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 const SizedBox(height: 8),
                 FormBuilderTextField(
                   name: 'password',
+                  style: TextStyle(color: AppColors.textDark),
                   decoration: InputDecoration(
                     hintText: 'Enter your password',
                     hintStyle: TextStyle(color: AppColors.textGray.withValues(alpha: 0.5)),

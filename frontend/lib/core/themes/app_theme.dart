@@ -41,10 +41,17 @@ class AppTheme {
           side: const BorderSide(color: AppColors.border),
         ),
       ),
+      textSelectionTheme: const TextSelectionThemeData(
+        cursorColor: AppColors.cyan,
+        selectionColor: Color(0x664ECDC4),
+        selectionHandleColor: AppColors.cyan,
+      ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: AppColors.cardBackground,
         contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+        labelStyle: const TextStyle(color: AppColors.textGray),
+        hintStyle: TextStyle(color: AppColors.textGray.withValues(alpha: 0.5)),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
           borderSide: const BorderSide(color: AppColors.border),
@@ -61,6 +68,10 @@ class AppTheme {
           borderRadius: BorderRadius.circular(16),
           borderSide: const BorderSide(color: AppColors.error),
         ),
+      ),
+      textTheme: const TextTheme().apply(
+        bodyColor: AppColors.textDark,
+        displayColor: AppColors.textDark,
       ),
       cardTheme: const CardThemeData(
         elevation: 0,
