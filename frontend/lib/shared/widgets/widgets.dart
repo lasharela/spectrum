@@ -1,4 +1,5 @@
 export 'app_button.dart';
+export 'gradient_scaffold.dart';
 export 'app_card.dart';
 export 'app_error_widget.dart';
 export 'app_loading_widget.dart';
