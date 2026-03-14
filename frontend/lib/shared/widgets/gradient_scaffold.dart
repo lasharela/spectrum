@@ -1,9 +1,8 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:forui/forui.dart';
 import '../../core/constants/app_colors.dart';
 
-/// A scaffold with subtle, asymmetric blurred gradient blobs in the background.
+/// A scaffold with subtle, asymmetric gradient blobs in the background.
 ///
 /// Use this as the main wrapper for screens instead of plain [Scaffold]
 /// to get a consistent ambient gradient across the app.
@@ -25,36 +24,33 @@ class GradientScaffold extends StatelessWidget {
       backgroundColor: colors.background,
       appBar: appBar,
       body: Stack(
-        clipBehavior: Clip.hardEdge,
+        fit: StackFit.expand,
         children: [
           // Purple blob — top left
           Positioned(
-            top: -60,
-            left: -40,
-            child: _Blob(
-              size: 280,
-              color: AppColors.gradientPurple.withValues(alpha: 0.5),
-            ),
+            top: -80,
+            left: -80,
+            width: 320,
+            height: 320,
+            child: _Blob(color: AppColors.gradientPurple.withValues(alpha: 0.45)),
           ),
           // Amber blob — middle right
           Positioned(
             top: 340,
-            right: -50,
-            child: _Blob(
-              size: 220,
-              color: AppColors.gradientAmber.withValues(alpha: 0.35),
-            ),
+            right: -80,
+            width: 280,
+            height: 280,
+            child: _Blob(color: AppColors.gradientAmber.withValues(alpha: 0.3)),
           ),
           // Rose blob — mid left
           Positioned(
             top: 180,
-            left: -30,
-            child: _Blob(
-              size: 180,
-              color: AppColors.gradientRose.withValues(alpha: 0.25),
-            ),
+            left: -60,
+            width: 240,
+            height: 240,
+            child: _Blob(color: AppColors.gradientRose.withValues(alpha: 0.2)),
           ),
-          Positioned.fill(child: body),
+          body,
         ],
       ),
     );
@@ -62,21 +58,16 @@ class GradientScaffold extends StatelessWidget {
 }
 
 class _Blob extends StatelessWidget {
-  final double size;
   final Color color;
 
-  const _Blob({required this.size, required this.color});
+  const _Blob({required this.color});
 
   @override
   Widget build(BuildContext context) {
-    return ImageFiltered(
-      imageFilter: ImageFilter.blur(sigmaX: 60, sigmaY: 60),
-      child: Container(
-        width: size,
-        height: size,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          color: color,
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        gradient: RadialGradient(
+          colors: [color, color.withValues(alpha: 0)],
         ),
       ),
     );
