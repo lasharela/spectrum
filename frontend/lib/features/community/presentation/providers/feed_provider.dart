@@ -115,13 +115,17 @@ class FeedNotifier extends Notifier<FeedState> {
   }
 
   Future<void> createPost({
+    String? title,
     required String content,
+    String? imageUrl,
     List<String> tags = const [],
     String category = 'General',
   }) async {
     final repo = ref.read(communityRepositoryProvider);
     final post = await repo.createPost(
+      title: title,
       content: content,
+      imageUrl: imageUrl,
       tags: tags,
       category: category,
     );

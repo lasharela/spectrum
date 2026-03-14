@@ -1,52 +1,41 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:forui/forui.dart';
 import 'package:spectrum_app/features/community/presentation/widgets/new_discussion_modal.dart';
+import '../../../../helpers/test_utils.dart';
 
 void main() {
   group('NewDiscussionModal', () {
-    testWidgets('renders category chips and form fields', (tester) async {
+    testWidgets('renders category select and form field', (tester) async {
       await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: NewDiscussionModal(
-              onSubmit: ({
-                required String content,
-                required String category,
-              }) {},
-            ),
+        buildTestApp(
+          NewDiscussionModal(
+            onSubmit: ({String? title, required String content, String? imageUrl, required String category}) {},
           ),
         ),
       );
 
-      // Verify category chips present
-      expect(find.text('General'), findsOneWidget);
-      expect(find.text('Sensory'), findsOneWidget);
-      expect(find.text('Education'), findsOneWidget);
-      expect(find.text('Support'), findsOneWidget);
-
-      // Verify form fields
-      expect(find.byType(TextField), findsAtLeast(1));
+      expect(find.text('Category'), findsOneWidget);
+      expect(find.text('Choose a category'), findsOneWidget);
+      expect(find.text('Discussion'), findsOneWidget);
+      expect(find.byType(FTextField), findsNWidgets(3));
     });
 
-    testWidgets('selecting a category chip highlights it', (tester) async {
+    testWidgets('shows post button disabled until content exists', (
+      tester,
+    ) async {
       await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: NewDiscussionModal(
-              onSubmit: ({
-                required String content,
-                required String category,
-              }) {},
-            ),
+        buildTestApp(
+          NewDiscussionModal(
+            onSubmit: ({String? title, required String content, String? imageUrl, required String category}) {},
           ),
         ),
       );
+      await tester.pumpAndSettle();
 
-      // Tap Education chip
-      await tester.tap(find.text('Education'));
-      await tester.pump();
-
-      // General should no longer be selected (visually)
+      final postButton = tester.widget<FButton>(
+        find.widgetWithText(FButton, 'Post'),
+      );
+      expect(postButton.onPress, isNull);
     });
   });
 }

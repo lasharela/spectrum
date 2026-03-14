@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import '../../../../core/constants/app_colors.dart';
+import 'package:forui/forui.dart';
+import 'package:image_picker/image_picker.dart';
+
 import '../../../../core/constants/app_spacing.dart';
 
 const _categories = [
@@ -15,7 +17,9 @@ const _categories = [
 
 class NewDiscussionModal extends StatefulWidget {
   final void Function({
+    String? title,
     required String content,
+    String? imageUrl,
     required String category,
   }) onSubmit;
 
@@ -29,6 +33,7 @@ class _NewDiscussionModalState extends State<NewDiscussionModal> {
   final _titleController = TextEditingController();
   final _contentController = TextEditingController();
   String _selectedCategory = 'General';
+  String? _pickedImagePath;
 
   @override
   void dispose() {
@@ -38,256 +43,199 @@ class _NewDiscussionModalState extends State<NewDiscussionModal> {
   }
 
   void _submit() {
-    if (_contentController.text.trim().isEmpty) return;
+    final content = _contentController.text.trim();
+    if (content.isEmpty) return;
+
+    final title = _titleController.text.trim();
     widget.onSubmit(
-      content: _contentController.text.trim(),
+      title: title.isEmpty ? null : title,
+      content: content,
+      imageUrl: _pickedImagePath,
       category: _selectedCategory,
     );
   }
 
+  Future<void> _pickImage() async {
+    final picker = ImagePicker();
+    final picked = await picker.pickImage(
+      source: ImageSource.gallery,
+      maxWidth: 1200,
+      maxHeight: 1200,
+      imageQuality: 80,
+    );
+    if (picked != null) {
+      setState(() => _pickedImagePath = picked.path);
+    }
+  }
+
+  void _removeImage() {
+    setState(() => _pickedImagePath = null);
+  }
+
   @override
   Widget build(BuildContext context) {
+    final typography = context.theme.typography;
+    final colors = context.theme.colors;
+    final canSubmit = _contentController.text.trim().isNotEmpty;
+    final bottomInset = MediaQuery.viewInsetsOf(context).bottom;
+
     return Container(
-      height: MediaQuery.of(context).size.height * 0.85,
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.vertical(
-          top: Radius.circular(AppSpacing.xl),
+      decoration: BoxDecoration(
+        color: colors.background,
+        borderRadius: const BorderRadius.vertical(
+          top: Radius.circular(AppSpacing.cardRadiusLarge),
         ),
       ),
-      child: Padding(
-        padding: EdgeInsets.only(
-          bottom: MediaQuery.of(context).viewInsets.bottom,
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Drag handle
-            Center(
-              child: Container(
-                margin: const EdgeInsets.only(top: AppSpacing.md),
-                width: 40,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: AppColors.textSecondary.withValues(alpha: 0.3),
-                  borderRadius: BorderRadius.circular(2),
+      child: SafeArea(
+        top: false,
+        child: Padding(
+          padding: EdgeInsets.fromLTRB(
+            AppSpacing.lg,
+            AppSpacing.md,
+            AppSpacing.lg,
+            AppSpacing.lg + bottomInset,
+          ),
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Center(
+                  child: Container(
+                    width: 40,
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color: colors.border,
+                      borderRadius: BorderRadius.circular(999),
+                    ),
+                  ),
                 ),
-              ),
-            ),
-            // Header row: Cancel | New Discussion | Post
-            Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: AppSpacing.lg,
-                vertical: AppSpacing.sm,
-              ),
-              child: Row(
-                children: [
-                  TextButton(
-                    onPressed: () => Navigator.pop(context),
-                    child: const Text(
-                      'Cancel',
-                      style: TextStyle(color: AppColors.textSecondary),
-                    ),
-                  ),
-                  const Expanded(
-                    child: Text(
-                      'New Discussion',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                  TextButton(
-                    onPressed: _submit,
-                    child: const Text(
-                      'Post',
-                      style: TextStyle(
-                        color: AppColors.primary,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const Divider(height: 1, color: AppColors.divider),
-            Expanded(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.all(AppSpacing.lg),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                const SizedBox(height: AppSpacing.md),
+                Row(
                   children: [
-                    // Category section
-                    const Text(
-                      'Category',
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                      ),
+                    FButton(
+                      variant: FButtonVariant.ghost,
+                      onPress: () => Navigator.of(context).pop(),
+                      child: const Text('Cancel'),
                     ),
-                    const SizedBox(height: AppSpacing.sm),
-                    Wrap(
-                      spacing: AppSpacing.sm,
-                      runSpacing: AppSpacing.sm,
-                      children: _categories.map((cat) {
-                        final isSelected = cat == _selectedCategory;
-                        return GestureDetector(
-                          onTap: () =>
-                              setState(() => _selectedCategory = cat),
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: AppSpacing.md,
-                              vertical: AppSpacing.xs,
-                            ),
-                            decoration: BoxDecoration(
-                              color: isSelected
-                                  ? AppColors.primary.withValues(alpha: 0.1)
-                                  : Colors.transparent,
-                              borderRadius: BorderRadius.circular(20),
-                              border: Border.all(
-                                color: isSelected
-                                    ? AppColors.primary
-                                    : AppColors.divider,
-                              ),
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                if (isSelected) ...[
-                                  const Icon(
-                                    Icons.check,
-                                    size: 14,
-                                    color: AppColors.primary,
-                                  ),
-                                  const SizedBox(width: 4),
-                                ],
-                                Text(
-                                  cat,
-                                  style: TextStyle(
-                                    fontSize: 13,
-                                    color: isSelected
-                                        ? AppColors.primary
-                                        : AppColors.textSecondary,
-                                    fontWeight: isSelected
-                                        ? FontWeight.w600
-                                        : FontWeight.normal,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        );
-                      }).toList(),
-                    ),
-                    const SizedBox(height: AppSpacing.lg),
-                    // Title field
-                    const Text(
-                      'Title',
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    const SizedBox(height: AppSpacing.sm),
-                    TextField(
-                      controller: _titleController,
-                      decoration: InputDecoration(
-                        hintText: 'Give your discussion a title...',
-                        filled: true,
-                        fillColor: AppColors.background,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(AppSpacing.md),
-                          borderSide: BorderSide.none,
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(AppSpacing.md),
-                          borderSide: BorderSide.none,
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(AppSpacing.md),
-                          borderSide: const BorderSide(
-                            color: AppColors.primary,
-                            width: 1.5,
-                          ),
-                        ),
-                        contentPadding: const EdgeInsets.symmetric(
-                          horizontal: AppSpacing.md,
-                          vertical: AppSpacing.md,
+                    Expanded(
+                      child: Text(
+                        'New Discussion',
+                        textAlign: TextAlign.center,
+                        style: typography.lg.copyWith(
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
                     ),
-                    const SizedBox(height: AppSpacing.lg),
-                    // Content field
-                    const Text(
-                      'Content',
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                      ),
+                    FButton(
+                      onPress: canSubmit ? _submit : null,
+                      child: const Text('Post'),
                     ),
-                    const SizedBox(height: AppSpacing.sm),
-                    TextField(
-                      controller: _contentController,
-                      maxLines: 6,
-                      maxLength: 5000,
-                      decoration: InputDecoration(
-                        hintText: 'Share your thoughts with the community...',
-                        filled: true,
-                        fillColor: AppColors.background,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(AppSpacing.md),
-                          borderSide: BorderSide.none,
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(AppSpacing.md),
-                          borderSide: BorderSide.none,
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(AppSpacing.md),
-                          borderSide: const BorderSide(
-                            color: AppColors.primary,
-                            width: 1.5,
-                          ),
-                        ),
-                        contentPadding: const EdgeInsets.all(AppSpacing.md),
-                      ),
-                    ),
-                    const SizedBox(height: AppSpacing.lg),
-                    // Add Image section
-                    Container(
-                      width: double.infinity,
-                      height: 100,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(AppSpacing.md),
-                        border: Border.all(color: AppColors.divider),
-                      ),
-                      child: const Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.add_photo_alternate_outlined,
-                            size: 28,
-                            color: AppColors.textSecondary,
-                          ),
-                          SizedBox(height: AppSpacing.xs),
-                          Text(
-                            'Tap to add image',
-                            style: TextStyle(
-                              fontSize: 13,
-                              color: AppColors.textSecondary,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: AppSpacing.lg),
                   ],
                 ),
-              ),
+                const SizedBox(height: AppSpacing.lg),
+                FTextField(
+                  control: FTextFieldControl.managed(
+                    controller: _titleController,
+                  ),
+                  label: const Text('Title'),
+                  hint: 'Give your discussion a title (optional)',
+                  textCapitalization: TextCapitalization.sentences,
+                ),
+                const SizedBox(height: AppSpacing.lg),
+                FSelect<String>(
+                  items: {for (final category in _categories) category: category},
+                  control: FSelectControl.lifted(
+                    value: _selectedCategory,
+                    onChange: (value) {
+                      if (value != null) {
+                        setState(() => _selectedCategory = value);
+                      }
+                    },
+                  ),
+                  autoHide: true,
+                  label: const Text('Category'),
+                  hint: 'Choose a category',
+                ),
+                const SizedBox(height: AppSpacing.lg),
+                FTextField.multiline(
+                  control: FTextFieldControl.managed(
+                    controller: _contentController,
+                    onChange: (_) => setState(() {}),
+                  ),
+                  label: const Text('Discussion'),
+                  hint: 'Share your thoughts, question, or experience...',
+                  minLines: 4,
+                  maxLines: 8,
+                  textCapitalization: TextCapitalization.sentences,
+                ),
+                const SizedBox(height: AppSpacing.md),
+                // Image section
+                if (_pickedImagePath != null)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: AppSpacing.md),
+                    child: Stack(
+                      children: [
+                        ClipRRect(
+                          borderRadius:
+                              BorderRadius.circular(AppSpacing.cardRadius),
+                          child: AspectRatio(
+                            aspectRatio: 16 / 9,
+                            child: Image.asset(
+                              _pickedImagePath!,
+                              fit: BoxFit.cover,
+                              errorBuilder: (_, __, ___) => Container(
+                                color: colors.muted,
+                                child: Center(
+                                  child: Icon(
+                                    Icons.image_outlined,
+                                    color: colors.mutedForeground,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        Positioned(
+                          top: AppSpacing.sm,
+                          right: AppSpacing.sm,
+                          child: GestureDetector(
+                            onTap: _removeImage,
+                            child: Container(
+                              padding: const EdgeInsets.all(AppSpacing.xxs),
+                              decoration: BoxDecoration(
+                                color: Colors.black.withAlpha(150),
+                                shape: BoxShape.circle,
+                              ),
+                              child: const Icon(
+                                Icons.close,
+                                size: 18,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                FButton(
+                  variant: FButtonVariant.outline,
+                  onPress: _pickImage,
+                  prefix: const Icon(Icons.image_outlined),
+                  child: Text(
+                    _pickedImagePath != null ? 'Change Image' : 'Add Image',
+                  ),
+                ),
+                const SizedBox(height: AppSpacing.md),
+                Text(
+                  'Start with a specific question or a short piece of context so replies can be more useful.',
+                  style: typography.xs.copyWith(
+                    color: colors.mutedForeground,
+                  ),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );

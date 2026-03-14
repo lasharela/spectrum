@@ -23,7 +23,9 @@ class PostAuthor {
 
 class Post {
   final String id;
+  final String? title;
   final String content;
+  final String? imageUrl;
   final List<String> tags;
   final String category;
   final String authorId;
@@ -35,7 +37,9 @@ class Post {
 
   const Post({
     required this.id,
+    this.title,
     required this.content,
+    this.imageUrl,
     required this.tags,
     this.category = 'General',
     required this.authorId,
@@ -49,7 +53,9 @@ class Post {
   factory Post.fromJson(Map<String, dynamic> json) {
     return Post(
       id: json['id'] as String,
+      title: json['title'] as String?,
       content: json['content'] as String,
+      imageUrl: json['imageUrl'] as String?,
       tags: (json['tags'] as List).cast<String>(),
       category: json['category'] as String? ?? 'General',
       authorId: json['authorId'] as String,
@@ -61,11 +67,22 @@ class Post {
     );
   }
 
-  Post copyWith({String? category, int? likesCount, int? commentsCount, bool? liked}) {
+  Post copyWith({
+    String? title,
+    String? content,
+    String? imageUrl,
+    List<String>? tags,
+    String? category,
+    int? likesCount,
+    int? commentsCount,
+    bool? liked,
+  }) {
     return Post(
       id: id,
-      content: content,
-      tags: tags,
+      title: title ?? this.title,
+      content: content ?? this.content,
+      imageUrl: imageUrl ?? this.imageUrl,
+      tags: tags ?? this.tags,
       category: category ?? this.category,
       authorId: authorId,
       author: author,
