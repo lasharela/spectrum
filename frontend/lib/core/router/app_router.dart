@@ -78,6 +78,20 @@ class AppRouter {
             ),
           ),
           GoRoute(
+            path: '/promotions',
+            name: 'promotions',
+            builder: (context, state) => const Scaffold(
+              body: Center(child: Text('Promotions — coming in Phase 7')),
+            ),
+          ),
+          GoRoute(
+            path: '/events',
+            name: 'events',
+            builder: (context, state) => const Scaffold(
+              body: Center(child: Text('Events — coming in Phase 6')),
+            ),
+          ),
+          GoRoute(
             path: '/profile',
             name: 'profile',
             builder: (context, state) => const ProfileScreen(),
