@@ -11,6 +11,7 @@ import '../../features/home/presentation/screens/home_screen.dart';
 import '../../features/community/presentation/screens/feed_screen.dart';
 import '../../features/community/presentation/screens/post_detail_screen.dart';
 import '../../features/profile/presentation/screens/profile_screen.dart';
+import '../../features/profile/presentation/screens/edit_profile_screen.dart';
 import '../../shared/widgets/main_navigation_shell.dart';
 import '../../shared/widgets/screen.dart';
 import '../../features/auth/presentation/providers/auth_provider.dart';
@@ -144,6 +145,13 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: '/profile',
         name: 'profile',
         builder: (context, state) => const ProfileScreen(),
+        routes: [
+          GoRoute(
+            path: 'edit',
+            name: 'editProfile',
+            builder: (context, state) => const EditProfileScreen(),
+          ),
+        ],
       ),
     ],
     errorBuilder: (context, state) => Scaffold(

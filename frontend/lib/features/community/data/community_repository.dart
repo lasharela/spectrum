@@ -20,6 +20,8 @@ class CommunityRepository {
     String? query,
     String? category,
     String? authorId,
+    String? state,
+    String? city,
   }) async {
     final response = await _api.get('/api/posts', queryParameters: {
       if (cursor != null) 'cursor': cursor,
@@ -27,6 +29,8 @@ class CommunityRepository {
       if (query != null && query.isNotEmpty) 'q': query,
       if (category != null) 'category': category,
       if (authorId != null) 'authorId': authorId,
+      if (state != null) 'state': state,
+      if (city != null) 'city': city,
     });
     final data = response.data as Map<String, dynamic>;
     final posts = (data['posts'] as List)

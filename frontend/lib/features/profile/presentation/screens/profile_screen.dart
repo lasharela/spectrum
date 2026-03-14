@@ -42,6 +42,15 @@ class ProfileScreen extends ConsumerWidget {
                   color: colors.mutedForeground,
                 ),
               ),
+              if (user?.state != null || user?.city != null) ...[
+                const SizedBox(height: 4),
+                Text(
+                  [user?.city, user?.state].where((s) => s != null).join(', '),
+                  style: typography.sm.copyWith(
+                    color: colors.mutedForeground,
+                  ),
+                ),
+              ],
               const SizedBox(height: 32),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -54,7 +63,7 @@ class ProfileScreen extends ConsumerWidget {
                           prefix: const Icon(FIcons.user),
                           title: const Text('Edit Profile'),
                           suffix: const Icon(FIcons.chevronRight),
-                          onPress: () {},
+                          onPress: () => context.push('/profile/edit'),
                         ),
                         FTile(
                           prefix: const Icon(FIcons.bell),

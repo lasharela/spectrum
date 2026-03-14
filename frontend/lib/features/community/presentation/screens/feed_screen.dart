@@ -31,6 +31,7 @@ class _FeedScreenState extends ConsumerState<FeedScreen> {
 
   void _openFilters() {
     final feedState = ref.read(feedProvider);
+    final currentUser = ref.read(authProvider).valueOrNull;
     showFSheet<void>(
       context: context,
       side: FLayout.btt,
@@ -39,6 +40,8 @@ class _FeedScreenState extends ConsumerState<FeedScreen> {
         selectedCategory: feedState.categoryFilter,
         selectedState: feedState.stateFilter,
         selectedCity: feedState.cityFilter,
+        defaultState: currentUser?.state,
+        defaultCity: currentUser?.city,
         onApply: ({String? category, String? state, String? city}) {
           ref.read(feedProvider.notifier).setFilters(
                 category: () => category,

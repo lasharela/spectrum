@@ -9,26 +9,34 @@ import 'package:spectrum_app/features/auth/domain/user.dart';
 import '../../../../helpers/test_utils.dart';
 
 class _FakeFeedNotifier extends FeedNotifier {
+  final FeedState _initialState;
+
+  _FakeFeedNotifier([FeedState? initialState])
+      : _initialState = initialState ??
+            FeedState(
+              posts: [
+                Post(
+                  id: '1',
+                  title: 'Best educational apps for kids on the spectrum',
+                  content:
+                      'Here are some apps that have worked great for my child.',
+                  imageUrl: 'https://example.com/community-post.jpg',
+                  tags: ['Apps'],
+                  category: 'Education',
+                  authorId: 'u1',
+                  author: const PostAuthor(
+                      id: 'u1', name: 'Alice', userType: 'parent'),
+                  createdAt: DateTime.now(),
+                  likesCount: 5,
+                  commentsCount: 2,
+                  liked: false,
+                ),
+              ],
+            );
+
   @override
   FeedState build() {
-    return FeedState(
-      posts: [
-        Post(
-          id: '1',
-          title: 'Best educational apps for kids on the spectrum',
-          content: 'Here are some apps that have worked great for my child.',
-          imageUrl: 'https://example.com/community-post.jpg',
-          tags: ['Apps'],
-          category: 'Education',
-          authorId: 'u1',
-          author: const PostAuthor(id: 'u1', name: 'Alice', userType: 'parent'),
-          createdAt: DateTime.now(),
-          likesCount: 5,
-          commentsCount: 2,
-          liked: false,
-        ),
-      ],
-    );
+    return _initialState;
   }
 }
 
@@ -91,6 +99,87 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.byType(FloatingActionButton), findsOneWidget);
+    });
+
+    testWidgets('search input is visible in All Discussions tab', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        buildTestApp(const FeedScreen(), overrides: testOverrides),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.byType(FTextField), findsOneWidget);
+      expect(find.byIcon(Icons.search_rounded), findsOneWidget);
+    });
+
+    testWidgets(
+        'shows active filter indicator (blue dot) when hasActiveFilters is true',
+        (tester) async {
+      final filteredOverrides = [
+        feedProvider.overrideWith(
+          () => _FakeFeedNotifier(
+            FeedState(
+              categoryFilter: 'Education',
+              posts: [
+                Post(
+                  id: '1',
+                  title: 'Test post',
+                  content: 'Content',
+                  tags: ['General'],
+                  category: 'Education',
+                  authorId: 'u1',
+                  author: const PostAuthor(
+                      id: 'u1', name: 'Alice', userType: 'parent'),
+                  createdAt: DateTime.now(),
+                  likesCount: 0,
+                  commentsCount: 0,
+                  liked: false,
+                ),
+              ],
+            ),
+          ),
+        ),
+        authProvider.overrideWith(() => _FakeAuthNotifier()),
+      ];
+
+      await tester.pumpWidget(
+        buildTestApp(const FeedScreen(), overrides: filteredOverrides),
+      );
+      await tester.pumpAndSettle();
+
+      // The blue dot is an 8x8 Container with BoxShape.circle
+      // Find the filter button icon (tune_rounded) and verify the dot exists
+      expect(find.byIcon(Icons.tune_rounded), findsOneWidget);
+
+      // The filter indicator is a small Container(8x8) with circle shape
+      // inside a Stack alongside the filter button
+      final dotFinder = find.byWidgetPredicate((widget) =>
+          widget is Container &&
+          widget.decoration is BoxDecoration &&
+          (widget.decoration as BoxDecoration).shape == BoxShape.circle &&
+          widget.constraints?.maxWidth == 8);
+      expect(dotFinder, findsOneWidget);
+    });
+
+    testWidgets(
+        'does not show active filter indicator when hasActiveFilters is false',
+        (tester) async {
+      await tester.pumpWidget(
+        buildTestApp(const FeedScreen(), overrides: testOverrides),
+      );
+      await tester.pumpAndSettle();
+
+      // The filter button should be present
+      expect(find.byIcon(Icons.tune_rounded), findsOneWidget);
+
+      // But the blue dot indicator should NOT be present
+      final dotFinder = find.byWidgetPredicate((widget) =>
+          widget is Container &&
+          widget.decoration is BoxDecoration &&
+          (widget.decoration as BoxDecoration).shape == BoxShape.circle &&
+          widget.constraints?.maxWidth == 8);
+      expect(dotFinder, findsNothing);
     });
   });
 }

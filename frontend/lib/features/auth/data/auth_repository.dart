@@ -69,6 +69,32 @@ class AuthRepository {
     }
   }
 
+  Future<User> updateProfile({
+    required String firstName,
+    required String lastName,
+    String? middleName,
+    String? state,
+    String? city,
+  }) async {
+    final response = await _api.put('/api/me', data: {
+      'firstName': firstName,
+      'lastName': lastName,
+      'middleName': middleName,
+      'state': state,
+      'city': city,
+    });
+    final data = response.data as Map<String, dynamic>;
+    return User.fromJson(data['user'] as Map<String, dynamic>);
+  }
+
+  Future<List<String>> getCities(String state) async {
+    final response = await _api.get('/api/cities', queryParameters: {
+      'state': state,
+    });
+    final data = response.data as Map<String, dynamic>;
+    return (data['cities'] as List).cast<String>();
+  }
+
   Future<void> forgotPassword({required String email}) async {
     await _api.post('/api/auth/forget-password', data: {
       'email': email,

@@ -91,6 +91,8 @@ class FeedNotifier extends Notifier<FeedState> {
         query: state.searchQuery.isNotEmpty ? state.searchQuery : null,
         category: state.categoryFilter,
         authorId: state.showMyDiscussions ? _currentUserId : null,
+        state: state.stateFilter,
+        city: state.cityFilter,
       );
       state = state.copyWith(
         posts: result.items,
@@ -159,6 +161,8 @@ class FeedNotifier extends Notifier<FeedState> {
         query: state.searchQuery.isNotEmpty ? state.searchQuery : null,
         category: state.categoryFilter,
         authorId: state.showMyDiscussions ? _currentUserId : null,
+        state: state.stateFilter,
+        city: state.cityFilter,
       );
       state = state.copyWith(
         posts: [...state.posts, ...result.items],
