@@ -10,7 +10,7 @@ Spectrum is a mobile application designed as a social network for people with au
 
 - **Frontend**: Flutter 3.32.5 / Dart 3.8.1
 - **Backend**: Hono (TypeScript) on Cloudflare Workers
-- **Database**: Neon Postgres with Prisma (edge-compatible)
+- **Database**: Cloudflare D1 (SQLite-based) with Prisma adapter
 - **Auth**: Better Auth
 - **State Management**: Riverpod
 - **HTTP Client**: Dio
@@ -154,7 +154,7 @@ The backend follows a layered architecture:
 - **Routes**: HTTP endpoint definitions (Hono routes)
 - **Handlers**: Request/response handling logic
 - **Services**: Business logic
-- **Prisma Models**: Database schema and queries via Prisma (edge)
+- **Prisma Models**: Database schema and queries via Prisma adapter for D1
 - **Auth**: Better Auth handles authentication (sessions, tokens)
 
 ### Frontend (Flutter + Riverpod)
