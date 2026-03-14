@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/constants/app_spacing.dart';
 import '../providers/feed_provider.dart';
 import '../widgets/post_card.dart';
 import '../widgets/new_discussion_modal.dart';
@@ -29,23 +30,22 @@ class _FeedScreenState extends ConsumerState<FeedScreen> {
     final currentUser = ref.watch(authProvider).valueOrNull;
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Community'),
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(48),
-          child: _TabBar(
-            showMyDiscussions: feedState.showMyDiscussions,
-            onTabChanged: (my) {
-              ref.read(feedProvider.notifier).setTab(myDiscussions: my);
-            },
-          ),
-        ),
+      appBar: _CommunityAppBar(
+        showMyDiscussions: feedState.showMyDiscussions,
+        onTabChanged: (my) {
+          ref.read(feedProvider.notifier).setTab(myDiscussions: my);
+        },
       ),
       body: Column(
         children: [
           // Search bar
           Padding(
-            padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
+            padding: const EdgeInsets.fromLTRB(
+              AppSpacing.lg,
+              AppSpacing.md,
+              AppSpacing.lg,
+              AppSpacing.sm,
+            ),
             child: TextField(
               controller: _searchController,
               decoration: InputDecoration(
@@ -61,17 +61,17 @@ class _FeedScreenState extends ConsumerState<FeedScreen> {
                       )
                     : null,
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(24),
-                  borderSide: const BorderSide(color: AppColors.border),
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: const BorderSide(color: AppColors.divider),
                 ),
                 enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(24),
-                  borderSide: const BorderSide(color: AppColors.border),
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: const BorderSide(color: AppColors.divider),
                 ),
                 filled: true,
-                fillColor: AppColors.backgroundGray,
+                fillColor: AppColors.background,
                 contentPadding: const EdgeInsets.symmetric(
-                  horizontal: 16,
+                  horizontal: AppSpacing.lg,
                   vertical: 10,
                 ),
                 isDense: true,
@@ -94,21 +94,26 @@ class _FeedScreenState extends ConsumerState<FeedScreen> {
                               Center(
                                 child: Column(
                                   children: [
-                                    Icon(Icons.forum_outlined,
-                                        size: 48, color: AppColors.textGray),
-                                    SizedBox(height: 12),
+                                    Icon(
+                                      Icons.forum_outlined,
+                                      size: 48,
+                                      color: AppColors.textSecondary,
+                                    ),
+                                    SizedBox(height: AppSpacing.md),
                                     Text(
                                       'No discussions yet',
                                       style: TextStyle(
-                                          color: AppColors.textGray,
-                                          fontSize: 16),
+                                        color: AppColors.textSecondary,
+                                        fontSize: 16,
+                                      ),
                                     ),
                                     SizedBox(height: 4),
                                     Text(
                                       'Start a new discussion!',
                                       style: TextStyle(
-                                          color: AppColors.textGray,
-                                          fontSize: 14),
+                                        color: AppColors.textSecondary,
+                                        fontSize: 14,
+                                      ),
                                     ),
                                   ],
                                 ),
@@ -130,7 +135,7 @@ class _FeedScreenState extends ConsumerState<FeedScreen> {
                                 if (index == feedState.posts.length) {
                                   return const Center(
                                     child: Padding(
-                                      padding: EdgeInsets.all(16),
+                                      padding: EdgeInsets.all(AppSpacing.lg),
                                       child: CircularProgressIndicator(),
                                     ),
                                   );
@@ -158,7 +163,9 @@ class _FeedScreenState extends ConsumerState<FeedScreen> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => _showNewDiscussion(context, ref),
-        backgroundColor: AppColors.cyan,
+        backgroundColor: AppColors.primary,
+        shape: const CircleBorder(),
+        elevation: 6,
         child: const Icon(Icons.add, color: Colors.white),
       ),
     );
@@ -191,9 +198,7 @@ class _FeedScreenState extends ConsumerState<FeedScreen> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-      ),
+      backgroundColor: Colors.transparent,
       builder: (ctx) => NewDiscussionModal(
         onSubmit: ({
           required String content,
@@ -262,8 +267,8 @@ class _Tab extends StatelessWidget {
         decoration: BoxDecoration(
           border: Border(
             bottom: BorderSide(
-              color: isSelected ? AppColors.cyan : Colors.transparent,
-              width: 2,
+              color: isSelected ? AppColors.primary : Colors.transparent,
+              width: 3,
             ),
           ),
         ),
@@ -271,10 +276,68 @@ class _Tab extends StatelessWidget {
           label,
           textAlign: TextAlign.center,
           style: TextStyle(
-            color: isSelected ? AppColors.cyan : AppColors.textGray,
+            color: isSelected ? AppColors.primary : AppColors.textSecondary,
             fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
             fontSize: 14,
           ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Custom app bar that combines SpectrumAppBar styling with tab bar support.
+class _CommunityAppBar extends StatelessWidget implements PreferredSizeWidget {
+  final bool showMyDiscussions;
+  final ValueChanged<bool> onTabChanged;
+
+  const _CommunityAppBar({
+    required this.showMyDiscussions,
+    required this.onTabChanged,
+  });
+
+  @override
+  Size get preferredSize =>
+      const Size.fromHeight(kToolbarHeight + 48);
+
+  @override
+  Widget build(BuildContext context) {
+    return AppBar(
+      backgroundColor: AppColors.background,
+      elevation: 0,
+      scrolledUnderElevation: 0,
+      centerTitle: true,
+      leading: Padding(
+        padding: const EdgeInsets.only(left: AppSpacing.lg),
+        child: IconButton(
+          icon: const Icon(Icons.notifications_outlined, size: 24),
+          color: AppColors.textPrimary,
+          onPressed: () {},
+        ),
+      ),
+      title: const Text(
+        'Community',
+        style: TextStyle(
+          fontSize: 20,
+          fontWeight: FontWeight.bold,
+          color: AppColors.textPrimary,
+        ),
+      ),
+      actions: [
+        Padding(
+          padding: const EdgeInsets.only(right: AppSpacing.lg),
+          child: IconButton(
+            icon: const Icon(Icons.settings_outlined, size: 24),
+            color: AppColors.textPrimary,
+            onPressed: () {},
+          ),
+        ),
+      ],
+      bottom: PreferredSize(
+        preferredSize: const Size.fromHeight(48),
+        child: _TabBar(
+          showMyDiscussions: showMyDiscussions,
+          onTabChanged: onTabChanged,
         ),
       ),
     );
