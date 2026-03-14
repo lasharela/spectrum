@@ -5,77 +5,99 @@ import '../../../../core/constants/app_colors.dart';
 class QuickActionsSection extends StatelessWidget {
   const QuickActionsSection({super.key});
 
-  static const _actions = [
-    _QuickAction(Icons.people, 'Community', '/community', AppColors.cyan),
-    _QuickAction(Icons.storefront, 'Catalogue', '/catalog', AppColors.coral),
-    _QuickAction(Icons.local_offer, 'Promotions', '/promotions', AppColors.yellow),
-    _QuickAction(Icons.event, 'Events', '/events', AppColors.navy),
-  ];
-
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
+        const Text(
           'Quick Actions',
-          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: AppColors.textDark,
-              ),
+          style: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+            color: AppColors.textPrimary,
+          ),
         ),
         const SizedBox(height: 16),
-        GridView.count(
-          crossAxisCount: 4,
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          mainAxisSpacing: 12,
-          crossAxisSpacing: 12,
-          children: _actions
-              .map((action) => _buildActionTile(context, action))
-              .toList(),
+        Row(
+          children: [
+            Expanded(
+              child: _buildActionCard(
+                context,
+                icon: Icons.support_agent,
+                label: 'Support',
+                color: AppColors.primary,
+                route: '/community',
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: _buildActionCard(
+                context,
+                icon: Icons.lightbulb_outline,
+                label: 'Suggest',
+                color: AppColors.secondary,
+                route: '/catalog',
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: _buildActionCard(
+                context,
+                icon: Icons.language,
+                label: 'Website',
+                color: AppColors.tertiary,
+                route: '/promotions',
+              ),
+            ),
+          ],
         ),
       ],
     );
   }
 
-  Widget _buildActionTile(BuildContext context, _QuickAction action) {
+  Widget _buildActionCard(
+    BuildContext context, {
+    required IconData icon,
+    required String label,
+    required Color color,
+    required String route,
+  }) {
     return GestureDetector(
-      onTap: () => context.go(action.route),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Container(
-            width: 48,
-            height: 48,
-            decoration: BoxDecoration(
-              color: action.color.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(12),
+      onTap: () => context.go(route),
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: AppColors.cardBackground,
+          borderRadius: BorderRadius.circular(16),
+          border: AppColors.cardBorderStyle,
+          boxShadow: [AppColors.cardShadow],
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                color: color.withValues(alpha: 0.1),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(icon, color: color, size: 20),
             ),
-            child: Icon(action.icon, color: action.color, size: 24),
-          ),
-          const SizedBox(height: 6),
-          Text(
-            action.label,
-            style: TextStyle(
-              fontSize: 11,
-              color: AppColors.textDark,
-              fontWeight: FontWeight.w500,
+            const SizedBox(height: 8),
+            Text(
+              label,
+              style: const TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.w500,
+                color: AppColors.textPrimary,
+              ),
+              textAlign: TextAlign.center,
             ),
-            textAlign: TextAlign.center,
-            overflow: TextOverflow.ellipsis,
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
-}
-
-class _QuickAction {
-  final IconData icon;
-  final String label;
-  final String route;
-  final Color color;
-
-  const _QuickAction(this.icon, this.label, this.route, this.color);
 }
