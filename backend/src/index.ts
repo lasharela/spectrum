@@ -25,32 +25,7 @@ app.get("/api/health", (c) => {
 
 // Per-request setup: create Prisma + Auth instances
 // Scoped to /api/* routes that need DB access (excludes /api/health above)
-app.use("/api/auth/*", async (c, next) => {
-  const prisma = createPrismaClient(c.env.DB);
-  const auth = createAuth(prisma, c.env.BETTER_AUTH_SECRET);
-  c.set("prisma", prisma);
-  c.set("auth", auth);
-  await next();
-});
-
-app.use("/api/me", async (c, next) => {
-  const prisma = createPrismaClient(c.env.DB);
-  const auth = createAuth(prisma, c.env.BETTER_AUTH_SECRET);
-  c.set("prisma", prisma);
-  c.set("auth", auth);
-  await next();
-});
-
-app.use("/api/posts/*", async (c, next) => {
-  const prisma = createPrismaClient(c.env.DB);
-  const auth = createAuth(prisma, c.env.BETTER_AUTH_SECRET);
-  c.set("prisma", prisma);
-  c.set("auth", auth);
-  await next();
-});
-
-// Also need middleware for /api/posts without trailing path
-app.use("/api/posts", async (c, next) => {
+app.use("/api/*", async (c, next) => {
   const prisma = createPrismaClient(c.env.DB);
   const auth = createAuth(prisma, c.env.BETTER_AUTH_SECRET);
   c.set("prisma", prisma);
