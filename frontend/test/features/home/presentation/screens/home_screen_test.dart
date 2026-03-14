@@ -35,7 +35,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.textContaining('Welcome back'), findsOneWidget);
-      expect(find.text('Quick Actions'), findsOneWidget);
+      expect(find.text('Hottest Promotions'), findsOneWidget);
 
       FlutterError.onError = originalOnError;
     });

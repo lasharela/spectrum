@@ -25,7 +25,7 @@ void main() {
       await tester.pumpWidget(buildTestApp(const SignupScreen()));
       await tester.pumpAndSettle();
 
-      expect(find.text('Full Name'), findsOneWidget);
+      expect(find.text('First Name'), findsOneWidget);
       expect(find.text('Email'), findsOneWidget);
       expect(find.text('Password'), findsOneWidget);
       expect(find.text('Confirm Password'), findsOneWidget);
