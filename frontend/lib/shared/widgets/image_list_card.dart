@@ -3,8 +3,8 @@ import 'package:forui/forui.dart';
 
 /// A card with an image on the left and text content on the right.
 ///
-/// The image fills the card height and clips to match the card's
-/// left-side border radius. Used for places, events, and similar list items.
+/// Uses a fixed height of 90px. The image fills the card height and
+/// clips to match the card's left-side border radius.
 class ImageListCard extends StatelessWidget {
   final String? imageUrl;
   final String title;
@@ -30,71 +30,69 @@ class ImageListCard extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
+        height: 90,
         decoration: BoxDecoration(
           color: colors.card,
           borderRadius: borderRadius,
         ),
         clipBehavior: Clip.antiAlias,
-        child: IntrinsicHeight(
-          child: Row(
-            children: [
-              // Left: image filling card height
-              SizedBox(
-                width: 100,
-                child: imageUrl != null
-                    ? Image.network(
-                        imageUrl!,
-                        fit: BoxFit.cover,
-                        height: double.infinity,
-                        errorBuilder: (_, __, ___) => _buildFallback(colors),
-                      )
-                    : _buildFallback(colors),
-              ),
-              // Right: text content
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.all(12),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        title,
-                        style: typography.md.copyWith(
-                          fontWeight: FontWeight.w600,
-                          color: colors.foreground,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
+        child: Row(
+          children: [
+            SizedBox(
+              width: 100,
+              height: 90,
+              child: imageUrl != null
+                  ? Image.network(
+                      imageUrl!,
+                      fit: BoxFit.cover,
+                      width: 100,
+                      height: 90,
+                      errorBuilder: (_, __, ___) => _buildFallback(colors),
+                    )
+                  : _buildFallback(colors),
+            ),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(12),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      title,
+                      style: typography.md.copyWith(
+                        fontWeight: FontWeight.w600,
+                        color: colors.foreground,
                       ),
-                      ...details.map((detail) => Padding(
-                            padding: const EdgeInsets.only(top: 3),
-                            child: Row(
-                              children: [
-                                Icon(detail.icon, size: 13, color: colors.mutedForeground),
-                                const SizedBox(width: 3),
-                                Expanded(
-                                  child: Text(
-                                    detail.text,
-                                    style: typography.sm.copyWith(color: colors.mutedForeground),
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    ...details.map((detail) => Padding(
+                          padding: const EdgeInsets.only(top: 3),
+                          child: Row(
+                            children: [
+                              Icon(detail.icon, size: 13, color: colors.mutedForeground),
+                              const SizedBox(width: 3),
+                              Expanded(
+                                child: Text(
+                                  detail.text,
+                                  style: typography.sm.copyWith(color: colors.mutedForeground),
+                                  overflow: TextOverflow.ellipsis,
                                 ),
-                              ],
-                            ),
-                          )),
-                    ],
-                  ),
+                              ),
+                            ],
+                          ),
+                        )),
+                  ],
                 ),
               ),
-              // Optional trailing widget
-              if (trailing != null)
-                Padding(
-                  padding: const EdgeInsets.only(right: 12),
-                  child: trailing!,
-                ),
-            ],
-          ),
+            ),
+            if (trailing != null)
+              Padding(
+                padding: const EdgeInsets.only(right: 12),
+                child: trailing!,
+              ),
+          ],
         ),
       ),
     );
