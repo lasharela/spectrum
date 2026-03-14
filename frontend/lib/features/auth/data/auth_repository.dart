@@ -59,4 +59,20 @@ class AuthRepository {
       return null;
     }
   }
+
+  Future<void> forgotPassword({required String email}) async {
+    await _api.post('/api/auth/forget-password', data: {
+      'email': email,
+    });
+  }
+
+  Future<void> resetPassword({
+    required String token,
+    required String newPassword,
+  }) async {
+    await _api.post('/api/auth/reset-password', data: {
+      'token': token,
+      'newPassword': newPassword,
+    });
+  }
 }
