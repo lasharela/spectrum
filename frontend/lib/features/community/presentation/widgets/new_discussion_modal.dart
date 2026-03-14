@@ -3,21 +3,11 @@ import 'package:forui/forui.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../../../core/constants/app_spacing.dart';
-
-const _categories = [
-  'General',
-  'Sensory',
-  'Education',
-  'Support',
-  'Resources',
-  'Daily Life',
-  'News',
-  'Social',
-];
+import '../../../../core/constants/categories.dart';
 
 class NewDiscussionModal extends StatefulWidget {
   final void Function({
-    String? title,
+    required String title,
     required String content,
     String? imageUrl,
     required String category,
@@ -43,12 +33,12 @@ class _NewDiscussionModalState extends State<NewDiscussionModal> {
   }
 
   void _submit() {
-    final content = _contentController.text.trim();
-    if (content.isEmpty) return;
-
     final title = _titleController.text.trim();
+    final content = _contentController.text.trim();
+    if (title.isEmpty || content.isEmpty) return;
+
     widget.onSubmit(
-      title: title.isEmpty ? null : title,
+      title: title,
       content: content,
       imageUrl: _pickedImagePath,
       category: _selectedCategory,
@@ -76,7 +66,8 @@ class _NewDiscussionModalState extends State<NewDiscussionModal> {
   Widget build(BuildContext context) {
     final typography = context.theme.typography;
     final colors = context.theme.colors;
-    final canSubmit = _contentController.text.trim().isNotEmpty;
+    final canSubmit = _titleController.text.trim().isNotEmpty &&
+        _contentController.text.trim().isNotEmpty;
     final bottomInset = MediaQuery.viewInsetsOf(context).bottom;
 
     return Container(
@@ -137,14 +128,15 @@ class _NewDiscussionModalState extends State<NewDiscussionModal> {
                 FTextField(
                   control: FTextFieldControl.managed(
                     controller: _titleController,
+                    onChange: (_) => setState(() {}),
                   ),
                   label: const Text('Title'),
-                  hint: 'Give your discussion a title (optional)',
+                  hint: 'Give your discussion a title',
                   textCapitalization: TextCapitalization.sentences,
                 ),
                 const SizedBox(height: AppSpacing.lg),
                 FSelect<String>(
-                  items: {for (final category in _categories) category: category},
+                  items: {for (final category in postCategories) category: category},
                   control: FSelectControl.lifted(
                     value: _selectedCategory,
                     onChange: (value) {

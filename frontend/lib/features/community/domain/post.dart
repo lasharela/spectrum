@@ -23,7 +23,7 @@ class PostAuthor {
 
 class Post {
   final String id;
-  final String? title;
+  final String title;
   final String content;
   final String? imageUrl;
   final List<String> tags;
@@ -37,7 +37,7 @@ class Post {
 
   const Post({
     required this.id,
-    this.title,
+    required this.title,
     required this.content,
     this.imageUrl,
     required this.tags,
@@ -53,7 +53,7 @@ class Post {
   factory Post.fromJson(Map<String, dynamic> json) {
     return Post(
       id: json['id'] as String,
-      title: json['title'] as String?,
+      title: json['title'] as String,
       content: json['content'] as String,
       imageUrl: json['imageUrl'] as String?,
       tags: (json['tags'] as List).cast<String>(),

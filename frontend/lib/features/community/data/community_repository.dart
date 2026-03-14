@@ -39,14 +39,14 @@ class CommunityRepository {
   }
 
   Future<Post> createPost({
-    String? title,
+    required String title,
     required String content,
     String? imageUrl,
     List<String> tags = const [],
     String category = 'General',
   }) async {
     final response = await _api.post('/api/posts', data: {
-      if (title != null) 'title': title,
+      'title': title,
       'content': content,
       if (imageUrl != null) 'imageUrl': imageUrl,
       'tags': tags,

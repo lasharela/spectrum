@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:forui/forui.dart';
-import 'package:go_router/go_router.dart';
 import '../../../../core/constants/app_spacing.dart';
 import '../../../../shared/widgets/screen.dart';
 import '../providers/dashboard_provider.dart';
@@ -35,6 +34,9 @@ class HomeScreen extends ConsumerWidget {
                 ),
                 const SizedBox(height: 16),
                 FButton(
+                  variant: FButtonVariant.destructive,
+                  size: FButtonSizeVariant.sm,
+                  mainAxisSize: MainAxisSize.min,
                   onPress: () => ref.read(dashboardProvider.notifier).refresh(),
                   child: const Text('Retry'),
                 ),
@@ -47,49 +49,31 @@ class HomeScreen extends ConsumerWidget {
           child: CustomScrollView(
             slivers: [
               SliverToBoxAdapter(
-                child: SafeArea(
-                  bottom: false,
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(
-                      AppSpacing.screenPadding,
-                      12,
-                      AppSpacing.screenPadding,
-                      24,
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            IconButton(
-                              icon: const Icon(Icons.notifications_outlined, size: 24),
-                              color: colors.foreground,
-                              onPressed: () {},
-                            ),
-                            GestureDetector(
-                              onTap: () => context.go('/profile'),
-                              child: FAvatar.raw(size: 34),
-                            ),
-                          ],
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(
+                    AppSpacing.screenPadding,
+                    12,
+                    AppSpacing.screenPadding,
+                    24,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Welcome back, ${dashboard.user.firstName}!',
+                        style: typography.xl.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: colors.foreground,
                         ),
-                        const SizedBox(height: 16),
-                        Text(
-                          'Welcome back, ${dashboard.user.firstName}!',
-                          style: typography.xl.copyWith(
-                            fontWeight: FontWeight.bold,
-                            color: colors.foreground,
-                          ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        "Here's what's happening today",
+                        style: typography.sm.copyWith(
+                          color: colors.mutedForeground,
                         ),
-                        const SizedBox(height: 4),
-                        Text(
-                          "Here's what's happening today",
-                          style: typography.sm.copyWith(
-                            color: colors.mutedForeground,
-                          ),
-                        ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ),
               ),

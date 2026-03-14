@@ -6,7 +6,9 @@ void main() {
     test('fromJson parses category field', () {
       final json = {
         'id': '1',
+        'title': 'Hello Title',
         'content': 'Hello',
+        'imageUrl': 'https://example.com/post.jpg',
         'tags': <String>[],
         'category': 'Education',
         'authorId': 'u1',
@@ -23,11 +25,14 @@ void main() {
       };
       final post = Post.fromJson(json);
       expect(post.category, 'Education');
+      expect(post.title, 'Hello Title');
+      expect(post.imageUrl, 'https://example.com/post.jpg');
     });
 
     test('fromJson defaults category to General when absent', () {
       final json = {
         'id': '1',
+        'title': 'Test Title',
         'content': 'Hello',
         'tags': <String>[],
         'authorId': 'u1',
@@ -49,6 +54,7 @@ void main() {
     test('copyWith preserves and updates category', () {
       final post = Post(
         id: '1',
+        title: 'Test Title',
         content: 'Hello',
         tags: [],
         category: 'General',

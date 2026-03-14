@@ -1,3 +1,6 @@
+import 'dart:async';
+import 'dart:developer' as developer;
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../data/community_repository.dart';
 import '../../domain/post.dart';
@@ -15,6 +18,9 @@ class FeedState {
   final bool isLoadingMore;
   final String searchQuery;
   final bool showMyDiscussions;
+  final String? categoryFilter;
+  final String? stateFilter;
+  final String? cityFilter;
 
   const FeedState({
     this.posts = const [],
@@ -23,7 +29,13 @@ class FeedState {
     this.isLoadingMore = false,
     this.searchQuery = '',
     this.showMyDiscussions = false,
+    this.categoryFilter,
+    this.stateFilter,
+    this.cityFilter,
   });
+
+  bool get hasActiveFilters =>
+      categoryFilter != null || stateFilter != null || cityFilter != null;
 
   FeedState copyWith({
     List<Post>? posts,
@@ -32,6 +44,9 @@ class FeedState {
     bool? isLoadingMore,
     String? searchQuery,
     bool? showMyDiscussions,
+    String? Function()? categoryFilter,
+    String? Function()? stateFilter,
+    String? Function()? cityFilter,
   }) {
     return FeedState(
       posts: posts ?? this.posts,
@@ -40,6 +55,10 @@ class FeedState {
       isLoadingMore: isLoadingMore ?? this.isLoadingMore,
       searchQuery: searchQuery ?? this.searchQuery,
       showMyDiscussions: showMyDiscussions ?? this.showMyDiscussions,
+      categoryFilter:
+          categoryFilter != null ? categoryFilter() : this.categoryFilter,
+      stateFilter: stateFilter != null ? stateFilter() : this.stateFilter,
+      cityFilter: cityFilter != null ? cityFilter() : this.cityFilter,
     );
   }
 }
@@ -48,8 +67,11 @@ final feedProvider =
     NotifierProvider<FeedNotifier, FeedState>(FeedNotifier.new);
 
 class FeedNotifier extends Notifier<FeedState> {
+  Timer? _debounce;
+
   @override
   FeedState build() {
+    ref.onDispose(() => _debounce?.cancel());
     Future.microtask(_loadInitial);
     return const FeedState(isLoading: true);
   }
@@ -67,6 +89,7 @@ class FeedNotifier extends Notifier<FeedState> {
     try {
       final result = await repo.getPosts(
         query: state.searchQuery.isNotEmpty ? state.searchQuery : null,
+        category: state.categoryFilter,
         authorId: state.showMyDiscussions ? _currentUserId : null,
       );
       state = state.copyWith(
@@ -74,7 +97,8 @@ class FeedNotifier extends Notifier<FeedState> {
         nextCursor: () => result.nextCursor,
         isLoading: false,
       );
-    } catch (_) {
+    } catch (e) {
+      developer.log('FeedProvider: failed to load posts: $e');
       state = state.copyWith(isLoading: false);
     }
   }
@@ -82,6 +106,13 @@ class FeedNotifier extends Notifier<FeedState> {
   Future<void> refresh() async {
     state = state.copyWith(isLoading: true);
     await _loadInitial();
+  }
+
+  void searchDebounced(String query) {
+    _debounce?.cancel();
+    _debounce = Timer(const Duration(milliseconds: 300), () {
+      search(query);
+    });
   }
 
   Future<void> search(String query) async {
@@ -94,6 +125,30 @@ class FeedNotifier extends Notifier<FeedState> {
     await _loadInitial();
   }
 
+  Future<void> setFilters({
+    String? Function()? category,
+    String? Function()? usState,
+    String? Function()? city,
+  }) async {
+    state = state.copyWith(
+      categoryFilter: category,
+      stateFilter: usState,
+      cityFilter: city,
+      isLoading: true,
+    );
+    await _loadInitial();
+  }
+
+  Future<void> clearFilters() async {
+    state = state.copyWith(
+      categoryFilter: () => null,
+      stateFilter: () => null,
+      cityFilter: () => null,
+      isLoading: true,
+    );
+    await _loadInitial();
+  }
+
   Future<void> loadMore() async {
     if (state.isLoadingMore || state.nextCursor == null) return;
     state = state.copyWith(isLoadingMore: true);
@@ -102,6 +157,7 @@ class FeedNotifier extends Notifier<FeedState> {
       final result = await repo.getPosts(
         cursor: state.nextCursor,
         query: state.searchQuery.isNotEmpty ? state.searchQuery : null,
+        category: state.categoryFilter,
         authorId: state.showMyDiscussions ? _currentUserId : null,
       );
       state = state.copyWith(
@@ -109,13 +165,14 @@ class FeedNotifier extends Notifier<FeedState> {
         nextCursor: () => result.nextCursor,
         isLoadingMore: false,
       );
-    } catch (_) {
+    } catch (e) {
+      developer.log('FeedProvider: failed to load more posts: $e');
       state = state.copyWith(isLoadingMore: false);
     }
   }
 
   Future<void> createPost({
-    String? title,
+    required String title,
     required String content,
     String? imageUrl,
     List<String> tags = const [],

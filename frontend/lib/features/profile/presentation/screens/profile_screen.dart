@@ -19,19 +19,11 @@ class ProfileScreen extends ConsumerWidget {
         child: SingleChildScrollView(
           child: Column(
             children: [
-              // Back button row
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 4),
-                child: Align(
-                  alignment: Alignment.centerLeft,
-                  child: IconButton(
-                    onPressed: () => context.go('/home'),
-                    icon: Icon(
-                      Icons.arrow_back_rounded,
-                      color: colors.foreground,
-                    ),
-                  ),
-                ),
+              FHeader.nested(
+                title: const Text('Account'),
+                prefixes: [
+                  FHeaderAction.back(onPress: () => context.go('/home')),
+                ],
               ),
               const SizedBox(height: 24),
               FAvatar.raw(size: 96),
@@ -100,7 +92,7 @@ class ProfileScreen extends ConsumerWidget {
                     SizedBox(
                       width: double.infinity,
                       child: FButton(
-                        variant: FButtonVariant.secondary,
+                        variant: FButtonVariant.destructive,
                         prefix: const Icon(FIcons.logOut),
                         onPress: () async {
                           await ref.read(authProvider.notifier).signOut();

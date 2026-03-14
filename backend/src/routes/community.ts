@@ -2,10 +2,10 @@ import { Hono } from "hono";
 import { zValidator } from "@hono/zod-validator";
 import { z } from "zod";
 import type { AppBindings, AppVariables } from "../types/context.js";
-import { sessionMiddleware } from "../middleware/session.js";
+import { sessionMiddleware, optionalSessionMiddleware } from "../middleware/session.js";
 
 const createPostSchema = z.object({
-  title: z.string().max(200).optional(),
+  title: z.string().min(1).max(200),
   content: z.string().min(1).max(5000),
   imageUrl: z.string().url().optional(),
   tags: z
@@ -38,11 +38,8 @@ const paginationSchema = z.object({
 export function communityRoutes() {
   const app = new Hono<{ Bindings: AppBindings; Variables: AppVariables }>();
 
-  // Apply auth middleware to all community routes
-  app.use("*", sessionMiddleware);
-
-  // GET / - list posts (paginated)
-  app.get("/", async (c) => {
+  // GET / - list posts (paginated, public read)
+  app.get("/", optionalSessionMiddleware, async (c) => {
     const prisma = c.get("prisma");
     const { cursor, limit, q, category, authorId } = paginationSchema.parse({
       cursor: c.req.query("cursor"),
@@ -52,7 +49,7 @@ export function communityRoutes() {
       authorId: c.req.query("authorId"),
     });
 
-    const user = c.get("user");
+    const user = c.get("user") as any;
 
     const where: Record<string, unknown> = {};
     if (q) {
@@ -72,7 +69,7 @@ export function communityRoutes() {
       orderBy: { createdAt: "desc" },
       include: {
         author: { select: { id: true, name: true, image: true, userType: true } },
-        reactions: { where: { authorId: user.id }, select: { id: true } },
+        ...(user ? { reactions: { where: { authorId: user.id }, select: { id: true } } } : {}),
       },
     });
 
@@ -93,14 +90,14 @@ export function communityRoutes() {
         createdAt: p.createdAt.toISOString(),
         likesCount: p.likesCount,
         commentsCount: p.commentsCount,
-        liked: p.reactions.length > 0,
+        liked: ((p as any).reactions?.length ?? 0) > 0,
       })),
       nextCursor,
     });
   });
 
   // POST / - create a post
-  app.post("/", zValidator("json", createPostSchema), async (c) => {
+  app.post("/", sessionMiddleware, zValidator("json", createPostSchema), async (c) => {
     const { title, content, imageUrl, tags, category } = c.req.valid("json");
     const user = c.get("user");
     const prisma = c.get("prisma");
@@ -133,8 +130,8 @@ export function communityRoutes() {
     );
   });
 
-  // GET /:id - get single post
-  app.get("/:id", async (c) => {
+  // GET /:id - get single post (public read)
+  app.get("/:id", optionalSessionMiddleware, async (c) => {
     const id = c.req.param("id");
     const user = c.get("user");
     const prisma = c.get("prisma");
@@ -143,7 +140,7 @@ export function communityRoutes() {
       where: { id },
       include: {
         author: { select: { id: true, name: true, image: true, userType: true } },
-        reactions: { where: { authorId: user.id }, select: { id: true } },
+        ...(user ? { reactions: { where: { authorId: user.id }, select: { id: true } } } : {}),
       },
     });
 
@@ -164,13 +161,13 @@ export function communityRoutes() {
         createdAt: post.createdAt.toISOString(),
         likesCount: post.likesCount,
         commentsCount: post.commentsCount,
-        liked: post.reactions.length > 0,
+        liked: ((post as any).reactions?.length ?? 0) > 0,
       },
     });
   });
 
   // PUT /:id - update own post
-  app.put("/:id", zValidator("json", updatePostSchema), async (c) => {
+  app.put("/:id", sessionMiddleware, zValidator("json", updatePostSchema), async (c) => {
     const id = c.req.param("id");
     const user = c.get("user");
     const prisma = c.get("prisma");
@@ -220,7 +217,7 @@ export function communityRoutes() {
   });
 
   // DELETE /:id - delete own post
-  app.delete("/:id", async (c) => {
+  app.delete("/:id", sessionMiddleware, async (c) => {
     const id = c.req.param("id");
     const user = c.get("user");
     const prisma = c.get("prisma");
@@ -240,8 +237,8 @@ export function communityRoutes() {
     return c.json({ success: true });
   });
 
-  // GET /:id/comments - list comments (paginated)
-  app.get("/:id/comments", async (c) => {
+  // GET /:id/comments - list comments (paginated, public read)
+  app.get("/:id/comments", optionalSessionMiddleware, async (c) => {
     const postId = c.req.param("id");
     const prisma = c.get("prisma");
     const { cursor, limit } = paginationSchema.parse({
@@ -282,7 +279,7 @@ export function communityRoutes() {
   });
 
   // POST /:id/comments - add comment
-  app.post("/:id/comments", zValidator("json", createCommentSchema), async (c) => {
+  app.post("/:id/comments", sessionMiddleware, zValidator("json", createCommentSchema), async (c) => {
     const postId = c.req.param("id");
     const { content } = c.req.valid("json");
     const user = c.get("user");
@@ -322,7 +319,7 @@ export function communityRoutes() {
   });
 
   // DELETE /:id/comments/:commentId - delete own comment
-  app.delete("/:id/comments/:commentId", async (c) => {
+  app.delete("/:id/comments/:commentId", sessionMiddleware, async (c) => {
     const postId = c.req.param("id");
     const commentId = c.req.param("commentId");
     const user = c.get("user");
@@ -352,7 +349,7 @@ export function communityRoutes() {
   });
 
   // PUT /:id/reactions - like a post
-  app.put("/:id/reactions", async (c) => {
+  app.put("/:id/reactions", sessionMiddleware, async (c) => {
     const postId = c.req.param("id");
     const user = c.get("user");
     const prisma = c.get("prisma");
@@ -384,7 +381,7 @@ export function communityRoutes() {
   });
 
   // DELETE /:id/reactions - unlike a post
-  app.delete("/:id/reactions", async (c) => {
+  app.delete("/:id/reactions", sessionMiddleware, async (c) => {
     const postId = c.req.param("id");
     const user = c.get("user");
     const prisma = c.get("prisma");

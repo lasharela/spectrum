@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:forui/forui.dart';
 import '../../core/constants/app_colors.dart';
@@ -34,15 +36,31 @@ class Screen extends StatelessWidget {
   }
 }
 
-class _GradientBackground extends StatelessWidget {
+class _GradientBackground extends StatefulWidget {
   final Widget child;
 
   const _GradientBackground({required this.child});
 
   @override
-  Widget build(BuildContext context) {
-    final backgroundColor = context.theme.colors.background;
+  State<_GradientBackground> createState() => _GradientBackgroundState();
+}
 
+class _GradientBackgroundState extends State<_GradientBackground> {
+  late final double _amberTop;
+  late final double _amberRight;
+  late final double _amberSize;
+
+  @override
+  void initState() {
+    super.initState();
+    final random = Random();
+    _amberTop = 56 + (random.nextDouble() * 88);
+    _amberRight = -120 + (random.nextDouble() * 120);
+    _amberSize = 360 + (random.nextDouble() * 72);
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return ClipRect(
       child: SizedBox.expand(
         child: Stack(
@@ -51,84 +69,39 @@ class _GradientBackground extends StatelessWidget {
           children: [
             IgnorePointer(
               child: Stack(
-                fit: StackFit.expand,
                 clipBehavior: Clip.hardEdge,
                 children: [
-                  DecoratedBox(
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [
-                          AppColors.gradientPurple.withValues(alpha: 0.16),
-                          AppColors.gradientAmber.withValues(alpha: 0.08),
-                          backgroundColor.withValues(alpha: 0),
-                        ],
-                        stops: const [0, 0.22, 0.55],
-                      ),
+                  Positioned(
+                    top: -80,
+                    left: -80,
+                    width: 320,
+                    height: 320,
+                    child: _Blob(
+                      color: AppColors.gradientPurple.withValues(alpha: 0.45),
                     ),
                   ),
                   Positioned(
-                    top: -96,
-                    left: -84,
-                    width: 340,
-                    height: 340,
+                    top: _amberTop,
+                    right: _amberRight,
+                    width: _amberSize,
+                    height: _amberSize,
                     child: _Blob(
-                      color: AppColors.gradientPurple.withValues(alpha: 0.58),
+                      color: AppColors.gradientAmber.withValues(alpha: 0.3),
                     ),
                   ),
                   Positioned(
-                    top: 170,
-                    left: -40,
-                    width: 260,
-                    height: 260,
+                    top: 180,
+                    left: -60,
+                    width: 240,
+                    height: 240,
                     child: _Blob(
-                      color: AppColors.gradientRose.withValues(alpha: 0.3),
-                    ),
-                  ),
-                  Positioned(
-                    top: 96,
-                    right: -96,
-                    width: 332,
-                    height: 332,
-                    child: _Blob(
-                      color: AppColors.gradientAmber.withValues(alpha: 0.52),
-                    ),
-                  ),
-                  Positioned(
-                    top: 48,
-                    right: 32,
-                    width: 118,
-                    height: 118,
-                    child: _Blob(
-                      color: AppColors.secondary.withValues(alpha: 0.22),
-                    ),
-                  ),
-                  Align(
-                    alignment: Alignment.bottomCenter,
-                    child: FractionallySizedBox(
-                      heightFactor: 0.58,
-                      widthFactor: 1,
-                      child: DecoratedBox(
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomCenter,
-                            colors: [
-                              backgroundColor.withValues(alpha: 0),
-                              backgroundColor.withValues(alpha: 0.72),
-                              backgroundColor,
-                            ],
-                            stops: const [0, 0.62, 1],
-                          ),
-                        ),
-                      ),
+                      color: AppColors.gradientRose.withValues(alpha: 0.2),
                     ),
                   ),
                 ],
               ),
             ),
-            child,
+            widget.child,
           ],
         ),
       ),
@@ -139,7 +112,9 @@ class _GradientBackground extends StatelessWidget {
 class _Blob extends StatelessWidget {
   final Color color;
 
-  const _Blob({required this.color});
+  const _Blob({
+    required this.color,
+  });
 
   @override
   Widget build(BuildContext context) {

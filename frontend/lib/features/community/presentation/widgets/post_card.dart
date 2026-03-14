@@ -63,18 +63,12 @@ class PostCard extends StatelessWidget {
                       ],
                     ),
                   ),
-                  const SizedBox(width: AppSpacing.sm),
-                  Icon(
-                    Icons.chevron_right_rounded,
-                    size: 20,
-                    color: colors.mutedForeground,
-                  ),
                 ],
               ),
               const SizedBox(height: AppSpacing.md),
-              if (contentParts.title case final title?) ...[
+              ...[
                 Text(
-                  title,
+                  contentParts.title,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                   style: typography.lg.copyWith(
@@ -99,9 +93,8 @@ class PostCard extends StatelessWidget {
                 const SizedBox(height: AppSpacing.md),
                 _PostImage(imageUrl: imageUrl),
               ],
-              const SizedBox(height: AppSpacing.sm),
+              const SizedBox(height: AppSpacing.xs),
               Row(
-                mainAxisSize: MainAxisSize.min,
                 children: [
                   _ActionButton(
                     icon: post.liked
@@ -113,31 +106,17 @@ class PostCard extends StatelessWidget {
                         : colors.mutedForeground,
                     onPress: onLike,
                   ),
-                  const SizedBox(width: AppSpacing.xs),
                   _ActionButton(
                     icon: Icons.chat_bubble_outline_rounded,
                     label: '${post.commentsCount}',
                     color: colors.mutedForeground,
                     onPress: onCommentTap ?? onTap,
                   ),
+                  const Spacer(),
+                  if (post.category.isNotEmpty)
+                    CategoryTag(category: post.category, compact: true),
                 ],
               ),
-              if (post.tags.isNotEmpty || post.category.isNotEmpty) ...[
-                const SizedBox(height: AppSpacing.sm),
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: Wrap(
-                    alignment: WrapAlignment.end,
-                    spacing: AppSpacing.xs,
-                    runSpacing: AppSpacing.xs,
-                    children: [
-                      CategoryTag(category: post.category, compact: true),
-                      for (final tag in post.tags.take(2))
-                        _CompactTag(label: '#$tag'),
-                    ],
-                  ),
-                ),
-              ],
             ],
           ),
         ),
@@ -155,33 +134,8 @@ class PostCard extends StatelessWidget {
   }
 }
 
-({String? title, String description}) _buildContentParts(Post post) {
-  if (post.title case final title? when title.trim().isNotEmpty) {
-    return (title: title.trim(), description: post.content.trim());
-  }
-
-  final content = post.content.trim();
-  final firstBreak = content.indexOf('\n');
-  if (firstBreak > 0) {
-    final title = content.substring(0, firstBreak).trim();
-    final description = content.substring(firstBreak + 1).trim();
-    return (
-      title: title.isEmpty ? null : title,
-      description: description.isEmpty ? content : description,
-    );
-  }
-
-  final sentenceMatch = RegExp(
-    r'^(.{12,90}?[.!?])\s+(.+)$',
-  ).firstMatch(content);
-  if (sentenceMatch != null) {
-    return (
-      title: sentenceMatch.group(1)?.trim(),
-      description: sentenceMatch.group(2)?.trim() ?? content,
-    );
-  }
-
-  return (title: null, description: content);
+({String title, String description}) _buildContentParts(Post post) {
+  return (title: post.title.trim(), description: post.content.trim());
 }
 
 Color categoryColor(String category) {
@@ -206,7 +160,7 @@ class CategoryTag extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = categoryColor(category);
+    const color = AppColors.primary;
 
     return Container(
       padding: EdgeInsets.symmetric(
@@ -222,30 +176,6 @@ class CategoryTag extends StatelessWidget {
         style: context.theme.typography.xs.copyWith(
           color: color,
           fontWeight: FontWeight.w600,
-        ),
-      ),
-    );
-  }
-}
-
-class _CompactTag extends StatelessWidget {
-  final String label;
-
-  const _CompactTag({required this.label});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-      decoration: BoxDecoration(
-        color: context.theme.colors.muted,
-        borderRadius: BorderRadius.circular(AppSpacing.badgeRadius),
-      ),
-      child: Text(
-        label,
-        style: context.theme.typography.xs.copyWith(
-          color: context.theme.colors.mutedForeground,
-          fontWeight: FontWeight.w500,
         ),
       ),
     );

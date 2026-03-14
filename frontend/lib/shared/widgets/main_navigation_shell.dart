@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:forui/forui.dart';
 import 'package:go_router/go_router.dart';
 
+import 'spectrum_app_bar.dart';
+
 class MainNavigationShell extends StatefulWidget {
   final Widget child;
 
@@ -13,6 +15,7 @@ class MainNavigationShell extends StatefulWidget {
 
 class _MainNavigationShellState extends State<MainNavigationShell> {
   static const _routes = ['/home', '/community', '/catalog', '/promotions', '/events'];
+  static const _titles = ['Home', 'Community', 'Catalogue', 'Promotions', 'Events'];
 
   int _indexFromLocation(String location) {
     for (var i = 0; i < _routes.length; i++) {
@@ -27,7 +30,15 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
     final selectedIndex = _indexFromLocation(location);
 
     return Scaffold(
-      body: widget.child,
+      body: SafeArea(
+        bottom: false,
+        child: Column(
+          children: [
+            SpectrumAppBar(title: _titles[selectedIndex]),
+            Expanded(child: widget.child),
+          ],
+        ),
+      ),
       bottomNavigationBar: FBottomNavigationBar(
         index: selectedIndex,
         onChange: (index) => context.go(_routes[index]),

@@ -9,7 +9,7 @@ void main() {
       await tester.pumpWidget(
         buildTestApp(
           NewDiscussionModal(
-            onSubmit: ({String? title, required String content, String? imageUrl, required String category}) {},
+            onSubmit: ({required String title, required String content, String? imageUrl, required String category}) {},
           ),
         ),
       );
@@ -26,7 +26,7 @@ void main() {
       await tester.pumpWidget(
         buildTestApp(
           NewDiscussionModal(
-            onSubmit: ({String? title, required String content, String? imageUrl, required String category}) {},
+            onSubmit: ({required String title, required String content, String? imageUrl, required String category}) {},
           ),
         ),
       );

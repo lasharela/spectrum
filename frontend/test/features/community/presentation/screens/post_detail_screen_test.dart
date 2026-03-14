@@ -15,6 +15,7 @@ class _FakeFeedNotifier extends FeedNotifier {
       posts: [
         Post(
           id: 'post-1',
+          title: 'Test Discussion',
           content: 'Full post content for detail view',
           tags: [],
           category: 'Support',

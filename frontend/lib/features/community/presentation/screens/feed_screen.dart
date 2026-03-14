@@ -9,6 +9,7 @@ import '../../../../shared/widgets/screen.dart';
 import '../../../auth/presentation/providers/auth_provider.dart';
 import '../../domain/post.dart';
 import '../providers/feed_provider.dart';
+import '../widgets/feed_filter_sheet.dart';
 import '../widgets/new_discussion_modal.dart';
 import '../widgets/post_card.dart';
 
@@ -28,6 +29,27 @@ class _FeedScreenState extends ConsumerState<FeedScreen> {
     super.dispose();
   }
 
+  void _openFilters() {
+    final feedState = ref.read(feedProvider);
+    showFSheet<void>(
+      context: context,
+      side: FLayout.btt,
+      mainAxisMaxRatio: 0.7,
+      builder: (sheetContext) => FeedFilterSheet(
+        selectedCategory: feedState.categoryFilter,
+        selectedState: feedState.stateFilter,
+        selectedCity: feedState.cityFilter,
+        onApply: ({String? category, String? state, String? city}) {
+          ref.read(feedProvider.notifier).setFilters(
+                category: () => category,
+                usState: () => state,
+                city: () => city,
+              );
+        },
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final feedState = ref.watch(feedProvider);
@@ -36,22 +58,6 @@ class _FeedScreenState extends ConsumerState<FeedScreen> {
     return Screen(
       body: Column(
         children: [
-          FHeader.nested(
-            title: const Text('Community'),
-            titleAlignment: Alignment.center,
-            prefixes: [
-              FHeaderAction(
-                icon: const Icon(Icons.notifications_outlined),
-                onPress: () {},
-              ),
-            ],
-            suffixes: [
-              FHeaderAction(
-                icon: const Icon(Icons.tune_rounded),
-                onPress: () {},
-              ),
-            ],
-          ),
           Expanded(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
@@ -98,17 +104,18 @@ class _FeedScreenState extends ConsumerState<FeedScreen> {
                       isLoadingMore: feedState.isLoadingMore,
                       posts: feedState.posts,
                       showSearch: true,
+                      hasActiveFilters: feedState.hasActiveFilters,
                       currentUserId: currentUser?.id,
                       onRefresh: () =>
                           ref.read(feedProvider.notifier).refresh(),
-                      onSearchSubmitted: (query) =>
-                          ref.read(feedProvider.notifier).search(query),
+                      onSearchChanged: (query) {
+                        ref.read(feedProvider.notifier).searchDebounced(query);
+                      },
                       onClearSearch: () {
                         _searchController.clear();
                         ref.read(feedProvider.notifier).search('');
-                        setState(() {});
                       },
-                      onSearchChanged: (_) => setState(() {}),
+                      onFilterTap: _openFilters,
                       onLoadMore: () =>
                           ref.read(feedProvider.notifier).loadMore(),
                       onPostTap: (postId) =>
@@ -130,12 +137,13 @@ class _FeedScreenState extends ConsumerState<FeedScreen> {
                       isLoadingMore: feedState.isLoadingMore,
                       posts: feedState.posts,
                       showSearch: false,
+                      hasActiveFilters: false,
                       currentUserId: currentUser?.id,
                       onRefresh: () =>
                           ref.read(feedProvider.notifier).refresh(),
-                      onSearchSubmitted: (_) {},
-                      onClearSearch: () {},
                       onSearchChanged: (_) {},
+                      onClearSearch: () {},
+                      onFilterTap: () {},
                       onLoadMore: () =>
                           ref.read(feedProvider.notifier).loadMore(),
                       onPostTap: (postId) =>
@@ -199,7 +207,7 @@ class _FeedScreenState extends ConsumerState<FeedScreen> {
       mainAxisMaxRatio: 0.88,
       builder: (sheetContext) => NewDiscussionModal(
         onSubmit: ({
-          String? title,
+          required String title,
           required String content,
           String? imageUrl,
           required String category,
@@ -223,11 +231,12 @@ class _FeedTabView extends StatelessWidget {
   final bool isLoadingMore;
   final List<Post> posts;
   final bool showSearch;
+  final bool hasActiveFilters;
   final String? currentUserId;
   final Future<void> Function() onRefresh;
-  final ValueChanged<String> onSearchSubmitted;
-  final VoidCallback onClearSearch;
   final ValueChanged<String> onSearchChanged;
+  final VoidCallback onClearSearch;
+  final VoidCallback onFilterTap;
   final VoidCallback onLoadMore;
   final ValueChanged<String> onPostTap;
   final ValueChanged<String> onLike;
@@ -241,11 +250,12 @@ class _FeedTabView extends StatelessWidget {
     required this.isLoadingMore,
     required this.posts,
     required this.showSearch,
+    required this.hasActiveFilters,
     required this.currentUserId,
     required this.onRefresh,
-    required this.onSearchSubmitted,
-    required this.onClearSearch,
     required this.onSearchChanged,
+    required this.onClearSearch,
+    required this.onFilterTap,
     required this.onLoadMore,
     required this.onPostTap,
     required this.onLike,
@@ -264,29 +274,57 @@ class _FeedTabView extends StatelessWidget {
               top: AppSpacing.md,
               bottom: AppSpacing.sm,
             ),
-            child: FTextField(
-              control: FTextFieldControl.managed(
-                controller: searchController,
-                onChange: (value) => onSearchChanged(value.text),
-              ),
-              hint: 'Search discussions...',
-              prefixBuilder: (context, style, variants) => Padding(
-                padding: const EdgeInsetsDirectional.only(start: 12),
-                child: IconTheme(
-                  data: style.iconStyle.resolve(variants),
-                  child: const Icon(Icons.search_rounded),
-                ),
-              ),
-              suffixBuilder: searchController.text.isEmpty
-                  ? null
-                  : (context, style, variants) => IconButton(
-                      onPressed: onClearSearch,
-                      icon: Icon(
-                        Icons.close_rounded,
-                        color: style.iconStyle.resolve(variants).color,
+            child: Row(
+              children: [
+                Expanded(
+                  child: FTextField(
+                    control: FTextFieldControl.managed(
+                      controller: searchController,
+                      onChange: (value) => onSearchChanged(value.text),
+                    ),
+                    hint: 'Search discussions...',
+                    prefixBuilder: (context, style, variants) => Padding(
+                      padding: const EdgeInsetsDirectional.only(start: 12),
+                      child: IconTheme(
+                        data: style.iconStyle.resolve(variants),
+                        child: const Icon(Icons.search_rounded),
                       ),
                     ),
-              onSubmit: onSearchSubmitted,
+                    suffixBuilder: searchController.text.isEmpty
+                        ? null
+                        : (context, style, variants) => IconButton(
+                            onPressed: onClearSearch,
+                            icon: Icon(
+                              Icons.close_rounded,
+                              color: style.iconStyle.resolve(variants).color,
+                            ),
+                          ),
+                  ),
+                ),
+                const SizedBox(width: AppSpacing.sm),
+                Stack(
+                  children: [
+                    FButton.icon(
+                      variant: FButtonVariant.outline,
+                      onPress: onFilterTap,
+                      child: const Icon(Icons.tune_rounded),
+                    ),
+                    if (hasActiveFilters)
+                      Positioned(
+                        top: 6,
+                        right: 6,
+                        child: Container(
+                          width: 8,
+                          height: 8,
+                          decoration: const BoxDecoration(
+                            color: AppColors.primary,
+                            shape: BoxShape.circle,
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
+              ],
             ),
           ),
         Expanded(
