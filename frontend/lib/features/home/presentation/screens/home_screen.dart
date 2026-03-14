@@ -93,12 +93,23 @@ class HomeScreen extends ConsumerWidget {
                   ),
                 ),
               ),
+              // Promotions — edge-to-edge (no horizontal padding)
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.only(
+                    top: AppSpacing.screenPadding,
+                    bottom: AppSpacing.sectionGap,
+                  ),
+                  child: PromotionsSection(promotions: dashboard.promotions),
+                ),
+              ),
+              // Remaining sections — with horizontal padding
               SliverPadding(
-                padding: const EdgeInsets.all(AppSpacing.screenPadding),
+                padding: EdgeInsets.symmetric(
+                  horizontal: AppSpacing.screenPadding,
+                ).copyWith(bottom: AppSpacing.screenPadding),
                 sliver: SliverList(
                   delegate: SliverChildListDelegate([
-                    PromotionsSection(promotions: dashboard.promotions),
-                    const SizedBox(height: AppSpacing.sectionGap),
                     PlacesSection(places: dashboard.places),
                     const SizedBox(height: AppSpacing.sectionGap),
                     EventsSection(events: dashboard.upcomingEvents),
