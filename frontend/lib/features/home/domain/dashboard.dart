@@ -84,25 +84,22 @@ class DashboardPost {
 class DashboardPromotion {
   final String id;
   final String title;
-  final String storeName;
+  final String store;
   final String? discount;
-  final String? imageUrl;
 
   const DashboardPromotion({
     required this.id,
     required this.title,
-    required this.storeName,
+    required this.store,
     this.discount,
-    this.imageUrl,
   });
 
   factory DashboardPromotion.fromJson(Map<String, dynamic> json) {
     return DashboardPromotion(
       id: json['id'] as String,
       title: json['title'] as String,
-      storeName: json['storeName'] as String,
+      store: json['store'] as String,
       discount: json['discount'] as String?,
-      imageUrl: json['imageUrl'] as String?,
     );
   }
 }
@@ -111,15 +108,13 @@ class DashboardPlace {
   final String id;
   final String name;
   final String address;
-  final double rating;
-  final String? imageUrl;
+  final String distance;
 
   const DashboardPlace({
     required this.id,
     required this.name,
     required this.address,
-    required this.rating,
-    this.imageUrl,
+    required this.distance,
   });
 
   factory DashboardPlace.fromJson(Map<String, dynamic> json) {
@@ -127,8 +122,7 @@ class DashboardPlace {
       id: json['id'] as String,
       name: json['name'] as String,
       address: json['address'] as String,
-      rating: (json['rating'] as num).toDouble(),
-      imageUrl: json['imageUrl'] as String?,
+      distance: json['distance'] as String,
     );
   }
 }
@@ -136,22 +130,25 @@ class DashboardPlace {
 class DashboardEvent {
   final String id;
   final String title;
+  final String time;
   final String location;
-  final DateTime dateTime;
+  final String category;
 
   const DashboardEvent({
     required this.id,
     required this.title,
+    required this.time,
     required this.location,
-    required this.dateTime,
+    required this.category,
   });
 
   factory DashboardEvent.fromJson(Map<String, dynamic> json) {
     return DashboardEvent(
       id: json['id'] as String,
       title: json['title'] as String,
+      time: json['time'] as String,
       location: json['location'] as String,
-      dateTime: DateTime.parse(json['dateTime'] as String),
+      category: json['category'] as String,
     );
   }
 }
