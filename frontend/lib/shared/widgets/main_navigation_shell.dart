@@ -18,7 +18,7 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
   final List<Map<String, dynamic>> _destinations = [
     {'icon': Icons.home, 'label': 'Home', 'route': '/home'},
     {'icon': Icons.people, 'label': AppStrings.community, 'route': '/community'},
-    {'icon': Icons.library_books, 'label': AppStrings.resources, 'route': '/resources'},
+    {'icon': Icons.storefront, 'label': 'Catalog', 'route': '/catalog'},
     {'icon': Icons.person, 'label': AppStrings.profile, 'route': '/profile'},
   ];
 

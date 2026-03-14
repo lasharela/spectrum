@@ -6,15 +6,13 @@ import '../../features/auth/presentation/screens/onboarding_screen.dart';
 import '../../features/home/presentation/screens/home_screen.dart';
 import '../../features/community/presentation/screens/feed_screen.dart';
 import '../../features/community/presentation/screens/post_detail_screen.dart';
-import '../../features/resources/presentation/screens/resources_screen.dart';
 import '../../features/profile/presentation/screens/profile_screen.dart';
-import '../../features/organizations/presentation/screens/organizations_screen.dart';
 import '../../shared/widgets/main_navigation_shell.dart';
 
 class AppRouter {
   static final _rootNavigatorKey = GlobalKey<NavigatorState>();
   static final _shellNavigatorKey = GlobalKey<NavigatorState>();
-  
+
   static final GoRouter router = GoRouter(
     navigatorKey: _rootNavigatorKey,
     initialLocation: '/onboarding',
@@ -57,19 +55,16 @@ class AppRouter {
             ],
           ),
           GoRoute(
-            path: '/resources',
-            name: 'resources',
-            builder: (context, state) => const ResourcesScreen(),
+            path: '/catalog',
+            name: 'catalog',
+            builder: (context, state) => const Scaffold(
+              body: Center(child: Text('Catalog — coming in Phase 5')),
+            ),
           ),
           GoRoute(
             path: '/profile',
             name: 'profile',
             builder: (context, state) => const ProfileScreen(),
-          ),
-          GoRoute(
-            path: '/organizations',
-            name: 'organizations',
-            builder: (context, state) => const OrganizationsScreen(),
           ),
         ],
       ),
