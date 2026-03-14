@@ -37,9 +37,20 @@ export function dashboardRoutes() {
         commentsCount: p.commentsCount,
         createdAt: p.createdAt.toISOString(),
       })),
-      promotions: [],
-      places: [],
-      upcomingEvents: [],
+      promotions: [
+        { id: "p1", title: "50% Off Sensory Toys", store: "Learning Express", discount: "50%" },
+        { id: "p2", title: "Free Therapy Session", store: "Wellness Center", discount: "FREE" },
+        { id: "p3", title: "Buy 1 Get 1 Books", store: "Barnes & Noble", discount: "BOGO" },
+      ],
+      places: [
+        { id: "pl1", name: "Sensory Garden Park", address: "123 Oak Street", distance: "0.5 miles" },
+        { id: "pl2", name: "Quiet Library Zone", address: "456 Main Avenue", distance: "1.2 miles" },
+        { id: "pl3", name: "Therapy Center", address: "789 Wellness Blvd", distance: "2.0 miles" },
+      ],
+      upcomingEvents: [
+        { id: "e1", title: "Parent Support Group", time: "10:00 AM", location: "Community Center", category: "Support" },
+        { id: "e2", title: "Art Therapy Session", time: "2:00 PM", location: "Creative Studio", category: "Therapy" },
+      ],
       stats: {
         postsCount,
       },
