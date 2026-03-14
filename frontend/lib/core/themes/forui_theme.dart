@@ -15,7 +15,6 @@ class AppForuiTheme {
           primary: AppColors.primary,
           primaryForeground: const Color(0xFFFFFFFF),
           background: const Color(0xFFF5F5F5),
-          border: AppColors.primary,
         ),
       );
 

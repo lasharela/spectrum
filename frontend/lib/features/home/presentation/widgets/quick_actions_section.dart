@@ -24,34 +24,79 @@ class QuickActionsSection extends StatelessWidget {
         Row(
           children: [
             Expanded(
-              child: FButton(
-                variant: FButtonVariant.outline,
-                onPress: () => context.go('/community'),
-                prefix: const Icon(Icons.support_agent),
-                child: const Text('Support'),
+              child: _buildActionCard(
+                context,
+                icon: Icons.support_agent,
+                label: 'Support',
+                route: '/community',
               ),
             ),
             const SizedBox(width: 12),
             Expanded(
-              child: FButton(
-                variant: FButtonVariant.outline,
-                onPress: () => context.go('/catalog'),
-                prefix: const Icon(Icons.lightbulb_outline),
-                child: const Text('Suggest'),
+              child: _buildActionCard(
+                context,
+                icon: Icons.lightbulb_outline,
+                label: 'Suggest',
+                route: '/catalog',
               ),
             ),
             const SizedBox(width: 12),
             Expanded(
-              child: FButton(
-                variant: FButtonVariant.outline,
-                onPress: () => context.go('/promotions'),
-                prefix: const Icon(Icons.language),
-                child: const Text('Website'),
+              child: _buildActionCard(
+                context,
+                icon: Icons.language,
+                label: 'Website',
+                route: '/promotions',
               ),
             ),
           ],
         ),
       ],
+    );
+  }
+
+  Widget _buildActionCard(
+    BuildContext context, {
+    required IconData icon,
+    required String label,
+    required String route,
+  }) {
+    final colors = context.theme.colors;
+    final typography = context.theme.typography;
+    final borderRadius = context.theme.style.borderRadius.lg;
+
+    return GestureDetector(
+      onTap: () => context.go(route),
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: colors.card,
+          borderRadius: borderRadius,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                color: colors.primary.withValues(alpha: 0.1),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(icon, color: colors.primary, size: 20),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              label,
+              style: typography.sm.copyWith(
+                fontWeight: FontWeight.w500,
+                color: colors.foreground,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

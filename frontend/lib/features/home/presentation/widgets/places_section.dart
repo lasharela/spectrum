@@ -45,11 +45,10 @@ class PlacesSection extends StatelessWidget {
                 padding: const EdgeInsets.only(bottom: 12),
                 child: ImageListCard(
                   imageUrl: place.imageUrl,
-                  fallbackIcon: Icons.place,
                   title: place.name,
                   details: [
                     ImageListCardDetail(icon: Icons.location_on, text: place.address),
-                    ImageListCardDetail(icon: Icons.directions_walk, text: place.distance),
+                    ImageListCardDetail(icon: Icons.directions_car, text: place.distance),
                   ],
                   trailing: Icon(Icons.directions, color: colors.primary, size: 20),
                 ),

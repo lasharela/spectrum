@@ -45,7 +45,6 @@ class EventsSection extends StatelessWidget {
                 padding: const EdgeInsets.only(bottom: 12),
                 child: ImageListCard(
                   imageUrl: event.imageUrl,
-                  fallbackIcon: Icons.event,
                   title: event.title,
                   details: [
                     ImageListCardDetail(icon: Icons.access_time, text: event.time),

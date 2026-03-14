@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:forui/forui.dart';
 
-/// A card with a square image on the left and text content on the right.
+/// A card with an image on the left and text content on the right.
 ///
 /// The image fills the card height and clips to match the card's
 /// left-side border radius. Used for places, events, and similar list items.
 class ImageListCard extends StatelessWidget {
   final String? imageUrl;
-  final IconData fallbackIcon;
   final String title;
   final List<ImageListCardDetail> details;
   final Widget? trailing;
@@ -16,7 +15,6 @@ class ImageListCard extends StatelessWidget {
   const ImageListCard({
     super.key,
     this.imageUrl,
-    required this.fallbackIcon,
     required this.title,
     this.details = const [],
     this.trailing,
@@ -35,15 +33,14 @@ class ImageListCard extends StatelessWidget {
         decoration: BoxDecoration(
           color: colors.card,
           borderRadius: borderRadius,
-          border: Border.all(color: colors.border, width: 0.5),
         ),
         clipBehavior: Clip.antiAlias,
         child: IntrinsicHeight(
           child: Row(
             children: [
-              // Left: square image
+              // Left: image filling card height
               SizedBox(
-                width: 80,
+                width: 100,
                 child: imageUrl != null
                     ? Image.network(
                         imageUrl!,
@@ -104,10 +101,10 @@ class ImageListCard extends StatelessWidget {
   }
 
   Widget _buildFallback(FColors colors) {
-    return Container(
-      color: colors.secondary,
-      child: Center(
-        child: Icon(fallbackIcon, color: colors.secondaryForeground, size: 28),
+    return ColoredBox(
+      color: colors.muted,
+      child: const Center(
+        child: Icon(Icons.image, color: Colors.grey, size: 28),
       ),
     );
   }

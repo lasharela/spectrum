@@ -1,11 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:forui/forui.dart';
+import '../../../../core/constants/app_colors.dart';
 import '../../domain/dashboard.dart';
 
 class PromotionsSection extends StatelessWidget {
   final List<DashboardPromotion> promotions;
 
   const PromotionsSection({super.key, required this.promotions});
+
+  static const _badgeColors = [
+    AppColors.accent1, // Red
+    AppColors.accent2, // Amber
+    AppColors.primary, // Blue
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -45,14 +52,17 @@ class PromotionsSection extends StatelessWidget {
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
               itemCount: promotions.length,
-              itemBuilder: (context, index) => _buildPromoCard(context, promotions[index]),
+              itemBuilder: (context, index) {
+                final badgeColor = _badgeColors[index % _badgeColors.length];
+                return _buildPromoCard(context, promotions[index], badgeColor);
+              },
             ),
           ),
       ],
     );
   }
 
-  Widget _buildPromoCard(BuildContext context, DashboardPromotion promo) {
+  Widget _buildPromoCard(BuildContext context, DashboardPromotion promo, Color badgeColor) {
     final typography = context.theme.typography;
     final colors = context.theme.colors;
 
@@ -65,7 +75,21 @@ class PromotionsSection extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             if (promo.discount != null)
-              FBadge(child: Text(promo.discount!)),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                decoration: BoxDecoration(
+                  color: badgeColor.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                child: Text(
+                  promo.discount!,
+                  style: TextStyle(
+                    color: badgeColor,
+                    fontSize: 11,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
             if (promo.discount != null)
               const SizedBox(height: 8),
             Text(
