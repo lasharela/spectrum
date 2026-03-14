@@ -8,7 +8,6 @@ class PostCard extends StatelessWidget {
   final VoidCallback? onTap;
   final VoidCallback? onLike;
   final VoidCallback? onDelete;
-
   const PostCard({
     super.key,
     required this.post,
@@ -20,7 +19,8 @@ class PostCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(12),
@@ -30,21 +30,17 @@ class PostCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _buildHeader(context),
-              const SizedBox(height: 12),
-              Text(post.content, style: Theme.of(context).textTheme.bodyLarge),
-              if (post.tags.isNotEmpty) ...[
-                const SizedBox(height: 8),
-                Wrap(
-                  spacing: 6,
-                  children: post.tags
-                      .map((tag) => Chip(
-                            label:
-                                Text(tag, style: const TextStyle(fontSize: 12)),
-                            visualDensity: VisualDensity.compact,
-                          ))
-                      .toList(),
-                ),
-              ],
+              const SizedBox(height: 8),
+              // Category tag
+              CategoryTag(category: post.category),
+              const SizedBox(height: 8),
+              // Content preview (max 3 lines)
+              Text(
+                post.content,
+                maxLines: 3,
+                overflow: TextOverflow.ellipsis,
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
               const SizedBox(height: 12),
               _buildActions(context),
             ],
@@ -78,7 +74,7 @@ class PostCard extends StatelessWidget {
                 style: const TextStyle(fontWeight: FontWeight.w600),
               ),
               Text(
-                DateFormat.yMMMd().add_jm().format(post.createdAt),
+                _formatTimestamp(post.createdAt),
                 style: TextStyle(fontSize: 12, color: AppColors.textGray),
               ),
             ],
@@ -86,7 +82,7 @@ class PostCard extends StatelessWidget {
         ),
         if (onDelete != null)
           IconButton(
-            icon: const Icon(Icons.delete_outline, size: 20),
+            icon: const Icon(Icons.more_vert, size: 20),
             onPressed: onDelete,
             color: AppColors.textGray,
           ),
@@ -97,35 +93,105 @@ class PostCard extends StatelessWidget {
   Widget _buildActions(BuildContext context) {
     return Row(
       children: [
-        InkWell(
+        _ActionButton(
+          icon: post.liked ? Icons.favorite : Icons.favorite_border,
+          label: '${post.likesCount}',
+          color: post.liked ? AppColors.coral : AppColors.textGray,
           onTap: onLike,
-          child: Row(
-            children: [
-              Icon(
-                post.liked ? Icons.favorite : Icons.favorite_border,
-                size: 20,
-                color: post.liked ? AppColors.coral : AppColors.textGray,
-              ),
-              const SizedBox(width: 4),
-              Text(
-                '${post.likesCount}',
-                style: TextStyle(color: AppColors.textGray, fontSize: 14),
-              ),
-            ],
-          ),
         ),
-        const SizedBox(width: 24),
-        Row(
-          children: [
-            Icon(Icons.comment_outlined, size: 20, color: AppColors.textGray),
-            const SizedBox(width: 4),
-            Text(
-              '${post.commentsCount}',
-              style: TextStyle(color: AppColors.textGray, fontSize: 14),
-            ),
-          ],
+        const SizedBox(width: 20),
+        _ActionButton(
+          icon: Icons.comment_outlined,
+          label: '${post.commentsCount}',
+          color: AppColors.textGray,
+        ),
+        const SizedBox(width: 20),
+        _ActionButton(
+          icon: Icons.share_outlined,
+          label: 'Share',
+          color: AppColors.textGray,
         ),
       ],
+    );
+  }
+
+  String _formatTimestamp(DateTime dt) {
+    final diff = DateTime.now().difference(dt);
+    if (diff.inMinutes < 1) return 'Just now';
+    if (diff.inMinutes < 60) return '${diff.inMinutes}m ago';
+    if (diff.inHours < 24) return '${diff.inHours}h ago';
+    if (diff.inDays < 7) return '${diff.inDays}d ago';
+    return DateFormat.yMMMd().format(dt);
+  }
+
+}
+
+/// Shared category color mapping — used by PostCard and PostDetailScreen
+Color categoryColor(String category) {
+  return switch (category) {
+    'General' => AppColors.cyan,
+    'Sensory' => AppColors.purple,
+    'Education' => AppColors.navy,
+    'Support' => AppColors.coral,
+    'Resources' => AppColors.success,
+    'Daily Life' => AppColors.orange,
+    'News' => AppColors.yellow,
+    'Social' => AppColors.cyan,
+    _ => AppColors.textGray,
+  };
+}
+
+/// Shared category tag widget — used by PostCard and PostDetailScreen
+class CategoryTag extends StatelessWidget {
+  final String category;
+
+  const CategoryTag({super.key, required this.category});
+
+  @override
+  Widget build(BuildContext context) {
+    final color = categoryColor(category);
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.15),
+        borderRadius: BorderRadius.circular(4),
+      ),
+      child: Text(
+        category,
+        style: TextStyle(
+          fontSize: 11,
+          fontWeight: FontWeight.w600,
+          color: color,
+        ),
+      ),
+    );
+  }
+}
+
+class _ActionButton extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final Color color;
+  final VoidCallback? onTap;
+
+  const _ActionButton({
+    required this.icon,
+    required this.label,
+    required this.color,
+    this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      child: Row(
+        children: [
+          Icon(icon, size: 20, color: color),
+          const SizedBox(width: 4),
+          Text(label, style: TextStyle(color: color, fontSize: 13)),
+        ],
+      ),
     );
   }
 }
