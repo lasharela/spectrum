@@ -25,6 +25,7 @@ class GradientScaffold extends StatelessWidget {
       backgroundColor: colors.background,
       appBar: appBar,
       body: Stack(
+        clipBehavior: Clip.hardEdge,
         children: [
           // Purple blob — top left
           Positioned(
@@ -53,7 +54,7 @@ class GradientScaffold extends StatelessWidget {
               color: AppColors.gradientRose.withValues(alpha: 0.25),
             ),
           ),
-          body,
+          Positioned.fill(child: body),
         ],
       ),
     );
