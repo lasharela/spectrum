@@ -53,14 +53,14 @@ class ImageListCard extends StatelessWidget {
             ),
             Expanded(
               child: Padding(
-                padding: const EdgeInsets.all(12),
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
                       title,
-                      style: typography.md.copyWith(
+                      style: typography.sm.copyWith(
                         fontWeight: FontWeight.w600,
                         color: colors.foreground,
                       ),
@@ -71,12 +71,12 @@ class ImageListCard extends StatelessWidget {
                           padding: const EdgeInsets.only(top: 2),
                           child: Row(
                             children: [
-                              Icon(detail.icon, size: 13, color: colors.mutedForeground),
+                              Icon(detail.icon, size: 12, color: colors.mutedForeground),
                               const SizedBox(width: 3),
                               Expanded(
                                 child: Text(
                                   detail.text,
-                                  style: typography.sm.copyWith(color: colors.mutedForeground),
+                                  style: typography.xs.copyWith(color: colors.mutedForeground),
                                   overflow: TextOverflow.ellipsis,
                                 ),
                               ),
