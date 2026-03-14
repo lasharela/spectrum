@@ -4,12 +4,12 @@ import 'package:forui/forui.dart';
 
 import '../constants/app_colors.dart';
 
-/// Forui theme configuration for Spectrum using the cyan/coral palette.
+/// Forui theme configuration for Spectrum using the original design palette.
 ///
 /// Provides [light] and [dark] [FThemeData] instances that map Spectrum's
 /// design tokens to Forui's color system.
 class AppForuiTheme {
-  /// Light theme using Spectrum's cyan/coral palette.
+  /// Light theme using Spectrum's original design palette.
   static FThemeData get light => FThemeData(
         touch: true,
         debugLabel: 'Spectrum Light',
@@ -17,24 +17,24 @@ class AppForuiTheme {
           brightness: Brightness.light,
           systemOverlayStyle: SystemUiOverlayStyle.dark,
           barrier: Color(0x33000000),
-          background: AppColors.backgroundGray,
-          foreground: AppColors.textDark,
-          primary: AppColors.cyan,
+          background: AppColors.background,
+          foreground: AppColors.textPrimary,
+          primary: AppColors.primary,
           primaryForeground: Color(0xFFFFFFFF),
-          secondary: AppColors.coral,
+          secondary: AppColors.secondary,
           secondaryForeground: Color(0xFFFFFFFF),
-          muted: Color(0xFFE8ECF0),
-          mutedForeground: AppColors.textGray,
+          muted: Color(0xFFE8EAED),
+          mutedForeground: AppColors.textSecondary,
           destructive: AppColors.error,
           destructiveForeground: Color(0xFFFFFFFF),
           error: AppColors.error,
           errorForeground: Color(0xFFFFFFFF),
           card: AppColors.cardBackground,
-          border: AppColors.border,
+          border: AppColors.divider,
         ),
       );
 
-  /// Dark theme using Spectrum's cyan/coral palette.
+  /// Dark theme using Spectrum's original design palette.
   static FThemeData get dark => FThemeData(
         touch: true,
         debugLabel: 'Spectrum Dark',
@@ -44,9 +44,9 @@ class AppForuiTheme {
           barrier: const Color(0x7A000000),
           background: const Color(0xFF121212),
           foreground: const Color(0xFFFAFAFA),
-          primary: AppColors.cyan,
+          primary: AppColors.primary,
           primaryForeground: const Color(0xFF000000),
-          secondary: AppColors.coral,
+          secondary: AppColors.secondary,
           secondaryForeground: const Color(0xFFFFFFFF),
           muted: const Color(0xFF262626),
           mutedForeground: const Color(0xFFA1A1A1),
