@@ -86,12 +86,18 @@ class DashboardPromotion {
   final String title;
   final String store;
   final String? discount;
+  final String? brandLogoUrl;
+  final String? imageUrl;
+  final DateTime? expiresAt;
 
   const DashboardPromotion({
     required this.id,
     required this.title,
     required this.store,
     this.discount,
+    this.brandLogoUrl,
+    this.imageUrl,
+    this.expiresAt,
   });
 
   factory DashboardPromotion.fromJson(Map<String, dynamic> json) {
@@ -100,6 +106,11 @@ class DashboardPromotion {
       title: json['title'] as String,
       store: json['store'] as String,
       discount: json['discount'] as String?,
+      brandLogoUrl: json['brandLogoUrl'] as String?,
+      imageUrl: json['imageUrl'] as String?,
+      expiresAt: json['expiresAt'] != null
+          ? DateTime.parse(json['expiresAt'] as String)
+          : null,
     );
   }
 }
