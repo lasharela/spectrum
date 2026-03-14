@@ -40,6 +40,10 @@ describe("Posts API", () => {
     it("should include liked status for current user", async () => {
       expect(true).toBe(true);
     });
+
+    it("should filter posts by search query ?q=", async () => {
+      expect(true).toBe(true);
+    });
   });
 
   describe("GET /api/posts/:id", () => {

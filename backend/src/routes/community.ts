@@ -19,6 +19,9 @@ const createCommentSchema = z.object({
 const paginationSchema = z.object({
   cursor: z.string().optional(),
   limit: z.coerce.number().int().min(1).max(50).default(20),
+  q: z.string().optional(),
+  category: z.string().optional(),
+  authorId: z.string().optional(),
 });
 
 export function communityRoutes() {
@@ -30,14 +33,29 @@ export function communityRoutes() {
   // GET / - list posts (paginated)
   app.get("/", async (c) => {
     const prisma = c.get("prisma");
-    const { cursor, limit } = paginationSchema.parse({
+    const { cursor, limit, q, category, authorId } = paginationSchema.parse({
       cursor: c.req.query("cursor"),
       limit: c.req.query("limit"),
+      q: c.req.query("q"),
+      category: c.req.query("category"),
+      authorId: c.req.query("authorId"),
     });
 
     const user = c.get("user");
 
+    const where: Record<string, unknown> = {};
+    if (q) {
+      where.content = { contains: q };
+    }
+    if (category) {
+      where.category = category;
+    }
+    if (authorId) {
+      where.authorId = authorId;
+    }
+
     const posts = await prisma.post.findMany({
+      where,
       take: limit + 1,
       ...(cursor ? { cursor: { id: cursor }, skip: 1 } : {}),
       orderBy: { createdAt: "desc" },
@@ -56,6 +74,7 @@ export function communityRoutes() {
         id: p.id,
         content: p.content,
         tags: JSON.parse(p.tags),
+        category: p.category,
         authorId: p.authorId,
         author: p.author,
         createdAt: p.createdAt.toISOString(),
@@ -86,6 +105,7 @@ export function communityRoutes() {
           id: post.id,
           content: post.content,
           tags: JSON.parse(post.tags),
+          category: post.category,
           authorId: post.authorId,
           author: post.author,
           createdAt: post.createdAt.toISOString(),
@@ -121,6 +141,7 @@ export function communityRoutes() {
         id: post.id,
         content: post.content,
         tags: JSON.parse(post.tags),
+        category: post.category,
         authorId: post.authorId,
         author: post.author,
         createdAt: post.createdAt.toISOString(),
