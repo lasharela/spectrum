@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../../core/constants/app_strings.dart';
+import 'package:forui/forui.dart';
+import 'package:go_router/go_router.dart';
 import '../../../auth/presentation/providers/auth_provider.dart';
 
 class ProfileScreen extends ConsumerWidget {
@@ -10,76 +11,106 @@ class ProfileScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final user = ref.watch(authProvider).valueOrNull;
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Profile'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.settings),
-            onPressed: () {
-              // TODO: Navigate to settings
-            },
-          ),
+    return FScaffold(
+      header: FHeader.nested(
+        title: const Text(''),
+        prefixes: [
+          FHeaderAction.back(onPress: () => context.go('/home')),
         ],
       ),
-      body: SingleChildScrollView(
+      child: SingleChildScrollView(
         child: Column(
           children: [
-            const SizedBox(height: 20),
-            const CircleAvatar(
-              radius: 50,
-              child: Icon(Icons.person, size: 50),
-            ),
+            const SizedBox(height: 32),
+            FAvatar.raw(size: 96),
             const SizedBox(height: 16),
             Text(
               user?.name ?? 'User',
-              style: Theme.of(context).textTheme.headlineSmall,
+              style: context.theme.typography.xl2.copyWith(
+                fontWeight: FontWeight.w600,
+                color: context.theme.colors.foreground,
+              ),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 4),
             Text(
               user?.email ?? '',
-              style: Theme.of(context).textTheme.bodyMedium,
+              style: context.theme.typography.sm.copyWith(
+                color: context.theme.colors.mutedForeground,
+              ),
             ),
             const SizedBox(height: 32),
-            ListTile(
-              leading: const Icon(Icons.edit),
-              title: const Text('Edit Profile'),
-              onTap: () {
-                // TODO: Edit profile
-              },
+            FTileGroup(
+              label: const Text('Account'),
+              children: [
+                FTile(
+                  prefix: const Icon(FIcons.user),
+                  title: const Text('Edit Profile'),
+                  suffix: const Icon(FIcons.chevronRight),
+                  onPress: () {},
+                ),
+                FTile(
+                  prefix: const Icon(FIcons.bell),
+                  title: const Text('Notifications'),
+                  suffix: const Icon(FIcons.chevronRight),
+                  onPress: () {},
+                ),
+                FTile(
+                  prefix: const Icon(FIcons.shield),
+                  title: const Text('Privacy'),
+                  suffix: const Icon(FIcons.chevronRight),
+                  onPress: () {},
+                ),
+              ],
             ),
-            ListTile(
-              leading: const Icon(Icons.notifications),
-              title: const Text('Notifications'),
-              onTap: () {
-                // TODO: Notification settings
-              },
+            const SizedBox(height: 16),
+            FTileGroup(
+              label: const Text('Support'),
+              children: [
+                FTile(
+                  prefix: const Icon(FIcons.helpCircle),
+                  title: const Text('Help & Support'),
+                  suffix: const Icon(FIcons.chevronRight),
+                  onPress: () {},
+                ),
+                FTile(
+                  prefix: const Icon(FIcons.info),
+                  title: const Text('About'),
+                  suffix: const Icon(FIcons.chevronRight),
+                  onPress: () {},
+                ),
+              ],
             ),
-            ListTile(
-              leading: const Icon(Icons.privacy_tip),
-              title: const Text('Privacy'),
-              onTap: () {
-                // TODO: Privacy settings
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.help),
-              title: const Text('Help & Support'),
-              onTap: () {
-                // TODO: Help
-              },
-            ),
-            const Divider(),
-            ListTile(
-              leading: const Icon(Icons.logout, color: Colors.red),
-              title: const Text(
-                AppStrings.logout,
-                style: TextStyle(color: Colors.red),
+            const SizedBox(height: 32),
+            SizedBox(
+              width: double.infinity,
+              child: FButton(
+                variant: FButtonVariant.secondary,
+                prefix: const Icon(FIcons.logOut),
+                onPress: () async {
+                  try {
+                    await ref.read(authProvider.notifier).signOut();
+                  } catch (_) {
+                    // Ensure we navigate even if API call fails
+                  }
+                  if (context.mounted) context.go('/onboarding');
+                },
+                child: const Text('Sign Out'),
               ),
-              onTap: () async {
-                await ref.read(authProvider.notifier).signOut();
-              },
             ),
+            const SizedBox(height: 48),
+            Text(
+              'Version 1.0.0',
+              style: context.theme.typography.xs.copyWith(
+                color: context.theme.colors.mutedForeground,
+              ),
+            ),
+            const SizedBox(height: 16),
+            FButton(
+              variant: FButtonVariant.ghost,
+              onPress: () {},
+              child: const Text('www.spectrum.app'),
+            ),
+            const SizedBox(height: 32),
           ],
         ),
       ),

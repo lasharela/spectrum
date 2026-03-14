@@ -31,28 +31,25 @@ void main() {
       expect(find.text('Confirm Password'), findsOneWidget);
     });
 
-    testWidgets('renders user type chips', (tester) async {
+    testWidgets('renders user type select', (tester) async {
       await tester.pumpWidget(buildTestApp(const SignupScreen()));
       await tester.pumpAndSettle();
 
-      expect(find.text('Person with Autism'), findsOneWidget);
-      expect(find.text('Parent/Caregiver'), findsOneWidget);
-      expect(find.text('Professional'), findsOneWidget);
+      expect(find.text('I am a...'), findsOneWidget);
     });
 
     testWidgets('renders Sign Up button', (tester) async {
       await tester.pumpWidget(buildTestApp(const SignupScreen()));
       await tester.pumpAndSettle();
 
-      expect(find.text('Sign Up'), findsOneWidget);
+      expect(find.widgetWithText(FButton, 'Sign Up'), findsOneWidget);
     });
 
-    testWidgets('renders already have an account text', (tester) async {
+    testWidgets('renders sign in ghost button', (tester) async {
       await tester.pumpWidget(buildTestApp(const SignupScreen()));
       await tester.pumpAndSettle();
 
-      expect(find.text('Already have an account?'), findsOneWidget);
-      expect(find.text('Sign In'), findsOneWidget);
+      expect(find.text('Already a user? Sign In'), findsOneWidget);
     });
   });
 }

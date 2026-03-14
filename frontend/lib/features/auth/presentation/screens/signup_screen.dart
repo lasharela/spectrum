@@ -1,10 +1,9 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:forui/forui.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../../core/constants/app_colors.dart';
 import '../../../../shared/api/api_exceptions.dart';
-import '../../../../shared/widgets/widgets.dart';
 import '../providers/auth_provider.dart';
 
 class SignupScreen extends ConsumerStatefulWidget {
@@ -15,6 +14,7 @@ class SignupScreen extends ConsumerStatefulWidget {
 }
 
 class _SignupScreenState extends ConsumerState<SignupScreen> {
+  final _formKey = GlobalKey<FormState>();
   final _firstNameController = TextEditingController();
   final _middleNameController = TextEditingController();
   final _lastNameController = TextEditingController();
@@ -23,46 +23,16 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
   final _confirmPasswordController = TextEditingController();
 
   bool _isLoading = false;
-  String? _firstNameError;
-  String? _lastNameError;
-  String? _emailError;
-  String? _passwordError;
-  String? _confirmPasswordError;
-  String? _userTypeError;
   String? _selectedUserType;
 
-  final List<Map<String, dynamic>> _userTypes = [
-    {
-      'value': 'autistic_individual',
-      'label': 'Person with Autism',
-      'icon': Icons.accessibility_new,
-    },
-    {
-      'value': 'parent',
-      'label': 'Parent/Caregiver',
-      'icon': Icons.family_restroom,
-    },
-    {
-      'value': 'professional',
-      'label': 'Professional',
-      'icon': Icons.medical_services,
-    },
-    {
-      'value': 'educator',
-      'label': 'Educator',
-      'icon': Icons.school,
-    },
-    {
-      'value': 'therapist',
-      'label': 'Therapist',
-      'icon': Icons.psychology,
-    },
-    {
-      'value': 'supporter',
-      'label': 'Supporter',
-      'icon': Icons.volunteer_activism,
-    },
-  ];
+  static const _userTypeLabels = {
+    'autistic_individual': 'Person with Autism',
+    'parent': 'Parent/Caregiver',
+    'professional': 'Professional',
+    'educator': 'Educator',
+    'therapist': 'Therapist',
+    'supporter': 'Supporter',
+  };
 
   @override
   void dispose() {
@@ -75,79 +45,8 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
     super.dispose();
   }
 
-  bool _validate() {
-    String? firstNameError;
-    String? lastNameError;
-    String? emailError;
-    String? passwordError;
-    String? confirmPasswordError;
-    String? userTypeError;
-
-    final firstName = _firstNameController.text.trim();
-    final lastName = _lastNameController.text.trim();
-    final email = _emailController.text.trim();
-    final password = _passwordController.text;
-    final confirmPassword = _confirmPasswordController.text;
-
-    if (firstName.isEmpty) {
-      firstNameError = 'First name is required';
-    } else if (firstName.length < 2) {
-      firstNameError = 'Must be at least 2 characters';
-    }
-
-    if (lastName.isEmpty) {
-      lastNameError = 'Last name is required';
-    } else if (lastName.length < 2) {
-      lastNameError = 'Must be at least 2 characters';
-    }
-
-    if (email.isEmpty) {
-      emailError = 'Email is required';
-    } else if (!RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$').hasMatch(email)) {
-      emailError = 'Enter a valid email';
-    }
-
-    if (password.isEmpty) {
-      passwordError = 'Password is required';
-    } else if (password.length < 8) {
-      passwordError = 'Password must be at least 8 characters';
-    } else if (!RegExp(r'[A-Z]').hasMatch(password)) {
-      passwordError = 'Password must contain an uppercase letter';
-    } else if (!RegExp(r'[a-z]').hasMatch(password)) {
-      passwordError = 'Password must contain a lowercase letter';
-    } else if (!RegExp(r'[0-9]').hasMatch(password)) {
-      passwordError = 'Password must contain a number';
-    }
-
-    if (confirmPassword.isEmpty) {
-      confirmPasswordError = 'Please confirm your password';
-    } else if (confirmPassword != password) {
-      confirmPasswordError = 'Passwords do not match';
-    }
-
-    if (_selectedUserType == null) {
-      userTypeError = 'Please select your user type';
-    }
-
-    setState(() {
-      _firstNameError = firstNameError;
-      _lastNameError = lastNameError;
-      _emailError = emailError;
-      _passwordError = passwordError;
-      _confirmPasswordError = confirmPasswordError;
-      _userTypeError = userTypeError;
-    });
-
-    return firstNameError == null &&
-        lastNameError == null &&
-        emailError == null &&
-        passwordError == null &&
-        confirmPasswordError == null &&
-        userTypeError == null;
-  }
-
   void _handleSignup() async {
-    if (!_validate()) return;
+    if (!_formKey.currentState!.validate()) return;
 
     setState(() => _isLoading = true);
     try {
@@ -179,227 +78,175 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(24.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(height: 20),
-                IconButton(
-                  onPressed: () => context.go('/onboarding'),
-                  icon: Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: AppColors.cardBackground,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Icon(
-                      Icons.arrow_back,
-                      color: AppColors.textPrimary,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 40),
-                _buildHeader(context),
-                const SizedBox(height: 40),
-                _buildForm(),
-                const SizedBox(height: 24),
-                _buildUserTypeSelector(),
-                const SizedBox(height: 32),
-                AppButton(
-                  label: 'Sign Up',
-                  onPressed: _isLoading ? null : _handleSignup,
-                  isLoading: _isLoading,
-                ),
-                const SizedBox(height: 24),
-                _buildSignInLink(context),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildHeader(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            Container(
-              width: 60,
-              height: 60,
-              decoration: BoxDecoration(
-                color: AppColors.primary,
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: const Icon(
-                Icons.person_add,
-                color: Colors.white,
-                size: 30,
-              ),
-            ),
-            const SizedBox(width: 16),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Create Account',
-                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.textPrimary,
-                      ),
-                ),
-                Text(
-                  'Join the Spectrum community',
-                  style: TextStyle(
-                    color: AppColors.textSecondary,
-                    fontSize: 14,
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-
-  Widget _buildForm() {
-    return AppCard(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          AppTextField(
-            label: 'First Name',
-            hint: 'Enter your first name',
-            controller: _firstNameController,
-            keyboardType: TextInputType.name,
-            error: _firstNameError != null ? Text(_firstNameError!) : null,
-          ),
-          const SizedBox(height: 20),
-          AppTextField(
-            label: 'Middle Name (optional)',
-            hint: 'Enter your middle name',
-            controller: _middleNameController,
-            keyboardType: TextInputType.name,
-          ),
-          const SizedBox(height: 20),
-          AppTextField(
-            label: 'Last Name',
-            hint: 'Enter your last name',
-            controller: _lastNameController,
-            keyboardType: TextInputType.name,
-            error: _lastNameError != null ? Text(_lastNameError!) : null,
-          ),
-          const SizedBox(height: 20),
-          AppTextField(
-            label: 'Email',
-            hint: 'Enter your email',
-            controller: _emailController,
-            keyboardType: TextInputType.emailAddress,
-            error: _emailError != null ? Text(_emailError!) : null,
-          ),
-          const SizedBox(height: 20),
-          AppTextField(
-            label: 'Password',
-            hint: 'Enter your password',
-            controller: _passwordController,
-            isPassword: true,
-            error: _passwordError != null ? Text(_passwordError!) : null,
-          ),
-          const SizedBox(height: 20),
-          AppTextField(
-            label: 'Confirm Password',
-            hint: 'Re-enter your password',
-            controller: _confirmPasswordController,
-            isPassword: true,
-            error: _confirmPasswordError != null
-                ? Text(_confirmPasswordError!)
-                : null,
-          ),
+    return FScaffold(
+      header: FHeader.nested(
+        title: const Text('Sign Up'),
+        prefixes: [
+          FHeaderAction.back(onPress: () => context.go('/onboarding')),
         ],
       ),
-    );
-  }
-
-  Widget _buildUserTypeSelector() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'I am a...',
-          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.w600,
-                color: AppColors.textPrimary,
+      child: SingleChildScrollView(
+        child: Form(
+          key: _formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 8),
+              FTextFormField(
+                control: FTextFieldControl.managed(
+                  controller: _firstNameController,
+                ),
+                label: const Text('First Name'),
+                hint: 'Enter your first name',
+                keyboardType: TextInputType.name,
+                textInputAction: TextInputAction.next,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'First name is required';
+                  }
+                  if (value.length < 2) return 'Must be at least 2 characters';
+                  return null;
+                },
+                autovalidateMode: AutovalidateMode.disabled,
               ),
-        ),
-        const SizedBox(height: 12),
-        Wrap(
-          spacing: 8,
-          runSpacing: 8,
-          children: _userTypes.map((type) {
-            final isSelected = _selectedUserType == type['value'];
-            return ChoiceChip(
-              label: Row(
-                mainAxisSize: MainAxisSize.min,
+              const SizedBox(height: 20),
+              FTextFormField(
+                control: FTextFieldControl.managed(
+                  controller: _middleNameController,
+                ),
+                label: const Text('Middle Name (optional)'),
+                hint: 'Enter your middle name',
+                keyboardType: TextInputType.name,
+                textInputAction: TextInputAction.next,
+              ),
+              const SizedBox(height: 20),
+              FTextFormField(
+                control: FTextFieldControl.managed(
+                  controller: _lastNameController,
+                ),
+                label: const Text('Last Name'),
+                hint: 'Enter your last name',
+                keyboardType: TextInputType.name,
+                textInputAction: TextInputAction.next,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Last name is required';
+                  }
+                  if (value.length < 2) return 'Must be at least 2 characters';
+                  return null;
+                },
+                autovalidateMode: AutovalidateMode.disabled,
+              ),
+              const SizedBox(height: 20),
+              FTextFormField(
+                control: FTextFieldControl.managed(
+                  controller: _emailController,
+                ),
+                label: const Text('Email'),
+                hint: 'Enter your email',
+                keyboardType: TextInputType.emailAddress,
+                textInputAction: TextInputAction.next,
+                validator: (value) {
+                  if (value == null || value.isEmpty) return 'Email is required';
+                  if (!RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$').hasMatch(value)) {
+                    return 'Enter a valid email';
+                  }
+                  return null;
+                },
+                autovalidateMode: AutovalidateMode.disabled,
+              ),
+              const SizedBox(height: 20),
+              FTextFormField.password(
+                control: FTextFieldControl.managed(
+                  controller: _passwordController,
+                ),
+                label: const Text('Password'),
+                hint: 'Enter your password',
+                textInputAction: TextInputAction.next,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Password is required';
+                  }
+                  if (value.length < 8) {
+                    return 'Must be at least 8 characters';
+                  }
+                  if (!RegExp(r'[A-Z]').hasMatch(value)) {
+                    return 'Must contain an uppercase letter';
+                  }
+                  if (!RegExp(r'[a-z]').hasMatch(value)) {
+                    return 'Must contain a lowercase letter';
+                  }
+                  if (!RegExp(r'[0-9]').hasMatch(value)) {
+                    return 'Must contain a number';
+                  }
+                  return null;
+                },
+                autovalidateMode: AutovalidateMode.disabled,
+              ),
+              const SizedBox(height: 20),
+              FTextFormField.password(
+                control: FTextFieldControl.managed(
+                  controller: _confirmPasswordController,
+                ),
+                label: const Text('Confirm Password'),
+                hint: 'Re-enter your password',
+                textInputAction: TextInputAction.done,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please confirm your password';
+                  }
+                  if (value != _passwordController.text) {
+                    return 'Passwords do not match';
+                  }
+                  return null;
+                },
+                autovalidateMode: AutovalidateMode.disabled,
+              ),
+              const SizedBox(height: 20),
+              FSelect<String>.rich(
+                label: const Text('I am a...'),
+                hint: 'Select your role',
+                format: (value) => _userTypeLabels[value] ?? value,
+                autoHide: true,
+                control: FSelectControl.managed(
+                  onChange: (value) {
+                    setState(() => _selectedUserType = value);
+                  },
+                ),
+                validator: (value) =>
+                    value == null ? 'Please select your role' : null,
+                autovalidateMode: AutovalidateMode.disabled,
                 children: [
-                  Icon(
-                    type['icon'] as IconData,
-                    size: 16,
-                  ),
-                  const SizedBox(width: 4),
-                  Text(type['label'] as String),
+                  for (final entry in _userTypeLabels.entries)
+                    FSelectItem<String>(
+                      title: Text(entry.value),
+                      value: entry.key,
+                    ),
                 ],
               ),
-              selected: isSelected,
-              onSelected: (selected) {
-                setState(() {
-                  _selectedUserType =
-                      selected ? type['value'] as String : null;
-                  _userTypeError = null;
-                });
-              },
-            );
-          }).toList(),
-        ),
-        if (_userTypeError != null)
-          Padding(
-            padding: const EdgeInsets.only(top: 8.0),
-            child: Text(
-              _userTypeError!,
-              style: TextStyle(
-                color: Theme.of(context).colorScheme.error,
-                fontSize: 12,
+              const SizedBox(height: 32),
+              SizedBox(
+                width: double.infinity,
+                child: FButton(
+                  onPress: _isLoading ? null : _handleSignup,
+                  child: _isLoading
+                      ? const FCircularProgress()
+                      : const Text('Sign Up'),
+                ),
               ),
-            ),
-          ),
-      ],
-    );
-  }
-
-  Widget _buildSignInLink(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Text(
-          'Already have an account?',
-          style: TextStyle(
-            color: AppColors.textSecondary,
+              const SizedBox(height: 16),
+              Center(
+                child: FButton(
+                  variant: FButtonVariant.ghost,
+                  onPress: () => context.go('/login'),
+                  child: const Text('Already a user? Sign In'),
+                ),
+              ),
+              const SizedBox(height: 24),
+            ],
           ),
         ),
-        const SizedBox(width: 4),
-        AppButton(
-          label: 'Sign In',
-          onPressed: () => context.go('/login'),
-          variant: AppButtonVariant.ghost,
-        ),
-      ],
+      ),
     );
   }
 }

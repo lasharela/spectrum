@@ -21,7 +21,6 @@ const _publicPaths = {
   '/signup',
   '/forgot-password',
   '/reset-password',
-  '/ui',
 };
 
 /// Notifier that bridges Riverpod auth state changes to GoRouter's
@@ -138,12 +137,12 @@ final routerProvider = Provider<GoRouter>((ref) {
               body: Center(child: Text('Events — coming in Phase 6')),
             ),
           ),
-          GoRoute(
-            path: '/profile',
-            name: 'profile',
-            builder: (context, state) => const ProfileScreen(),
-          ),
         ],
+      ),
+      GoRoute(
+        path: '/profile',
+        name: 'profile',
+        builder: (context, state) => const ProfileScreen(),
       ),
     ],
     errorBuilder: (context, state) => Scaffold(

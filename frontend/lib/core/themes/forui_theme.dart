@@ -14,7 +14,9 @@ class AppForuiTheme {
         colors: FColors.zincLight.copyWith(
           primary: AppColors.primary,
           primaryForeground: const Color(0xFFFFFFFF),
-          background: const Color(0xFFF5F5F5),
+          secondary: const Color(0xFFDDE3F8), // Light primary blue
+          secondaryForeground: AppColors.primary,
+          background: const Color(0xFFF3F6FA), // Soft blue tint
         ),
       );
 
