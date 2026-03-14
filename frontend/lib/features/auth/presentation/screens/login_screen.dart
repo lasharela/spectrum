@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/constants/app_colors.dart';
+import '../../../../shared/widgets/widgets.dart';
 import '../providers/auth_provider.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
@@ -13,18 +13,52 @@ class LoginScreen extends ConsumerStatefulWidget {
 }
 
 class _LoginScreenState extends ConsumerState<LoginScreen> {
-  final _formKey = GlobalKey<FormBuilderState>();
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
   bool _isLoading = false;
-  bool _obscurePassword = true;
+  String? _emailError;
+  String? _passwordError;
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
+  bool _validate() {
+    String? emailError;
+    String? passwordError;
+
+    final email = _emailController.text.trim();
+    final password = _passwordController.text;
+
+    if (email.isEmpty) {
+      emailError = 'Email is required';
+    } else if (!RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$').hasMatch(email)) {
+      emailError = 'Enter a valid email';
+    }
+
+    if (password.isEmpty) {
+      passwordError = 'Password is required';
+    }
+
+    setState(() {
+      _emailError = emailError;
+      _passwordError = passwordError;
+    });
+
+    return emailError == null && passwordError == null;
+  }
 
   void _handleLogin() async {
-    if (!(_formKey.currentState?.saveAndValidate() ?? false)) return;
-    final values = _formKey.currentState!.value;
+    if (!_validate()) return;
+
     setState(() => _isLoading = true);
     try {
       await ref.read(authProvider.notifier).signIn(
-        email: values['email'] as String,
-        password: values['password'] as String,
+        email: _emailController.text.trim(),
+        password: _passwordController.text,
       );
       if (mounted) context.go('/home');
     } catch (e) {
@@ -66,11 +100,15 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 const SizedBox(height: 40),
                 _buildHeader(context),
                 const SizedBox(height: 40),
-                _buildForm(context),
+                _buildForm(),
                 const SizedBox(height: 24),
-                _buildLoginButton(context),
+                AppButton(
+                  label: 'Sign In',
+                  onPressed: _isLoading ? null : _handleLogin,
+                  isLoading: _isLoading,
+                ),
                 const SizedBox(height: 24),
-                _buildAlternativeLogin(context),
+                _buildAlternativeLogin(),
                 const SizedBox(height: 24),
                 _buildSignupLink(context),
               ],
@@ -130,124 +168,33 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     );
   }
 
-  Widget _buildForm(BuildContext context) {
-    return FormBuilder(
-      key: _formKey,
+  Widget _buildForm() {
+    return AppCard(
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            decoration: BoxDecoration(
-              color: AppColors.cardBackground,
-              borderRadius: BorderRadius.circular(16),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.05),
-                  blurRadius: 10,
-                  offset: const Offset(0, 4),
-                ),
-              ],
-            ),
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Email',
-                  style: TextStyle(
-                    color: AppColors.textDark,
-                    fontWeight: FontWeight.w600,
-                    fontSize: 14,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                FormBuilderTextField(
-                  name: 'email',
-                  style: TextStyle(color: AppColors.textDark),
-                  decoration: InputDecoration(
-                    hintText: 'Enter your email',
-                    hintStyle: TextStyle(color: AppColors.textGray.withValues(alpha: 0.5)),
-                    prefixIcon: Icon(
-                      Icons.email_outlined,
-                      color: AppColors.cyan,
-                    ),
-                    filled: true,
-                    fillColor: AppColors.backgroundGray,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide.none,
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide.none,
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide(color: AppColors.cyan, width: 2),
-                    ),
-                  ),
-                  keyboardType: TextInputType.emailAddress,
-                ),
-                const SizedBox(height: 20),
-                Text(
-                  'Password',
-                  style: TextStyle(
-                    color: AppColors.textDark,
-                    fontWeight: FontWeight.w600,
-                    fontSize: 14,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                FormBuilderTextField(
-                  name: 'password',
-                  style: TextStyle(color: AppColors.textDark),
-                  decoration: InputDecoration(
-                    hintText: 'Enter your password',
-                    hintStyle: TextStyle(color: AppColors.textGray.withValues(alpha: 0.5)),
-                    prefixIcon: Icon(
-                      Icons.lock_outline,
-                      color: AppColors.coral,
-                    ),
-                    suffixIcon: IconButton(
-                      icon: Icon(
-                        _obscurePassword ? Icons.visibility_off : Icons.visibility,
-                        color: AppColors.textGray,
-                      ),
-                      onPressed: () {
-                        setState(() => _obscurePassword = !_obscurePassword);
-                      },
-                    ),
-                    filled: true,
-                    fillColor: AppColors.backgroundGray,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide.none,
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide.none,
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide(color: AppColors.coral, width: 2),
-                    ),
-                  ),
-                  obscureText: _obscurePassword,
-                ),
-                const SizedBox(height: 16),
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: TextButton(
-                    onPressed: () {},
-                    child: Text(
-                      'Forgot Password?',
-                      style: TextStyle(
-                        color: AppColors.cyan,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
+          AppTextField(
+            label: 'Email',
+            hint: 'Enter your email',
+            controller: _emailController,
+            keyboardType: TextInputType.emailAddress,
+            error: _emailError != null ? Text(_emailError!) : null,
+          ),
+          const SizedBox(height: 20),
+          AppTextField(
+            label: 'Password',
+            hint: 'Enter your password',
+            controller: _passwordController,
+            isPassword: true,
+            error: _passwordError != null ? Text(_passwordError!) : null,
+          ),
+          const SizedBox(height: 16),
+          Align(
+            alignment: Alignment.centerRight,
+            child: AppButton(
+              label: 'Forgot Password?',
+              onPressed: () => context.go('/forgot-password'),
+              variant: AppButtonVariant.ghost,
             ),
           ),
         ],
@@ -255,55 +202,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     );
   }
 
-  Widget _buildLoginButton(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      height: 56,
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: AppColors.primaryGradient,
-          begin: Alignment.centerLeft,
-          end: Alignment.centerRight,
-        ),
-        borderRadius: BorderRadius.circular(28),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.cyan.withValues(alpha: 0.3),
-            blurRadius: 20,
-            offset: const Offset(0, 10),
-          ),
-        ],
-      ),
-      child: ElevatedButton(
-        onPressed: _isLoading ? null : _handleLogin,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.transparent,
-          shadowColor: Colors.transparent,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(28),
-          ),
-        ),
-        child: _isLoading
-            ? SizedBox(
-                height: 24,
-                width: 24,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                ),
-              )
-            : Text(
-                'Sign In',
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-      ),
-    );
-  }
-
-  Widget _buildAlternativeLogin(BuildContext context) {
+  Widget _buildAlternativeLogin() {
     return Column(
       children: [
         Text(

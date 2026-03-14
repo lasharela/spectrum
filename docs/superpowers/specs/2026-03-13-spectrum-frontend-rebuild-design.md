@@ -390,19 +390,31 @@ Each phase follows this sequence:
 - Tests: sign up flow, sign in flow, session management
 
 ### Phase 3 — Home & Navigation
-- Rebuild Home dashboard with Forui (replace all hardcoded data)
-- Rebuild bottom navigation (4 tabs: Home, Community, Catalog, Profile)
-- Backend: `GET /api/dashboard` endpoint
+- Rebuild bottom navigation to match ana/backup exactly: **5 tabs** (Home, Community, Catalogue, Promotions, Events)
+- AppBar: Notifications bell icon (left) → Notifications screen, Settings gear icon (right) → Settings screen
+- Rebuild Home dashboard with Forui to match ana/backup layout:
+  - Greeting card ("Welcome back, {user name}!") with subtitle
+  - Hottest Promotions: horizontal scrollable cards (discount badge, title, store name)
+  - Popular Places: cards with image placeholder, name, address, rating
+  - Upcoming Events: cards with date badge, title, location, time
+  - Quick Actions / Resources: grid of resource cards (icon, label)
+- Backend: `GET /api/dashboard` endpoint (returns greeting, promotions summary, places, events, resources)
 - OpenAPI: `contracts/dashboard.yaml`
 - Wire Home screen to real user data (greeting uses authenticated user name)
-- Wire dashboard cards to real counts
+- Wire dashboard cards to real counts/data
 
 ### Phase 4 — Community
-- Port full Community screen from ana/backup (discussions with tabs, search, replies)
+- Port full Community screen from ana/backup matching UI exactly:
+  - "All Discussions" / "My Discussions" tab bar with underline indicator
+  - Search bar ("Search discussions...")
+  - Post cards: avatar circle (initial letter), username, timestamp, category tag (e.g. "News"), title, content preview, optional image placeholder, like count + comment count + share button
+  - Floating action button (blue circle with +) to create new discussion
+  - Post detail: bottom sheet with full post content, "Replies" section with count, reply cards (avatar, name, timestamp, like), "Add a reply..." input with send button
+  - New Discussion modal: category chips (General, Sensory, Education, Support, Resources, Daily Life, News, Social), Title field, Content field, "Add Image" area with tap-to-add
 - Rebuild with Forui + clean architecture layers
-- Backend: add `?q=` search parameter to existing `GET /api/posts`, add `PUT /api/posts/:id`
+- Backend: add `?q=` search parameter to existing `GET /api/posts`, add `PUT /api/posts/:id`, add category field to Post model
 - OpenAPI: update `contracts/community.yaml`
-- Tests: post creation, feed loading
+- Tests: post creation, feed loading, search, category filtering
 
 ### Phase 5 — Catalog
 - Port Catalog screen from ana/backup
@@ -459,11 +471,11 @@ Complete list of screens across both branches, with target status:
 | Forgot Password | ana/backup | auth | 2 |
 | Reset Password | ana/backup | auth | 2 |
 | Home Dashboard | both branches | home | 3 |
-| Main Navigation Shell | both branches | shared | 3 |
-| Community/Discussions | ana/backup (full) | community | 4 |
-| Feed | development | community | 4 |
-| Post Detail | development | community | 4 |
-| Catalog | ana/backup (was "catalog_screen") | catalog | 5 |
+| Main Navigation Shell (5 tabs) | ana/backup | shared | 3 |
+| Community/Discussions (All/My tabs) | ana/backup (full) | community | 4 |
+| Post Detail (bottom sheet) | ana/backup + development | community | 4 |
+| New Discussion modal | ana/backup | community | 4 |
+| Catalog | ana/backup | catalog | 5 |
 | Events | ana/backup | events | 6 |
 | Promotions | ana/backup | promotions | 7 |
 | Profile | both branches | profile | 8 |
@@ -472,6 +484,10 @@ Complete list of screens across both branches, with target status:
 | Privacy | ana/backup | profile | 8 |
 | Notifications | ana/backup | notifications | 9 |
 | Interactive Map | ana/backup | map | 10 |
+
+> **Note:** `resources_screen.dart` from ana/backup is a placeholder ("coming soon"). Resources are accessed via the Quick Actions section on the Home dashboard (Phase 3).
+>
+> **UI Source of Truth:** All screens must match the ana/backup visual design, rebuilt with Forui components and shared widgets for consistency. Screenshots in `temp/` directory serve as reference.
 
 ## Testing Strategy
 

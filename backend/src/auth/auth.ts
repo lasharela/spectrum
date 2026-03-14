@@ -10,6 +10,11 @@ export function createAuth(prisma: PrismaClient, secret: string) {
     }),
     emailAndPassword: {
       enabled: true,
+      sendResetPassword: async (data, request) => {
+        console.log(
+          `[DEV] Password reset for ${data.user.email}: ${data.url}`
+        );
+      },
     },
     user: {
       additionalFields: {
