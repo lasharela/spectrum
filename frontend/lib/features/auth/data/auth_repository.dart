@@ -9,13 +9,19 @@ class AuthRepository {
   Future<User> signUp({
     required String email,
     required String password,
-    required String name,
+    required String firstName,
+    String? middleName,
+    required String lastName,
     required String userType,
   }) async {
+    final fullName = [firstName, if (middleName != null && middleName.isNotEmpty) middleName, lastName].join(' ');
     final response = await _api.post('/api/auth/sign-up/email', data: {
       'email': email,
       'password': password,
-      'name': name,
+      'name': fullName,
+      'firstName': firstName,
+      'middleName': middleName,
+      'lastName': lastName,
       'userType': userType,
     });
     final data = response.data as Map<String, dynamic>;

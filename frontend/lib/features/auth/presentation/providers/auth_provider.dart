@@ -20,7 +20,9 @@ class AuthNotifier extends AsyncNotifier<User?> {
   Future<void> signUp({
     required String email,
     required String password,
-    required String name,
+    required String firstName,
+    String? middleName,
+    required String lastName,
     required String userType,
   }) async {
     state = const AsyncLoading();
@@ -29,10 +31,15 @@ class AuthNotifier extends AsyncNotifier<User?> {
       return repo.signUp(
         email: email,
         password: password,
-        name: name,
+        firstName: firstName,
+        middleName: middleName,
+        lastName: lastName,
         userType: userType,
       );
     });
+    if (state.hasError) {
+      throw state.error!;
+    }
   }
 
   Future<void> signIn({
@@ -44,6 +51,9 @@ class AuthNotifier extends AsyncNotifier<User?> {
       final repo = ref.read(authRepositoryProvider);
       return repo.signIn(email: email, password: password);
     });
+    if (state.hasError) {
+      throw state.error!;
+    }
   }
 
   Future<void> signOut() async {

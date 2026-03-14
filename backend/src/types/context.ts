@@ -5,6 +5,9 @@ export type UserContext = {
   id: string;
   email: string;
   name: string;
+  firstName: string;
+  middleName: string | null;
+  lastName: string;
   userType: string;
   image: string | null;
 };

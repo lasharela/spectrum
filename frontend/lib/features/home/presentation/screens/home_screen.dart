@@ -49,7 +49,7 @@ class HomeScreen extends ConsumerWidget {
                   sliver: SliverList(
                     delegate: SliverChildListDelegate([
                       GreetingCard(
-                        userName: dashboard.user.name,
+                        userName: dashboard.user.firstName,
                         userType: dashboard.user.userType,
                       ),
                       const SizedBox(height: 24),

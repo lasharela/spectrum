@@ -110,7 +110,7 @@ class _FakeDashboardNotifier extends AsyncNotifier<DashboardData>
   @override
   Future<DashboardData> build() async {
     return const DashboardData(
-      user: DashboardUser(name: 'TestUser', userType: 'parent'),
+      user: DashboardUser(firstName: 'TestUser', userType: 'parent'),
       recentPosts: [],
       promotions: [],
       places: [],

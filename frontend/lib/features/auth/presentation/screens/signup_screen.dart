@@ -1,7 +1,9 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/constants/app_colors.dart';
+import '../../../../shared/api/api_exceptions.dart';
 import '../../../../shared/widgets/widgets.dart';
 import '../providers/auth_provider.dart';
 
@@ -13,13 +15,16 @@ class SignupScreen extends ConsumerStatefulWidget {
 }
 
 class _SignupScreenState extends ConsumerState<SignupScreen> {
-  final _nameController = TextEditingController();
+  final _firstNameController = TextEditingController();
+  final _middleNameController = TextEditingController();
+  final _lastNameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
 
   bool _isLoading = false;
-  String? _nameError;
+  String? _firstNameError;
+  String? _lastNameError;
   String? _emailError;
   String? _passwordError;
   String? _confirmPasswordError;
@@ -61,7 +66,9 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
 
   @override
   void dispose() {
-    _nameController.dispose();
+    _firstNameController.dispose();
+    _middleNameController.dispose();
+    _lastNameController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
     _confirmPasswordController.dispose();
@@ -69,32 +76,37 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
   }
 
   bool _validate() {
-    String? nameError;
+    String? firstNameError;
+    String? lastNameError;
     String? emailError;
     String? passwordError;
     String? confirmPasswordError;
     String? userTypeError;
 
-    final name = _nameController.text.trim();
+    final firstName = _firstNameController.text.trim();
+    final lastName = _lastNameController.text.trim();
     final email = _emailController.text.trim();
     final password = _passwordController.text;
     final confirmPassword = _confirmPasswordController.text;
 
-    // Name validation
-    if (name.isEmpty) {
-      nameError = 'Name is required';
-    } else if (name.length < 2) {
-      nameError = 'Name must be at least 2 characters';
+    if (firstName.isEmpty) {
+      firstNameError = 'First name is required';
+    } else if (firstName.length < 2) {
+      firstNameError = 'Must be at least 2 characters';
     }
 
-    // Email validation
+    if (lastName.isEmpty) {
+      lastNameError = 'Last name is required';
+    } else if (lastName.length < 2) {
+      lastNameError = 'Must be at least 2 characters';
+    }
+
     if (email.isEmpty) {
       emailError = 'Email is required';
     } else if (!RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$').hasMatch(email)) {
       emailError = 'Enter a valid email';
     }
 
-    // Password validation
     if (password.isEmpty) {
       passwordError = 'Password is required';
     } else if (password.length < 8) {
@@ -107,27 +119,27 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
       passwordError = 'Password must contain a number';
     }
 
-    // Confirm password validation
     if (confirmPassword.isEmpty) {
       confirmPasswordError = 'Please confirm your password';
     } else if (confirmPassword != password) {
       confirmPasswordError = 'Passwords do not match';
     }
 
-    // User type validation
     if (_selectedUserType == null) {
       userTypeError = 'Please select your user type';
     }
 
     setState(() {
-      _nameError = nameError;
+      _firstNameError = firstNameError;
+      _lastNameError = lastNameError;
       _emailError = emailError;
       _passwordError = passwordError;
       _confirmPasswordError = confirmPasswordError;
       _userTypeError = userTypeError;
     });
 
-    return nameError == null &&
+    return firstNameError == null &&
+        lastNameError == null &&
         emailError == null &&
         passwordError == null &&
         confirmPasswordError == null &&
@@ -139,18 +151,27 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
 
     setState(() => _isLoading = true);
     try {
+      final middleName = _middleNameController.text.trim();
       await ref.read(authProvider.notifier).signUp(
             email: _emailController.text.trim(),
             password: _passwordController.text,
-            name: _nameController.text.trim(),
+            firstName: _firstNameController.text.trim(),
+            middleName: middleName.isEmpty ? null : middleName,
+            lastName: _lastNameController.text.trim(),
             userType: _selectedUserType!,
           );
       if (mounted) context.go('/home');
     } catch (e) {
       if (mounted) {
         setState(() => _isLoading = false);
+        String message = 'Something went wrong';
+        if (e is ApiException) {
+          message = e.message;
+        } else if (e is DioException && e.error is ApiException) {
+          message = (e.error as ApiException).message;
+        }
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Sign up failed: ${e.toString()}')),
+          SnackBar(content: Text(message)),
         );
       }
     }
@@ -259,11 +280,26 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           AppTextField(
-            label: 'Full Name',
-            hint: 'Enter your full name',
-            controller: _nameController,
+            label: 'First Name',
+            hint: 'Enter your first name',
+            controller: _firstNameController,
             keyboardType: TextInputType.name,
-            error: _nameError != null ? Text(_nameError!) : null,
+            error: _firstNameError != null ? Text(_firstNameError!) : null,
+          ),
+          const SizedBox(height: 20),
+          AppTextField(
+            label: 'Middle Name (optional)',
+            hint: 'Enter your middle name',
+            controller: _middleNameController,
+            keyboardType: TextInputType.name,
+          ),
+          const SizedBox(height: 20),
+          AppTextField(
+            label: 'Last Name',
+            hint: 'Enter your last name',
+            controller: _lastNameController,
+            keyboardType: TextInputType.name,
+            error: _lastNameError != null ? Text(_lastNameError!) : null,
           ),
           const SizedBox(height: 20),
           AppTextField(

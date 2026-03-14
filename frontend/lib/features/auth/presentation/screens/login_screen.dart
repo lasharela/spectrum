@@ -1,7 +1,9 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/constants/app_colors.dart';
+import '../../../../shared/api/api_exceptions.dart';
 import '../../../../shared/widgets/widgets.dart';
 import '../providers/auth_provider.dart';
 
@@ -64,8 +66,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     } catch (e) {
       if (mounted) {
         setState(() => _isLoading = false);
+        String message = 'Something went wrong';
+        if (e is ApiException) {
+          message = e.message;
+        } else if (e is DioException && e.error is ApiException) {
+          message = (e.error as ApiException).message;
+        }
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Login failed: ${e.toString()}')),
+          SnackBar(content: Text(message)),
         );
       }
     }

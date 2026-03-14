@@ -37,7 +37,15 @@ app.use("/api/*", async (c, next) => {
 // Auth routes — Better Auth handler
 app.on(["GET", "POST"], "/api/auth/**", async (c) => {
   const auth = c.get("auth");
-  return auth.handler(c.req.raw);
+  try {
+    return await auth.handler(c.req.raw);
+  } catch (err) {
+    console.error("Auth handler error:", err);
+    return c.json(
+      { message: "Authentication error", code: "AUTH_ERROR" },
+      500
+    );
+  }
 });
 
 // Profile endpoint

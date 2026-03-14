@@ -36,14 +36,14 @@ class DashboardData {
 }
 
 class DashboardUser {
-  final String name;
+  final String firstName;
   final String userType;
 
-  const DashboardUser({required this.name, required this.userType});
+  const DashboardUser({required this.firstName, required this.userType});
 
   factory DashboardUser.fromJson(Map<String, dynamic> json) {
     return DashboardUser(
-      name: json['name'] as String,
+      firstName: json['firstName'] as String,
       userType: json['userType'] as String,
     );
   }

@@ -25,7 +25,7 @@ export function dashboardRoutes() {
 
     return c.json({
       user: {
-        name: user.name,
+        firstName: user.firstName,
         userType: user.userType,
       },
       recentPosts: recentPosts.map((p) => ({
