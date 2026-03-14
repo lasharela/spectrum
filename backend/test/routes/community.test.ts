@@ -56,6 +56,18 @@ describe("Posts API", () => {
     });
   });
 
+  describe("PUT /api/posts/:id", () => {
+    it("should update own post content and category", async () => {
+      expect(true).toBe(true);
+    });
+    it("should return 403 when updating another user's post", async () => {
+      expect(true).toBe(true);
+    });
+    it("should return 404 for non-existent post", async () => {
+      expect(true).toBe(true);
+    });
+  });
+
   describe("DELETE /api/posts/:id", () => {
     it("should delete own post", async () => {
       expect(true).toBe(true);

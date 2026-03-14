@@ -10,6 +10,13 @@ const createPostSchema = z.object({
     .array(z.string().max(30))
     .max(5)
     .default([]),
+  category: z.string().default("General"),
+});
+
+const updatePostSchema = z.object({
+  content: z.string().min(1).max(5000).optional(),
+  tags: z.array(z.string().max(30)).max(5).optional(),
+  category: z.string().optional(),
 });
 
 const createCommentSchema = z.object({
@@ -88,12 +95,12 @@ export function communityRoutes() {
 
   // POST / - create a post
   app.post("/", zValidator("json", createPostSchema), async (c) => {
-    const { content, tags } = c.req.valid("json");
+    const { content, tags, category } = c.req.valid("json");
     const user = c.get("user");
     const prisma = c.get("prisma");
 
     const post = await prisma.post.create({
-      data: { content, tags: JSON.stringify(tags), authorId: user.id },
+      data: { content, tags: JSON.stringify(tags), category, authorId: user.id },
       include: {
         author: { select: { id: true, name: true, image: true, userType: true } },
       },
@@ -148,6 +155,52 @@ export function communityRoutes() {
         likesCount: post.likesCount,
         commentsCount: post.commentsCount,
         liked: post.reactions.length > 0,
+      },
+    });
+  });
+
+  // PUT /:id - update own post
+  app.put("/:id", zValidator("json", updatePostSchema), async (c) => {
+    const id = c.req.param("id");
+    const user = c.get("user");
+    const prisma = c.get("prisma");
+    const body = c.req.valid("json");
+
+    const post = await prisma.post.findUnique({ where: { id } });
+
+    if (!post) {
+      return c.json({ error: "Post not found", code: "NOT_FOUND" }, 404);
+    }
+
+    if (post.authorId !== user.id) {
+      return c.json({ error: "Not authorized", code: "FORBIDDEN" }, 403);
+    }
+
+    const updated = await prisma.post.update({
+      where: { id },
+      data: {
+        ...(body.content !== undefined ? { content: body.content } : {}),
+        ...(body.tags !== undefined ? { tags: JSON.stringify(body.tags) } : {}),
+        ...(body.category !== undefined ? { category: body.category } : {}),
+      },
+      include: {
+        author: { select: { id: true, name: true, image: true, userType: true } },
+        reactions: { where: { authorId: user.id }, select: { id: true } },
+      },
+    });
+
+    return c.json({
+      post: {
+        id: updated.id,
+        content: updated.content,
+        tags: JSON.parse(updated.tags),
+        category: updated.category,
+        authorId: updated.authorId,
+        author: updated.author,
+        createdAt: updated.createdAt.toISOString(),
+        likesCount: updated.likesCount,
+        commentsCount: updated.commentsCount,
+        liked: updated.reactions.length > 0,
       },
     });
   });
