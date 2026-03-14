@@ -4,6 +4,7 @@ import { createPrismaClient } from "./db/client.js";
 import { createAuth } from "./auth/auth.js";
 import { sessionMiddleware } from "./middleware/session.js";
 import { communityRoutes } from "./routes/community.js";
+import { dashboardRoutes } from "./routes/dashboard.js";
 import type { AppBindings, AppVariables } from "./types/context.js";
 
 const app = new Hono<{ Bindings: AppBindings; Variables: AppVariables }>();
@@ -47,6 +48,7 @@ app.get("/api/me", sessionMiddleware, async (c) => {
 
 // Community routes
 app.route("/api/posts", communityRoutes());
+app.route("/api/dashboard", dashboardRoutes());
 
 // Global error handler
 app.onError((err, c) => {
