@@ -9,23 +9,25 @@
     "test:watch": "vitest",
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev",
-    "db:push": "prisma db push"
+    "db:push": "prisma db push",
+    "db:seed": "npx tsx src/db/seed.ts"
   },
   "dependencies": {
-    "hono": "^4.7.0",
     "@hono/zod-validator": "^0.5.0",
-    "better-auth": "^1.2.0",
-    "@prisma/client": "^6.5.0",
     "@prisma/adapter-d1": "^6.5.0",
+    "@prisma/client": "^6.5.0",
+    "better-auth": "^1.2.0",
+    "hono": "^4.7.0",
     "zod": "^3.24.0"
   },
   "devDependencies": {
-    "wrangler": "^4.0.0",
     "@cloudflare/workers-types": "^4.20250312.0",
+    "@types/node": "^22.0.0",
+    "prisma": "^6.5.0",
+    "tsx": "^4.21.0",
     "typescript": "^5.7.0",
     "vitest": "^3.0.0",
-    "prisma": "^6.5.0",
-    "@types/node": "^22.0.0"
+    "wrangler": "^4.0.0"
   },
   "prisma": {
     "schema": "src/db/schema.prisma"
