@@ -17,7 +17,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.backgroundGray,
+      backgroundColor: AppColors.background,
       body: SafeArea(
         child: Column(
           children: [
@@ -57,7 +57,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 width: 280,
                 height: 280,
                 decoration: BoxDecoration(
-                  color: AppColors.coral.withValues(alpha: 0.3),
+                  color: AppColors.accent1.withValues(alpha: 0.3),
                   shape: BoxShape.circle,
                 ),
               ),
@@ -65,11 +65,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 width: 220,
                 height: 220,
                 decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: AppColors.coralGradient,
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
+                  color: AppColors.accent1,
                   shape: BoxShape.circle,
                 ),
               ),
@@ -77,7 +73,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 width: 160,
                 height: 160,
                 decoration: BoxDecoration(
-                  color: AppColors.cyan,
+                  color: AppColors.tertiary,
                   shape: BoxShape.circle,
                 ),
               ),
@@ -85,13 +81,13 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 width: 100,
                 height: 100,
                 decoration: BoxDecoration(
-                  color: AppColors.yellow,
+                  color: AppColors.warning,
                   shape: BoxShape.circle,
                 ),
-                child: Icon(
+                child: const Icon(
                   Icons.palette,
                   size: 50,
-                  color: AppColors.textLight,
+                  color: AppColors.textOnPrimary,
                 ),
               ),
             ],
@@ -101,7 +97,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             'Welcome to Spectrum',
             style: Theme.of(context).textTheme.headlineMedium?.copyWith(
               fontWeight: FontWeight.bold,
-              color: AppColors.textDark,
+              color: AppColors.textPrimary,
             ),
           ),
           const SizedBox(height: 16),
@@ -109,7 +105,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             'Connect, Learn, and Grow\nwith our supportive community',
             textAlign: TextAlign.center,
             style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-              color: AppColors.textGray,
+              color: AppColors.textSecondary,
               height: 1.5,
             ),
           ),
@@ -137,7 +133,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     width: 120,
                     height: 120,
                     decoration: BoxDecoration(
-                      color: AppColors.yellow,
+                      color: AppColors.warning,
                       borderRadius: BorderRadius.circular(30),
                     ),
                   ),
@@ -149,7 +145,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     width: 100,
                     height: 100,
                     decoration: BoxDecoration(
-                      color: AppColors.cyan,
+                      color: AppColors.tertiary,
                       shape: BoxShape.circle,
                     ),
                   ),
@@ -160,17 +156,13 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     width: 180,
                     height: 180,
                     decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: AppColors.coralGradient,
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                      ),
+                      color: AppColors.accent1,
                       borderRadius: BorderRadius.circular(40),
                     ),
-                    child: Icon(
+                    child: const Icon(
                       Icons.people,
                       size: 80,
-                      color: AppColors.textLight,
+                      color: AppColors.textOnPrimary,
                     ),
                   ),
                 ),
@@ -182,7 +174,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             'Find Your Community',
             style: Theme.of(context).textTheme.headlineMedium?.copyWith(
               fontWeight: FontWeight.bold,
-              color: AppColors.textDark,
+              color: AppColors.textPrimary,
             ),
           ),
           const SizedBox(height: 16),
@@ -190,7 +182,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             'Connect with parents, professionals,\nand individuals on the spectrum',
             textAlign: TextAlign.center,
             style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-              color: AppColors.textGray,
+              color: AppColors.textSecondary,
               height: 1.5,
             ),
           ),
@@ -214,7 +206,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   width: 200,
                   height: 200,
                   decoration: BoxDecoration(
-                    color: AppColors.navy,
+                    color: AppColors.darkGray,
                     borderRadius: BorderRadius.circular(40),
                   ),
                 ),
@@ -225,11 +217,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   width: 200,
                   height: 200,
                   decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: AppColors.primaryGradient,
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    ),
+                    color: AppColors.primary,
                     borderRadius: BorderRadius.circular(40),
                   ),
                 ),
@@ -238,13 +226,13 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 width: 140,
                 height: 140,
                 decoration: BoxDecoration(
-                  color: AppColors.yellow,
+                  color: AppColors.warning,
                   shape: BoxShape.circle,
                 ),
-                child: Icon(
+                child: const Icon(
                   Icons.school,
                   size: 70,
-                  color: AppColors.textLight,
+                  color: AppColors.textOnPrimary,
                 ),
               ),
             ],
@@ -254,7 +242,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             'Learn & Share',
             style: Theme.of(context).textTheme.headlineMedium?.copyWith(
               fontWeight: FontWeight.bold,
-              color: AppColors.textDark,
+              color: AppColors.textPrimary,
             ),
           ),
           const SizedBox(height: 16),
@@ -262,7 +250,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             'Access resources, courses,\nand expert guidance',
             textAlign: TextAlign.center,
             style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-              color: AppColors.textGray,
+              color: AppColors.textSecondary,
               height: 1.5,
             ),
           ),
@@ -283,7 +271,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             height: 8,
             width: _currentPage == index ? 32 : 8,
             decoration: BoxDecoration(
-              color: _currentPage == index ? AppColors.cyan : AppColors.border,
+              color: _currentPage == index ? AppColors.primary : AppColors.divider,
               borderRadius: BorderRadius.circular(4),
             ),
           );

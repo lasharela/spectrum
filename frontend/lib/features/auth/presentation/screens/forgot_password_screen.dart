@@ -68,7 +68,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.backgroundGray,
+      backgroundColor: AppColors.background,
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
@@ -98,13 +98,13 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
             width: 80,
             height: 80,
             decoration: BoxDecoration(
-              color: AppColors.cyan.withValues(alpha: 0.1),
+              color: AppColors.primary.withValues(alpha: 0.1),
               shape: BoxShape.circle,
             ),
             child: const Icon(
               Icons.lock_reset,
               size: 40,
-              color: AppColors.cyan,
+              color: AppColors.primary,
             ),
           ),
         ),
@@ -113,7 +113,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
           'Forgot Password?',
           style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                 fontWeight: FontWeight.bold,
-                color: AppColors.textDark,
+                color: AppColors.textPrimary,
               ),
           textAlign: TextAlign.center,
         ),
@@ -121,7 +121,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
         Text(
           "Enter your email and we'll send you a reset link",
           style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                color: AppColors.textGray,
+                color: AppColors.textSecondary,
               ),
           textAlign: TextAlign.center,
         ),
@@ -160,13 +160,13 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
             width: 80,
             height: 80,
             decoration: BoxDecoration(
-              color: AppColors.cyan.withValues(alpha: 0.1),
+              color: AppColors.primary.withValues(alpha: 0.1),
               shape: BoxShape.circle,
             ),
             child: const Icon(
               Icons.mark_email_read_outlined,
               size: 40,
-              color: AppColors.cyan,
+              color: AppColors.primary,
             ),
           ),
         ),
@@ -175,7 +175,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
           'Check Your Email',
           style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                 fontWeight: FontWeight.bold,
-                color: AppColors.textDark,
+                color: AppColors.textPrimary,
               ),
           textAlign: TextAlign.center,
         ),
@@ -183,7 +183,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
         Text(
           "We've sent password reset instructions to $email",
           style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                color: AppColors.textGray,
+                color: AppColors.textSecondary,
               ),
           textAlign: TextAlign.center,
         ),

@@ -82,7 +82,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.backgroundGray,
+      backgroundColor: AppColors.background,
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
@@ -101,7 +101,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     ),
                     child: Icon(
                       Icons.arrow_back,
-                      color: AppColors.textDark,
+                      color: AppColors.textPrimary,
                     ),
                   ),
                 ),
@@ -123,7 +123,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     child: Text(
                       'Forgot Password?',
                       style: TextStyle(
-                        color: AppColors.coral,
+                        color: AppColors.accent1,
                         fontSize: 14,
                       ),
                     ),
@@ -151,11 +151,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               width: 60,
               height: 60,
               decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: AppColors.primaryGradient,
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
+                color: AppColors.primary,
                 borderRadius: BorderRadius.circular(16),
               ),
               child: Icon(
@@ -172,13 +168,13 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   'Welcome Back!',
                   style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                     fontWeight: FontWeight.bold,
-                    color: AppColors.textDark,
+                    color: AppColors.textPrimary,
                   ),
                 ),
                 Text(
                   'Sign in to continue',
                   style: TextStyle(
-                    color: AppColors.textGray,
+                    color: AppColors.textSecondary,
                     fontSize: 14,
                   ),
                 ),
@@ -221,7 +217,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         Text(
           'Or continue with',
           style: TextStyle(
-            color: AppColors.textGray,
+            color: AppColors.textSecondary,
             fontSize: 14,
           ),
         ),
@@ -231,19 +227,19 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           children: [
             _buildSocialButton(
               icon: Icons.g_mobiledata,
-              color: AppColors.coral,
+              color: AppColors.accent1,
               onTap: () {},
             ),
             const SizedBox(width: 16),
             _buildSocialButton(
               icon: Icons.apple,
-              color: AppColors.navy,
+              color: AppColors.darkGray,
               onTap: () {},
             ),
             const SizedBox(width: 16),
             _buildSocialButton(
               icon: Icons.facebook,
-              color: AppColors.cyan,
+              color: AppColors.tertiary,
               onTap: () {},
             ),
           ],
@@ -267,7 +263,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           color: AppColors.cardBackground,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: AppColors.border,
+            color: AppColors.divider,
           ),
         ),
         child: Icon(
@@ -286,7 +282,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         Text(
           "Don't have an account? ",
           style: TextStyle(
-            color: AppColors.textGray,
+            color: AppColors.textSecondary,
           ),
         ),
         TextButton(
@@ -294,7 +290,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           child: Text(
             'Sign Up',
             style: TextStyle(
-              color: AppColors.coral,
+              color: AppColors.accent1,
               fontWeight: FontWeight.bold,
             ),
           ),

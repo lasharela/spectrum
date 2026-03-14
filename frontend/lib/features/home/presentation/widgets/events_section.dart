@@ -103,7 +103,7 @@ class EventsSection extends StatelessWidget {
                     ),
                     const SizedBox(width: 2),
                     Text(
-                      _formatDate(event.dateTime),
+                      event.time,
                       style: const TextStyle(
                         fontSize: 13,
                         color: AppColors.textSecondary,
@@ -143,9 +143,9 @@ class EventsSection extends StatelessWidget {
               color: AppColors.primary.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(12),
             ),
-            child: const Text(
-              'Event',
-              style: TextStyle(
+            child: Text(
+              event.category,
+              style: const TextStyle(
                 fontSize: 12,
                 color: AppColors.primary,
               ),
@@ -156,11 +156,4 @@ class EventsSection extends StatelessWidget {
     );
   }
 
-  String _formatDate(DateTime dt) {
-    final months = [
-      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
-    ];
-    return '${months[dt.month - 1]} ${dt.day}';
-  }
 }

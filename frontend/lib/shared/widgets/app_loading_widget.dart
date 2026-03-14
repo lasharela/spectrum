@@ -3,7 +3,7 @@ import '../../core/constants/app_colors.dart';
 
 /// A widget that displays a loading indicator with an optional message.
 ///
-/// Uses [AppColors.cyan] for the progress indicator color. This is a plain
+/// Uses [AppColors.primary] for the progress indicator color. This is a plain
 /// Material widget (not Forui-wrapped), used for loading states.
 class AppLoadingWidget extends StatelessWidget {
   /// An optional message to display below the loading indicator.

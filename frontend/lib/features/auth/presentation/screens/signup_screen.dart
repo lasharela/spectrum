@@ -180,7 +180,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.backgroundGray,
+      backgroundColor: AppColors.background,
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
@@ -199,7 +199,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                     ),
                     child: Icon(
                       Icons.arrow_back,
-                      color: AppColors.textDark,
+                      color: AppColors.textPrimary,
                     ),
                   ),
                 ),
@@ -235,11 +235,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
               width: 60,
               height: 60,
               decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: AppColors.primaryGradient,
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
+                color: AppColors.primary,
                 borderRadius: BorderRadius.circular(16),
               ),
               child: const Icon(
@@ -256,13 +252,13 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                   'Create Account',
                   style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                         fontWeight: FontWeight.bold,
-                        color: AppColors.textDark,
+                        color: AppColors.textPrimary,
                       ),
                 ),
                 Text(
                   'Join the Spectrum community',
                   style: TextStyle(
-                    color: AppColors.textGray,
+                    color: AppColors.textSecondary,
                     fontSize: 14,
                   ),
                 ),
@@ -340,7 +336,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
           'I am a...',
           style: Theme.of(context).textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.w600,
-                color: AppColors.textDark,
+                color: AppColors.textPrimary,
               ),
         ),
         const SizedBox(height: 12),
@@ -394,7 +390,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
         Text(
           'Already have an account?',
           style: TextStyle(
-            color: AppColors.textGray,
+            color: AppColors.textSecondary,
           ),
         ),
         const SizedBox(width: 4),

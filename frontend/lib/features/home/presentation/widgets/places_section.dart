@@ -114,7 +114,7 @@ class PlacesSection extends StatelessWidget {
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  '${place.rating.toStringAsFixed(1)} mi',
+                  place.distance,
                   style: const TextStyle(
                     fontSize: 13,
                     color: AppColors.textSecondary,

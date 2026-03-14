@@ -96,7 +96,7 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.backgroundGray,
+      backgroundColor: AppColors.background,
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
@@ -128,13 +128,13 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
             width: 80,
             height: 80,
             decoration: BoxDecoration(
-              color: AppColors.cyan.withValues(alpha: 0.1),
+              color: AppColors.primary.withValues(alpha: 0.1),
               shape: BoxShape.circle,
             ),
             child: const Icon(
               Icons.lock_reset,
               size: 40,
-              color: AppColors.cyan,
+              color: AppColors.primary,
             ),
           ),
         ),
@@ -143,7 +143,7 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
           'Reset Your Password',
           style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                 fontWeight: FontWeight.bold,
-                color: AppColors.textDark,
+                color: AppColors.textPrimary,
               ),
           textAlign: TextAlign.center,
         ),
@@ -151,7 +151,7 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
         Text(
           'Create a new password for ${widget.email}',
           style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                color: AppColors.textGray,
+                color: AppColors.textSecondary,
               ),
           textAlign: TextAlign.center,
         ),
@@ -174,7 +174,7 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
         Text(
           '8+ characters, uppercase, lowercase, number',
           style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: AppColors.textGray,
+                color: AppColors.textSecondary,
               ),
           textAlign: TextAlign.center,
         ),
@@ -219,7 +219,7 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
           'Password Reset!',
           style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                 fontWeight: FontWeight.bold,
-                color: AppColors.textDark,
+                color: AppColors.textPrimary,
               ),
           textAlign: TextAlign.center,
         ),
@@ -227,7 +227,7 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
         Text(
           'Your password has been successfully reset',
           style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                color: AppColors.textGray,
+                color: AppColors.textSecondary,
               ),
           textAlign: TextAlign.center,
         ),

@@ -17,7 +17,7 @@ void main() {
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
     });
 
-    testWidgets('uses AppColors.cyan for indicator color', (tester) async {
+    testWidgets('uses AppColors.primary for indicator color', (tester) async {
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -29,7 +29,7 @@ void main() {
       final indicator = tester.widget<CircularProgressIndicator>(
         find.byType(CircularProgressIndicator),
       );
-      expect(indicator.color, AppColors.cyan);
+      expect(indicator.color, AppColors.primary);
     });
 
     testWidgets('displays message when provided', (tester) async {

@@ -116,7 +116,7 @@ class PromotionsSection extends StatelessWidget {
           ),
           const SizedBox(height: 4),
           Text(
-            promo.storeName,
+            promo.store,
             style: const TextStyle(
               fontSize: 12,
               color: AppColors.textSecondary,
