@@ -50,7 +50,7 @@ class GradientScaffold extends StatelessWidget {
             height: 240,
             child: _Blob(color: AppColors.gradientRose.withValues(alpha: 0.2)),
           ),
-          body,
+          Positioned.fill(child: body),
         ],
       ),
     );
