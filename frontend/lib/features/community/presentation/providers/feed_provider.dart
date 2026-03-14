@@ -50,7 +50,7 @@ final feedProvider =
 class FeedNotifier extends Notifier<FeedState> {
   @override
   FeedState build() {
-    _loadInitial();
+    Future.microtask(_loadInitial);
     return const FeedState(isLoading: true);
   }
 

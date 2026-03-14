@@ -5,6 +5,7 @@ import '../../features/auth/presentation/screens/login_screen.dart';
 import '../../features/auth/presentation/screens/signup_screen.dart';
 import '../../features/auth/presentation/screens/onboarding_screen.dart';
 import '../../features/auth/presentation/screens/forgot_password_screen.dart';
+import '../../features/debug/ui_test_screen.dart';
 import '../../features/auth/presentation/screens/reset_password_screen.dart';
 import '../../features/home/presentation/screens/home_screen.dart';
 import '../../features/community/presentation/screens/feed_screen.dart';
@@ -20,6 +21,7 @@ const _publicPaths = {
   '/signup',
   '/forgot-password',
   '/reset-password',
+  '/ui',
 };
 
 /// Notifier that bridges Riverpod auth state changes to GoRouter's
@@ -60,6 +62,11 @@ final routerProvider = Provider<GoRouter>((ref) {
       return null;
     },
     routes: [
+      GoRoute(
+        path: '/ui',
+        name: 'ui',
+        builder: (context, state) => const UiTestScreen(),
+      ),
       GoRoute(
         path: '/onboarding',
         name: 'onboarding',

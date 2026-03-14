@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:forui/forui.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/constants/app_colors.dart';
-import '../../../../shared/widgets/widgets.dart';
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
@@ -17,7 +17,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
       body: SafeArea(
         child: Column(
           children: [
@@ -287,16 +286,19 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         children: [
           SizedBox(
             width: double.infinity,
-            child: AppButton(
-              label: 'Get Started',
-              onPressed: () => context.go('/login'),
+            child: FButton(
+              onPress: () => context.go('/signup'),
+              child: const Text('Get Started'),
             ),
           ),
           const SizedBox(height: 16),
-          AppButton(
-            label: 'Already have an account? Sign In',
-            variant: AppButtonVariant.ghost,
-            onPressed: () => context.go('/login'),
+          SizedBox(
+            width: double.infinity,
+            child: FButton(
+              variant: FButtonVariant.outline,
+              onPress: () => context.go('/login'),
+              child: const Text('Already a user? Sign In'),
+            ),
           ),
         ],
       ),
