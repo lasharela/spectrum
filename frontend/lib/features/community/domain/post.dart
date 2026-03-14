@@ -25,6 +25,7 @@ class Post {
   final String id;
   final String content;
   final List<String> tags;
+  final String category;
   final String authorId;
   final PostAuthor author;
   final DateTime createdAt;
@@ -36,6 +37,7 @@ class Post {
     required this.id,
     required this.content,
     required this.tags,
+    this.category = 'General',
     required this.authorId,
     required this.author,
     required this.createdAt,
@@ -49,6 +51,7 @@ class Post {
       id: json['id'] as String,
       content: json['content'] as String,
       tags: (json['tags'] as List).cast<String>(),
+      category: json['category'] as String? ?? 'General',
       authorId: json['authorId'] as String,
       author: PostAuthor.fromJson(json['author'] as Map<String, dynamic>),
       createdAt: DateTime.parse(json['createdAt'] as String),
@@ -58,11 +61,12 @@ class Post {
     );
   }
 
-  Post copyWith({int? likesCount, int? commentsCount, bool? liked}) {
+  Post copyWith({String? category, int? likesCount, int? commentsCount, bool? liked}) {
     return Post(
       id: id,
       content: content,
       tags: tags,
+      category: category ?? this.category,
       authorId: authorId,
       author: author,
       createdAt: createdAt,
