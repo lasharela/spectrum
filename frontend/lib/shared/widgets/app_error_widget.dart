@@ -39,7 +39,7 @@ class AppErrorWidget extends StatelessWidget {
               textAlign: TextAlign.center,
               style: const TextStyle(
                 fontSize: 16,
-                color: AppColors.textDark,
+                color: AppColors.textPrimary,
               ),
             ),
             if (onRetry != null) ...[

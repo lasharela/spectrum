@@ -70,8 +70,8 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
                           Icon(
                             dest.icon,
                             color: isSelected
-                                ? AppColors.cyan
-                                : AppColors.textGray,
+                                ? AppColors.primary
+                                : AppColors.textSecondary,
                             size: 22,
                           ),
                           const SizedBox(height: 4),
@@ -80,8 +80,8 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
                             style: TextStyle(
                               fontSize: 11,
                               color: isSelected
-                                  ? AppColors.cyan
-                                  : AppColors.textGray,
+                                  ? AppColors.primary
+                                  : AppColors.textSecondary,
                               fontWeight: isSelected
                                   ? FontWeight.w600
                                   : FontWeight.normal,
