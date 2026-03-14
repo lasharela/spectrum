@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:forui/forui.dart';
@@ -45,23 +46,32 @@ class HomeScreen extends ConsumerWidget {
         },
         data: (dashboard) => Stack(
           children: [
-            // Subtle gradient at the top that fades to background
+            // Ambient blurred blobs for organic gradient
+            // Purple blob — top left
             Positioned(
-              top: 0,
-              left: 0,
-              right: 0,
-              height: 300,
-              child: Container(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      AppColors.gradientPurple,
-                      colors.background,
-                    ],
-                  ),
-                ),
+              top: -60,
+              left: -40,
+              child: _GradientBlob(
+                size: 280,
+                color: AppColors.gradientPurple.withValues(alpha: 0.5),
+              ),
+            ),
+            // Amber blob — top right, slightly lower
+            Positioned(
+              top: 30,
+              right: -60,
+              child: _GradientBlob(
+                size: 220,
+                color: AppColors.gradientAmber.withValues(alpha: 0.35),
+              ),
+            ),
+            // Rose blob — mid left
+            Positioned(
+              top: 180,
+              left: -30,
+              child: _GradientBlob(
+                size: 180,
+                color: AppColors.gradientRose.withValues(alpha: 0.25),
               ),
             ),
             RefreshIndicator(
@@ -135,6 +145,28 @@ class HomeScreen extends ConsumerWidget {
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class _GradientBlob extends StatelessWidget {
+  final double size;
+  final Color color;
+
+  const _GradientBlob({required this.size, required this.color});
+
+  @override
+  Widget build(BuildContext context) {
+    return ImageFiltered(
+      imageFilter: ImageFilter.blur(sigmaX: 60, sigmaY: 60),
+      child: Container(
+        width: size,
+        height: size,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: color,
         ),
       ),
     );
