@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:forui/forui.dart';
 import 'package:go_router/go_router.dart';
-import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_spacing.dart';
 import '../../../../shared/widgets/spectrum_app_bar.dart';
 import '../providers/dashboard_provider.dart';
@@ -27,25 +26,28 @@ class HomeScreen extends ConsumerWidget {
       ),
       body: dashboardAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, _) => Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(Icons.error_outline, size: 48, color: AppColors.error),
-              const SizedBox(height: 16),
-              const Text(
-                'Failed to load dashboard',
-                style: TextStyle(color: AppColors.textSecondary),
-              ),
-              const SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: () =>
-                    ref.read(dashboardProvider.notifier).refresh(),
-                child: const Text('Retry'),
-              ),
-            ],
-          ),
-        ),
+        error: (error, _) {
+          final colors = context.theme.colors;
+          final typography = context.theme.typography;
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.error_outline, size: 48, color: colors.destructive),
+                const SizedBox(height: 16),
+                Text(
+                  'Failed to load dashboard',
+                  style: typography.sm.copyWith(color: colors.mutedForeground),
+                ),
+                const SizedBox(height: 16),
+                FButton(
+                  onPress: () => ref.read(dashboardProvider.notifier).refresh(),
+                  child: const Text('Retry'),
+                ),
+              ],
+            ),
+          );
+        },
         data: (dashboard) => RefreshIndicator(
           onRefresh: () => ref.read(dashboardProvider.notifier).refresh(),
           child: CustomScrollView(
