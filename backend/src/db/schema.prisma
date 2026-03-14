@@ -69,7 +69,9 @@ model Verification {
 
 model Post {
   id            String     @id @default(cuid())
+  title         String?
   content       String
+  imageUrl      String?
   tags          String    @default("[]")
   category      String    @default("General")
   authorId      String

@@ -67,8 +67,10 @@ async function main() {
 
   const postData = [
     {
+      title: "Tips for managing sensory overload in public spaces",
       content:
-        "Tips for managing sensory overload in public spaces. Noise-canceling headphones really help...",
+        "I've found that noise-canceling headphones really help when going to crowded places. We also carry a small sensory kit with fidget toys and sunglasses.",
+      imageUrl: "https://picsum.photos/seed/sensory/400/225",
       tags: '["Sensory", "Tips"]',
       category: "Sensory",
       authorId: users[0].id,
@@ -76,39 +78,44 @@ async function main() {
       commentsCount: 2,
     },
     {
+      title: "Best educational apps for kids on the spectrum",
       content:
-        "Just discovered a great new therapy center in our area! They specialize in speech therapy for children.",
-      tags: '["Resources", "Therapy"]',
-      category: "Resources",
-      authorId: users[1].id,
-      likesCount: 23,
-      commentsCount: 1,
-    },
-    {
-      content:
-        "Our school just implemented a sensory room and the results have been amazing for our students.",
-      tags: '["Education", "Sensory"]',
+        "Here are some apps that have worked great for my child. They focus on communication skills and social scenarios in a fun, interactive way.",
+      tags: '["Education", "Resources"]',
       category: "Education",
-      authorId: users[2].id,
+      authorId: users[1].id,
       likesCount: 67,
-      commentsCount: 0,
+      commentsCount: 18,
     },
     {
+      title: "Weekly support group - Everyone welcome!",
       content:
-        "Looking for recommendations on social skills groups for teens. Any experiences to share?",
-      tags: '["Social", "Support"]',
-      category: "Social",
+        "Join us every Wednesday for our online support group. We discuss daily challenges, share wins, and just be there for each other.",
+      tags: '["Support", "Community"]',
+      category: "Support",
+      authorId: users[2].id,
+      likesCount: 89,
+      commentsCount: 34,
+    },
+    {
+      title: "Recommendations for autism-friendly restaurants",
+      content:
+        "Looking for restaurant recommendations in the Bay Area that are sensory-friendly. Low lighting, quieter seating areas, and understanding staff are a plus.",
+      tags: '["Resources", "Social"]',
+      category: "Resources",
       authorId: users[0].id,
-      likesCount: 12,
-      commentsCount: 0,
+      likesCount: 28,
+      commentsCount: 12,
     },
     {
+      title: "Daily routine visual schedule template",
       content:
-        "Daily routine visual schedule template that works great for morning routines. Happy to share!",
+        "I created a visual schedule that works great for morning routines. Happy to share the template with anyone who wants it!",
+      imageUrl: "https://picsum.photos/seed/schedule/400/225",
       tags: '["Daily Life", "Tips"]',
       category: "Daily Life",
       authorId: users[2].id,
-      likesCount: 89,
+      likesCount: 92,
       commentsCount: 3,
     },
   ];

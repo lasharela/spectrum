@@ -5,7 +5,9 @@ import type { AppBindings, AppVariables } from "../types/context.js";
 import { sessionMiddleware } from "../middleware/session.js";
 
 const createPostSchema = z.object({
+  title: z.string().max(200).optional(),
   content: z.string().min(1).max(5000),
+  imageUrl: z.string().url().optional(),
   tags: z
     .array(z.string().max(30))
     .max(5)
@@ -14,7 +16,9 @@ const createPostSchema = z.object({
 });
 
 const updatePostSchema = z.object({
+  title: z.string().max(200).optional(),
   content: z.string().min(1).max(5000).optional(),
+  imageUrl: z.string().url().nullable().optional(),
   tags: z.array(z.string().max(30)).max(5).optional(),
   category: z.string().optional(),
 });
@@ -79,7 +83,9 @@ export function communityRoutes() {
     return c.json({
       posts: results.map((p) => ({
         id: p.id,
+        title: p.title,
         content: p.content,
+        imageUrl: p.imageUrl,
         tags: JSON.parse(p.tags),
         category: p.category,
         authorId: p.authorId,
@@ -95,12 +101,12 @@ export function communityRoutes() {
 
   // POST / - create a post
   app.post("/", zValidator("json", createPostSchema), async (c) => {
-    const { content, tags, category } = c.req.valid("json");
+    const { title, content, imageUrl, tags, category } = c.req.valid("json");
     const user = c.get("user");
     const prisma = c.get("prisma");
 
     const post = await prisma.post.create({
-      data: { content, tags: JSON.stringify(tags), category, authorId: user.id },
+      data: { title, content, imageUrl, tags: JSON.stringify(tags), category, authorId: user.id },
       include: {
         author: { select: { id: true, name: true, image: true, userType: true } },
       },
@@ -110,7 +116,9 @@ export function communityRoutes() {
       {
         post: {
           id: post.id,
+          title: post.title,
           content: post.content,
+          imageUrl: post.imageUrl,
           tags: JSON.parse(post.tags),
           category: post.category,
           authorId: post.authorId,
@@ -146,7 +154,9 @@ export function communityRoutes() {
     return c.json({
       post: {
         id: post.id,
+        title: post.title,
         content: post.content,
+        imageUrl: post.imageUrl,
         tags: JSON.parse(post.tags),
         category: post.category,
         authorId: post.authorId,
@@ -179,7 +189,9 @@ export function communityRoutes() {
     const updated = await prisma.post.update({
       where: { id },
       data: {
+        ...(body.title !== undefined ? { title: body.title } : {}),
         ...(body.content !== undefined ? { content: body.content } : {}),
+        ...(body.imageUrl !== undefined ? { imageUrl: body.imageUrl } : {}),
         ...(body.tags !== undefined ? { tags: JSON.stringify(body.tags) } : {}),
         ...(body.category !== undefined ? { category: body.category } : {}),
       },
@@ -192,7 +204,9 @@ export function communityRoutes() {
     return c.json({
       post: {
         id: updated.id,
+        title: updated.title,
         content: updated.content,
+        imageUrl: updated.imageUrl,
         tags: JSON.parse(updated.tags),
         category: updated.category,
         authorId: updated.authorId,
