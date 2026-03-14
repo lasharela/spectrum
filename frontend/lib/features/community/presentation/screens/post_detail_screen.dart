@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import '../../domain/comment.dart';
 import '../providers/feed_provider.dart';
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/constants/app_spacing.dart';
 import '../widgets/post_card.dart';
 
 class PostDetailScreen extends ConsumerStatefulWidget {
@@ -73,23 +74,24 @@ class _PostDetailScreenState extends ConsumerState<PostDetailScreen> {
         children: [
           Expanded(
             child: ListView(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(AppSpacing.lg),
               children: [
                 // Author header
                 Row(
                   children: [
                     CircleAvatar(
                       radius: 20,
-                      backgroundColor: AppColors.cyan,
+                      backgroundColor:
+                          AppColors.primary.withValues(alpha: 0.1),
                       child: Text(
                         post.author.name[0].toUpperCase(),
                         style: const TextStyle(
-                          color: Colors.white,
+                          color: AppColors.primary,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                     ),
-                    const SizedBox(width: 12),
+                    const SizedBox(width: AppSpacing.md),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -97,27 +99,31 @@ class _PostDetailScreenState extends ConsumerState<PostDetailScreen> {
                           Text(
                             post.author.name,
                             style: const TextStyle(
-                                fontWeight: FontWeight.w600, fontSize: 16),
+                              fontWeight: FontWeight.w600,
+                              fontSize: 16,
+                            ),
                           ),
                           Text(
                             DateFormat.yMMMd()
                                 .add_jm()
                                 .format(post.createdAt),
-                            style: TextStyle(
-                                fontSize: 12, color: AppColors.textGray),
+                            style: const TextStyle(
+                              fontSize: 12,
+                              color: AppColors.textSecondary,
+                            ),
                           ),
                         ],
                       ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 12),
+                const SizedBox(height: AppSpacing.md),
                 // Category tag
                 CategoryTag(category: post.category),
-                const SizedBox(height: 12),
+                const SizedBox(height: AppSpacing.md),
                 // Full content
                 Text(post.content, style: const TextStyle(fontSize: 15)),
-                const SizedBox(height: 16),
+                const SizedBox(height: AppSpacing.lg),
                 // Like/comment actions
                 Row(
                   children: [
@@ -133,24 +139,29 @@ class _PostDetailScreenState extends ConsumerState<PostDetailScreen> {
                                 : Icons.favorite_border,
                             size: 20,
                             color: post.liked
-                                ? AppColors.coral
-                                : AppColors.textGray,
+                                ? AppColors.accent1
+                                : AppColors.textSecondary,
                           ),
                           const SizedBox(width: 4),
                           Text(
                             '${post.likesCount}',
-                            style: TextStyle(color: AppColors.textGray),
+                            style: const TextStyle(
+                              color: AppColors.textSecondary,
+                            ),
                           ),
                         ],
                       ),
                     ),
                     const SizedBox(width: 24),
-                    Icon(Icons.comment_outlined,
-                        size: 20, color: AppColors.textGray),
+                    const Icon(
+                      Icons.comment_outlined,
+                      size: 20,
+                      color: AppColors.textSecondary,
+                    ),
                     const SizedBox(width: 4),
                     Text(
                       '${post.commentsCount}',
-                      style: TextStyle(color: AppColors.textGray),
+                      style: const TextStyle(color: AppColors.textSecondary),
                     ),
                   ],
                 ),
@@ -163,12 +174,12 @@ class _PostDetailScreenState extends ConsumerState<PostDetailScreen> {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                const SizedBox(height: 12),
+                const SizedBox(height: AppSpacing.md),
                 // Comment list
                 if (_isLoadingComments)
                   const Center(
                     child: Padding(
-                      padding: EdgeInsets.all(16),
+                      padding: EdgeInsets.all(AppSpacing.lg),
                       child: CircularProgressIndicator(),
                     ),
                   )
@@ -178,7 +189,9 @@ class _PostDetailScreenState extends ConsumerState<PostDetailScreen> {
                     child: Center(
                       child: Text(
                         'No replies yet. Be the first!',
-                        style: TextStyle(color: AppColors.textGray),
+                        style: const TextStyle(
+                          color: AppColors.textSecondary,
+                        ),
                       ),
                     ),
                   )
@@ -190,11 +203,14 @@ class _PostDetailScreenState extends ConsumerState<PostDetailScreen> {
           // Reply input
           SafeArea(
             child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              decoration: BoxDecoration(
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.lg,
+                vertical: AppSpacing.sm,
+              ),
+              decoration: const BoxDecoration(
                 color: Colors.white,
                 border: Border(
-                  top: BorderSide(color: AppColors.border),
+                  top: BorderSide(color: AppColors.divider),
                 ),
               ),
               child: Row(
@@ -204,24 +220,57 @@ class _PostDetailScreenState extends ConsumerState<PostDetailScreen> {
                       controller: _replyController,
                       decoration: InputDecoration(
                         hintText: 'Add a reply...',
+                        filled: true,
+                        fillColor: AppColors.background,
                         border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(24),
+                          borderRadius: BorderRadius.circular(25),
+                          borderSide: BorderSide.none,
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(25),
+                          borderSide: BorderSide.none,
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(25),
+                          borderSide: const BorderSide(
+                            color: AppColors.primary,
+                            width: 1.5,
+                          ),
                         ),
                         contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 16,
+                          horizontal: AppSpacing.lg,
                           vertical: 10,
                         ),
                         isDense: true,
                       ),
                       maxLength: 2000,
                       maxLines: null,
-                      buildCounter: (_, {required currentLength, required isFocused, required maxLength}) => null,
+                      buildCounter: (
+                        _, {
+                        required currentLength,
+                        required isFocused,
+                        required maxLength,
+                      }) =>
+                          null,
                     ),
                   ),
-                  const SizedBox(width: 8),
-                  IconButton(
-                    onPressed: _addReply,
-                    icon: Icon(Icons.send, color: AppColors.cyan),
+                  const SizedBox(width: AppSpacing.sm),
+                  Container(
+                    width: 40,
+                    height: 40,
+                    decoration: const BoxDecoration(
+                      color: AppColors.primary,
+                      shape: BoxShape.circle,
+                    ),
+                    child: IconButton(
+                      onPressed: _addReply,
+                      icon: const Icon(
+                        Icons.send,
+                        color: Colors.white,
+                        size: 18,
+                      ),
+                      padding: EdgeInsets.zero,
+                    ),
                   ),
                 ],
               ),
@@ -246,14 +295,19 @@ class _ReplyCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
+    return Container(
+      margin: const EdgeInsets.only(bottom: AppSpacing.sm),
+      padding: const EdgeInsets.all(AppSpacing.md),
+      decoration: BoxDecoration(
+        color: AppColors.background,
+        borderRadius: BorderRadius.circular(AppSpacing.md),
+      ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           CircleAvatar(
             radius: 16,
-            backgroundColor: AppColors.cyan,
+            backgroundColor: AppColors.secondary,
             child: Text(
               comment.author.name[0].toUpperCase(),
               style: const TextStyle(
@@ -272,13 +326,17 @@ class _ReplyCard extends StatelessWidget {
                     Text(
                       comment.author.name,
                       style: const TextStyle(
-                          fontWeight: FontWeight.w600, fontSize: 14),
+                        fontWeight: FontWeight.w600,
+                        fontSize: 14,
+                      ),
                     ),
-                    const SizedBox(width: 8),
+                    const SizedBox(width: AppSpacing.sm),
                     Text(
                       DateFormat.yMMMd().format(comment.createdAt),
-                      style: TextStyle(
-                          fontSize: 11, color: AppColors.textGray),
+                      style: const TextStyle(
+                        fontSize: 11,
+                        color: AppColors.textSecondary,
+                      ),
                     ),
                   ],
                 ),
