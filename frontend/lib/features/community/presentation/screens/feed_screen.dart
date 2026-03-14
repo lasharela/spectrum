@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_spacing.dart';
+import '../../../../shared/widgets/screen.dart';
 import '../providers/feed_provider.dart';
 import '../widgets/post_card.dart';
 import '../widgets/new_discussion_modal.dart';
@@ -29,7 +30,7 @@ class _FeedScreenState extends ConsumerState<FeedScreen> {
     final feedState = ref.watch(feedProvider);
     final currentUser = ref.watch(authProvider).valueOrNull;
 
-    return Scaffold(
+    return Screen(
       appBar: _CommunityAppBar(
         showMyDiscussions: feedState.showMyDiscussions,
         onTabChanged: (my) {
@@ -162,6 +163,7 @@ class _FeedScreenState extends ConsumerState<FeedScreen> {
         ],
       ),
       floatingActionButton: FloatingActionButton(
+
         onPressed: () => _showNewDiscussion(context, ref),
         backgroundColor: AppColors.primary,
         shape: const CircleBorder(),

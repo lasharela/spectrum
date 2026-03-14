@@ -49,8 +49,11 @@ class AuthRepository {
   }
 
   Future<void> signOut() async {
-    await _api.post('/api/auth/sign-out');
-    await _api.clearToken();
+    try {
+      await _api.post('/api/auth/sign-out');
+    } finally {
+      await _api.clearToken();
+    }
   }
 
   Future<User?> getCurrentUser() async {

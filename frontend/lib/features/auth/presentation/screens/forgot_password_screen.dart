@@ -67,8 +67,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.background,
+    return Screen(
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(

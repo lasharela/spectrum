@@ -12,6 +12,7 @@ import '../../features/community/presentation/screens/feed_screen.dart';
 import '../../features/community/presentation/screens/post_detail_screen.dart';
 import '../../features/profile/presentation/screens/profile_screen.dart';
 import '../../shared/widgets/main_navigation_shell.dart';
+import '../../shared/widgets/screen.dart';
 import '../../features/auth/presentation/providers/auth_provider.dart';
 
 /// Auth routes that don't require authentication
@@ -119,21 +120,21 @@ final routerProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: '/catalog',
             name: 'catalog',
-            builder: (context, state) => const Scaffold(
+            builder: (context, state) => const Screen(
               body: Center(child: Text('Catalog — coming in Phase 5')),
             ),
           ),
           GoRoute(
             path: '/promotions',
             name: 'promotions',
-            builder: (context, state) => const Scaffold(
+            builder: (context, state) => const Screen(
               body: Center(child: Text('Promotions — coming in Phase 7')),
             ),
           ),
           GoRoute(
             path: '/events',
             name: 'events',
-            builder: (context, state) => const Scaffold(
+            builder: (context, state) => const Screen(
               body: Center(child: Text('Events — coming in Phase 6')),
             ),
           ),

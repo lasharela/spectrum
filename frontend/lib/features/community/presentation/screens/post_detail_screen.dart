@@ -5,6 +5,7 @@ import '../../domain/comment.dart';
 import '../providers/feed_provider.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_spacing.dart';
+import '../../../../shared/widgets/screen.dart';
 import '../widgets/post_card.dart';
 
 class PostDetailScreen extends ConsumerStatefulWidget {
@@ -62,13 +63,13 @@ class _PostDetailScreenState extends ConsumerState<PostDetailScreen> {
         feedState.posts.where((p) => p.id == widget.postId).firstOrNull;
 
     if (post == null) {
-      return Scaffold(
+      return Screen(
         appBar: AppBar(),
         body: const Center(child: CircularProgressIndicator()),
       );
     }
 
-    return Scaffold(
+    return Screen(
       appBar: AppBar(title: const Text('Discussion')),
       body: Column(
         children: [

@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:forui/forui.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/constants/app_spacing.dart';
-import '../../../../shared/widgets/gradient_scaffold.dart';
+import '../../../../shared/widgets/screen.dart';
 import '../providers/dashboard_provider.dart';
 import '../widgets/promotions_section.dart';
 import '../widgets/places_section.dart';
@@ -19,7 +19,7 @@ class HomeScreen extends ConsumerWidget {
     final colors = context.theme.colors;
     final typography = context.theme.typography;
 
-    return GradientScaffold(
+    return Screen(
       body: dashboardAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (error, _) {

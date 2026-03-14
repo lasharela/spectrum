@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:forui/forui.dart';
 import 'package:go_router/go_router.dart';
-import '../../../../shared/widgets/gradient_scaffold.dart';
+import '../../../../shared/widgets/screen.dart';
 import '../../../auth/presentation/providers/auth_provider.dart';
 
 class ProfileScreen extends ConsumerWidget {
@@ -14,7 +14,7 @@ class ProfileScreen extends ConsumerWidget {
     final typography = context.theme.typography;
     final colors = context.theme.colors;
 
-    return GradientScaffold(
+    return Screen(
       body: SafeArea(
         child: SingleChildScrollView(
           child: Column(
@@ -22,10 +22,15 @@ class ProfileScreen extends ConsumerWidget {
               // Back button row
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 4),
-                child: Row(
-                  children: [
-                    FHeaderAction.back(onPress: () => context.go('/home')),
-                  ],
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: IconButton(
+                    onPressed: () => context.go('/home'),
+                    icon: Icon(
+                      Icons.arrow_back_rounded,
+                      color: colors.foreground,
+                    ),
+                  ),
                 ),
               ),
               const SizedBox(height: 24),
