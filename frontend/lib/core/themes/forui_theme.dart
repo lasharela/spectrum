@@ -14,6 +14,7 @@ class AppForuiTheme {
         colors: FColors.zincLight.copyWith(
           primary: AppColors.primary,
           primaryForeground: const Color(0xFFFFFFFF),
+          background: const Color(0xFFF5F5F5),
           border: AppColors.primary,
         ),
       );
@@ -24,7 +25,6 @@ class AppForuiTheme {
         colors: FColors.zincDark.copyWith(
           primary: AppColors.primary,
           primaryForeground: const Color(0xFFFFFFFF),
-          border: AppColors.primary,
         ),
       );
 }

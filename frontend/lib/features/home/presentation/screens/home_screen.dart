@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:forui/forui.dart';
+import 'package:go_router/go_router.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_spacing.dart';
 import '../../../../shared/widgets/spectrum_app_bar.dart';
@@ -18,8 +20,11 @@ class HomeScreen extends ConsumerWidget {
     final dashboardAsync = ref.watch(dashboardProvider);
 
     return Scaffold(
-      backgroundColor: AppColors.background,
-      appBar: const SpectrumAppBar(title: 'Spectrum'),
+      backgroundColor: context.theme.colors.background,
+      appBar: SpectrumAppBar(
+        title: 'Spectrum',
+        onAvatarTap: () => context.go('/profile'),
+      ),
       body: dashboardAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (error, _) => Center(
