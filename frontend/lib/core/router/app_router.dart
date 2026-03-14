@@ -22,12 +22,23 @@ const _publicPaths = {
   '/reset-password',
 };
 
+/// Notifier that bridges Riverpod auth state changes to GoRouter's
+/// refreshListenable so the router re-evaluates redirects without
+/// being recreated.
+class _AuthNotifier extends ChangeNotifier {
+  _AuthNotifier(Ref ref) {
+    ref.listen(authProvider, (_, __) => notifyListeners());
+  }
+}
+
 final routerProvider = Provider<GoRouter>((ref) {
-  final authState = ref.watch(authProvider);
+  final authNotifier = _AuthNotifier(ref);
 
   return GoRouter(
     initialLocation: '/onboarding',
+    refreshListenable: authNotifier,
     redirect: (context, state) {
+      final authState = ref.read(authProvider);
       final path = state.uri.path;
       final isPublicRoute = _publicPaths.contains(path);
 
@@ -36,7 +47,7 @@ final routerProvider = Provider<GoRouter>((ref) {
 
       final isLoggedIn = authState.valueOrNull != null;
 
-      // Not logged in and trying to access protected route → go to onboarding
+      // Not logged in and trying to access protected route
       if (!isLoggedIn && !isPublicRoute) {
         return '/onboarding';
       }

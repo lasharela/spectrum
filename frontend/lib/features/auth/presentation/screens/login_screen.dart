@@ -115,7 +115,21 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   onPressed: _isLoading ? null : _handleLogin,
                   isLoading: _isLoading,
                 ),
-                const SizedBox(height: 24),
+                const SizedBox(height: 12),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: TextButton(
+                    onPressed: () => context.go('/forgot-password'),
+                    child: Text(
+                      'Forgot Password?',
+                      style: TextStyle(
+                        color: AppColors.coral,
+                        fontSize: 14,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
                 _buildAlternativeLogin(),
                 const SizedBox(height: 24),
                 _buildSignupLink(context),
@@ -195,15 +209,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             controller: _passwordController,
             isPassword: true,
             error: _passwordError != null ? Text(_passwordError!) : null,
-          ),
-          const SizedBox(height: 16),
-          Align(
-            alignment: Alignment.centerRight,
-            child: AppButton(
-              label: 'Forgot Password?',
-              onPressed: () => context.go('/forgot-password'),
-              variant: AppButtonVariant.ghost,
-            ),
           ),
         ],
       ),
