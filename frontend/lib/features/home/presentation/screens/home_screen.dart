@@ -43,92 +43,98 @@ class HomeScreen extends ConsumerWidget {
             ),
           );
         },
-        data: (dashboard) => RefreshIndicator(
-          onRefresh: () => ref.read(dashboardProvider.notifier).refresh(),
-          child: CustomScrollView(
-            slivers: [
-              // Gradient header area
-              SliverToBoxAdapter(
-                child: Container(
-                  decoration: const BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: [
-                        AppColors.gradientPurple,
-                        AppColors.gradientRose,
-                        AppColors.gradientAmber,
-                      ],
-                      stops: [0.0, 0.5, 1.0],
-                    ),
+        data: (dashboard) => Stack(
+          children: [
+            // Subtle gradient at the top that fades to background
+            Positioned(
+              top: 0,
+              left: 0,
+              right: 0,
+              height: 300,
+              child: Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      AppColors.gradientPurple,
+                      colors.background,
+                    ],
                   ),
-                  child: SafeArea(
-                    bottom: false,
-                    child: Padding(
-                      padding: const EdgeInsets.fromLTRB(
-                        AppSpacing.screenPadding,
-                        12,
-                        AppSpacing.screenPadding,
-                        24,
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          // Top row: notification + avatar
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              IconButton(
-                                icon: const Icon(Icons.notifications_outlined, size: 24),
+                ),
+              ),
+            ),
+            RefreshIndicator(
+              onRefresh: () => ref.read(dashboardProvider.notifier).refresh(),
+              child: CustomScrollView(
+                slivers: [
+                  SliverToBoxAdapter(
+                    child: SafeArea(
+                      bottom: false,
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(
+                          AppSpacing.screenPadding,
+                          12,
+                          AppSpacing.screenPadding,
+                          24,
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            // Top row: notification + avatar
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                IconButton(
+                                  icon: const Icon(Icons.notifications_outlined, size: 24),
+                                  color: colors.foreground,
+                                  onPressed: () {},
+                                ),
+                                GestureDetector(
+                                  onTap: () => context.go('/profile'),
+                                  child: FAvatar.raw(size: 34),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 16),
+                            Text(
+                              'Welcome back, ${dashboard.user.firstName}!',
+                              style: typography.xl.copyWith(
+                                fontWeight: FontWeight.bold,
                                 color: colors.foreground,
-                                onPressed: () {},
                               ),
-                              GestureDetector(
-                                onTap: () => context.go('/profile'),
-                                child: FAvatar.raw(size: 34),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              "Here's what's happening today",
+                              style: typography.sm.copyWith(
+                                color: colors.mutedForeground,
                               ),
-                            ],
-                          ),
-                          const SizedBox(height: 16),
-                          // Greeting text — no card
-                          Text(
-                            'Welcome back, ${dashboard.user.firstName}!',
-                            style: typography.xl.copyWith(
-                              fontWeight: FontWeight.bold,
-                              color: colors.foreground,
                             ),
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            "Here's what's happening today",
-                            style: typography.sm.copyWith(
-                              color: colors.mutedForeground,
-                            ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
                   ),
-                ),
+                  SliverPadding(
+                    padding: const EdgeInsets.all(AppSpacing.screenPadding),
+                    sliver: SliverList(
+                      delegate: SliverChildListDelegate([
+                        PromotionsSection(promotions: dashboard.promotions),
+                        const SizedBox(height: AppSpacing.sectionGap),
+                        PlacesSection(places: dashboard.places),
+                        const SizedBox(height: AppSpacing.sectionGap),
+                        EventsSection(events: dashboard.upcomingEvents),
+                        const SizedBox(height: AppSpacing.sectionGap),
+                        const QuickActionsSection(),
+                        const SizedBox(height: 80),
+                      ]),
+                    ),
+                  ),
+                ],
               ),
-              // Content area
-              SliverPadding(
-                padding: const EdgeInsets.all(AppSpacing.screenPadding),
-                sliver: SliverList(
-                  delegate: SliverChildListDelegate([
-                    PromotionsSection(promotions: dashboard.promotions),
-                    const SizedBox(height: AppSpacing.sectionGap),
-                    PlacesSection(places: dashboard.places),
-                    const SizedBox(height: AppSpacing.sectionGap),
-                    EventsSection(events: dashboard.upcomingEvents),
-                    const SizedBox(height: AppSpacing.sectionGap),
-                    const QuickActionsSection(),
-                    const SizedBox(height: 80),
-                  ]),
-                ),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
