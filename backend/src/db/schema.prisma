@@ -78,7 +78,7 @@ model Post {
   comments  Comment[]
   reactions Reaction[]
 
-  @@index([createdAt(sort: Desc)])
+  @@index([createdAt])
 }
 
 model Comment {
@@ -91,7 +91,7 @@ model Comment {
   author User @relation(fields: [authorId], references: [id])
   post   Post @relation(fields: [postId], references: [id], onDelete: Cascade)
 
-  @@index([postId, createdAt(sort: Desc)])
+  @@index([postId, createdAt])
 }
 
 model Reaction {
