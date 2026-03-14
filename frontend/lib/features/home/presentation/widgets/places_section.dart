@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../../../core/constants/app_colors.dart';
+import 'package:forui/forui.dart';
+import '../../../../shared/widgets/image_list_card.dart';
 import '../../domain/dashboard.dart';
 
 class PlacesSection extends StatelessWidget {
@@ -9,149 +10,51 @@ class PlacesSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final typography = context.theme.typography;
+    final colors = context.theme.colors;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           'Popular Places',
-          style: TextStyle(
-            fontSize: 20,
+          style: typography.lg.copyWith(
             fontWeight: FontWeight.bold,
-            color: AppColors.textPrimary,
+            color: colors.foreground,
           ),
         ),
         const SizedBox(height: 12),
         if (places.isEmpty)
-          _buildEmptyState()
+          FCard.raw(
+            child: Padding(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                children: [
+                  Icon(Icons.place_outlined, size: 32, color: colors.mutedForeground),
+                  const SizedBox(height: 8),
+                  Text(
+                    'No places listed yet',
+                    style: typography.sm.copyWith(color: colors.mutedForeground),
+                  ),
+                ],
+              ),
+            ),
+          )
         else
-          ...places.map((place) => _buildPlaceCard(place)),
-      ],
-    );
-  }
-
-  Widget _buildEmptyState() {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(24),
-      decoration: BoxDecoration(
-        color: AppColors.cardBackground,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.cardBorder),
-      ),
-      child: const Column(
-        children: [
-          Icon(
-            Icons.place_outlined,
-            size: 32,
-            color: AppColors.textSecondary,
-          ),
-          SizedBox(height: 8),
-          Text(
-            'No places listed yet',
-            style: TextStyle(color: AppColors.textSecondary, fontSize: 14),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildPlaceCard(DashboardPlace place) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: AppColors.cardBackground,
-        borderRadius: BorderRadius.circular(16),
-        border: AppColors.cardBorderStyle,
-        boxShadow: [AppColors.cardShadow],
-      ),
-      child: Row(
-        children: [
-          // Left icon
-          Container(
-            width: 50,
-            height: 50,
-            decoration: BoxDecoration(
-              color: AppColors.primary.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: const Icon(Icons.place, color: AppColors.primary),
-          ),
-          const SizedBox(width: 12),
-          // Center content
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  place.name,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.textPrimary,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Row(
-                  children: [
-                    const Icon(
-                      Icons.location_on,
-                      size: 13,
-                      color: AppColors.textSecondary,
-                    ),
-                    const SizedBox(width: 2),
-                    Expanded(
-                      child: Text(
-                        place.address,
-                        style: const TextStyle(
-                          fontSize: 13,
-                          color: AppColors.textSecondary,
-                        ),
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
+          ...places.map((place) => Padding(
+                padding: const EdgeInsets.only(bottom: 12),
+                child: ImageListCard(
+                  imageUrl: place.imageUrl,
+                  fallbackIcon: Icons.place,
+                  title: place.name,
+                  details: [
+                    ImageListCardDetail(icon: Icons.location_on, text: place.address),
+                    ImageListCardDetail(icon: Icons.directions_walk, text: place.distance),
                   ],
+                  trailing: Icon(Icons.directions, color: colors.primary, size: 20),
                 ),
-                const SizedBox(height: 2),
-                Text(
-                  place.distance,
-                  style: const TextStyle(
-                    fontSize: 13,
-                    color: AppColors.textSecondary,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(width: 12),
-          // Right: directions button
-          Column(
-            children: [
-              Container(
-                width: 40,
-                height: 40,
-                decoration: BoxDecoration(
-                  color: AppColors.primary.withValues(alpha: 0.1),
-                  shape: BoxShape.circle,
-                ),
-                child: const Icon(
-                  Icons.directions,
-                  color: AppColors.primary,
-                  size: 20,
-                ),
-              ),
-              const SizedBox(height: 4),
-              const Text(
-                'Directions',
-                style: TextStyle(
-                  fontSize: 10,
-                  color: AppColors.textSecondary,
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
+              )),
+      ],
     );
   }
 }
