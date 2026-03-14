@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:forui/forui.dart';
+import '../../core/constants/app_colors.dart';
 import '../../core/constants/app_spacing.dart';
 import '../../features/home/domain/dashboard.dart';
 
@@ -14,6 +15,12 @@ class PromotionCarousel extends StatelessWidget {
     this.onItemSelected,
     super.key,
   });
+
+  static const _badgeColors = [
+    AppColors.accent1,
+    AppColors.accent2,
+    AppColors.primary,
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -45,6 +52,8 @@ class PromotionCarousel extends StatelessWidget {
     final promo = promotions[index];
     const borderRadius = 18.0;
     final colors = context.theme.colors;
+    final typography = context.theme.typography;
+    final badgeColor = _badgeColors[index % _badgeColors.length];
 
     return GestureDetector(
       onTap: () => onItemSelected?.call(promo.id),
@@ -70,7 +79,7 @@ class PromotionCarousel extends StatelessWidget {
                 ),
               ),
 
-            // Gradient overlay
+            // Subtle gradient — only bottom portion
             Positioned.fill(
               child: DecoratedBox(
                 decoration: BoxDecoration(
@@ -78,27 +87,76 @@ class PromotionCarousel extends StatelessWidget {
                     begin: Alignment.bottomCenter,
                     end: Alignment.topCenter,
                     colors: [
-                      Colors.black,
-                      Colors.black,
-                      Colors.black.withAlpha(0),
+                      Colors.black.withAlpha(180),
+                      Colors.black.withAlpha(60),
+                      Colors.transparent,
                     ],
-                    stops: const [0.0, 0.2, 1.0],
+                    stops: const [0.0, 0.35, 0.6],
                   ),
                 ),
               ),
             ),
 
-            // Time remaining badge (top-right)
+            // Top-left: brand logo + name
             Positioned(
-              top: AppSpacing.sm,
-              right: AppSpacing.sm,
+              top: AppSpacing.md,
+              left: AppSpacing.md,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  FAvatar.raw(
+                    size: 28,
+                    child: promo.brandLogoUrl != null
+                        ? CachedNetworkImage(
+                            imageUrl: promo.brandLogoUrl!,
+                            fit: BoxFit.cover,
+                            width: 28,
+                            height: 28,
+                            errorWidget: (_, __, ___) => Center(
+                              child: Text(
+                                promo.store.isNotEmpty
+                                    ? promo.store[0].toUpperCase()
+                                    : '?',
+                                style: typography.xs.copyWith(
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                            ),
+                          )
+                        : Center(
+                            child: Text(
+                              promo.store.isNotEmpty
+                                  ? promo.store[0].toUpperCase()
+                                  : '?',
+                              style: typography.xs.copyWith(
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ),
+                  ),
+                  const SizedBox(width: AppSpacing.sm),
+                  Text(
+                    promo.store,
+                    style: typography.xs.copyWith(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            // Top-right: time remaining badge
+            Positioned(
+              top: AppSpacing.md,
+              right: AppSpacing.md,
               child: Container(
                 padding: const EdgeInsets.symmetric(
                   horizontal: AppSpacing.sm,
                   vertical: AppSpacing.xxs,
                 ),
                 decoration: BoxDecoration(
-                  color: Colors.black.withAlpha(153),
+                  color: Colors.black.withAlpha(100),
                   borderRadius: BorderRadius.circular(AppSpacing.badgeRadius),
                 ),
                 child: Row(
@@ -108,9 +166,8 @@ class PromotionCarousel extends StatelessWidget {
                     const SizedBox(width: 4),
                     Text(
                       _formatTimeRemaining(promo.expiresAt),
-                      style: const TextStyle(
+                      style: typography.xs.copyWith(
                         color: Colors.white,
-                        fontSize: 12,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -119,89 +176,51 @@ class PromotionCarousel extends StatelessWidget {
               ),
             ),
 
-            // Bottom content: brand logo + name, promotion title
+            // Bottom: title + discount badge
             Align(
               alignment: Alignment.bottomLeft,
               child: Padding(
                 padding: const EdgeInsets.all(AppSpacing.md),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    // Brand row: logo + name
-                    Row(
-                      children: [
-                        _buildBrandLogo(promo),
-                        const SizedBox(width: AppSpacing.sm),
-                        Flexible(
-                          child: Text(
-                            promo.store,
-                            style: const TextStyle(
-                              color: Colors.white70,
-                              fontSize: 13,
-                              fontWeight: FontWeight.w500,
-                            ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
+                    Expanded(
+                      child: Text(
+                        promo.title,
+                        style: typography.sm.copyWith(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    if (promo.discount != null) ...[
+                      const SizedBox(width: AppSpacing.md),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: AppSpacing.sm,
+                          vertical: AppSpacing.xxs,
+                        ),
+                        decoration: BoxDecoration(
+                          color: badgeColor,
+                          borderRadius:
+                              BorderRadius.circular(AppSpacing.badgeRadius),
+                        ),
+                        child: Text(
+                          promo.discount!,
+                          style: typography.xs.copyWith(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
-                      ],
-                    ),
-                    const SizedBox(height: AppSpacing.sm),
-                    // Promotion title
-                    Text(
-                      promo.title,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
                       ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
+                    ],
                   ],
                 ),
               ),
             ),
           ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildBrandLogo(DashboardPromotion promo) {
-    const size = 28.0;
-
-    if (promo.brandLogoUrl != null) {
-      return ClipOval(
-        child: CachedNetworkImage(
-          imageUrl: promo.brandLogoUrl!,
-          width: size,
-          height: size,
-          fit: BoxFit.cover,
-          errorWidget: (_, __, ___) => _brandLogoFallback(promo, size),
-        ),
-      );
-    }
-
-    return _brandLogoFallback(promo, size);
-  }
-
-  Widget _brandLogoFallback(DashboardPromotion promo, double size) {
-    return Container(
-      width: size,
-      height: size,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        color: Colors.white.withAlpha(51),
-      ),
-      alignment: Alignment.center,
-      child: Text(
-        promo.store.isNotEmpty ? promo.store[0].toUpperCase() : '?',
-        style: const TextStyle(
-          color: Colors.white,
-          fontSize: 14,
-          fontWeight: FontWeight.bold,
         ),
       ),
     );
