@@ -50,7 +50,25 @@ class PlacesSection extends StatelessWidget {
                     ImageListCardDetail(icon: Icons.location_on, text: place.address),
                     ImageListCardDetail(icon: Icons.directions_car, text: place.distance),
                   ],
-                  trailing: Icon(Icons.directions, color: colors.primary, size: 20),
+                  trailing: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Container(
+                        width: 40,
+                        height: 40,
+                        decoration: BoxDecoration(
+                          color: colors.primary.withValues(alpha: 0.1),
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(Icons.directions, color: colors.primary, size: 20),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        'Directions',
+                        style: typography.xs.copyWith(color: colors.mutedForeground),
+                      ),
+                    ],
+                  ),
                 ),
               )),
       ],

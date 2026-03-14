@@ -30,7 +30,7 @@ class ImageListCard extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        height: 90,
+        height: 100,
         decoration: BoxDecoration(
           color: colors.card,
           borderRadius: borderRadius,
@@ -40,13 +40,13 @@ class ImageListCard extends StatelessWidget {
           children: [
             SizedBox(
               width: 100,
-              height: 90,
+              height: 100,
               child: imageUrl != null
                   ? Image.network(
                       imageUrl!,
                       fit: BoxFit.cover,
                       width: 100,
-                      height: 90,
+                      height: 100,
                       errorBuilder: (_, __, ___) => _buildFallback(colors),
                     )
                   : _buildFallback(colors),
@@ -68,7 +68,7 @@ class ImageListCard extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                     ),
                     ...details.map((detail) => Padding(
-                          padding: const EdgeInsets.only(top: 3),
+                          padding: const EdgeInsets.only(top: 2),
                           child: Row(
                             children: [
                               Icon(detail.icon, size: 13, color: colors.mutedForeground),
