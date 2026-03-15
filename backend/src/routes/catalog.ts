@@ -135,7 +135,7 @@ export function catalogRoutes() {
       const savedItems = await prisma.savedItem.findMany({
         where: {
           userId: user.id,
-          itemType: "organization",
+          itemType: "catalog",
           itemId: { in: results.map((o: any) => o.id) },
         },
         select: { itemId: true },
@@ -194,7 +194,7 @@ export function catalogRoutes() {
         where: {
           userId_itemType_itemId: {
             userId: user.id,
-            itemType: "organization",
+            itemType: "catalog",
             itemId: id,
           },
         },
@@ -319,7 +319,7 @@ export function catalogRoutes() {
       where: {
         userId_itemType_itemId: {
           userId: user.id,
-          itemType: "organization",
+          itemType: "catalog",
           itemId: id,
         },
       },

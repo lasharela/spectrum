@@ -93,7 +93,7 @@ class CatalogNotifier extends Notifier<CatalogState> {
   @override
   CatalogState build() {
     ref.onDispose(() => _debounce?.cancel());
-    _loadInitial();
+    Future.microtask(_loadInitial);
     return const CatalogState();
   }
 
@@ -167,21 +167,12 @@ class CatalogNotifier extends Notifier<CatalogState> {
     }
   }
 
-  void toggleSave(String placeId) {
+  void setSaved(String placeId, {required bool saved}) {
     final index = state.places.indexWhere((p) => p.id == placeId);
     if (index == -1) return;
-    final place = state.places[index];
-    final updated = place.copyWith(saved: !place.saved);
     final newList = List<Place>.from(state.places);
-    newList[index] = updated;
+    newList[index] = state.places[index].copyWith(saved: saved);
     state = state.copyWith(places: newList);
-
-    // Fire and forget
-    if (updated.saved) {
-      _repo.savePlace(placeId);
-    } else {
-      _repo.unsavePlace(placeId);
-    }
   }
 }
 

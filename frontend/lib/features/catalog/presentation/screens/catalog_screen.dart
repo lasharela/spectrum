@@ -18,6 +18,7 @@ class CatalogScreen extends ConsumerStatefulWidget {
 
 class _CatalogScreenState extends ConsumerState<CatalogScreen> {
   final _searchController = TextEditingController();
+  int _tabIndex = 0;
 
   @override
   void dispose() {
@@ -29,18 +30,16 @@ class _CatalogScreenState extends ConsumerState<CatalogScreen> {
     final catalogState = ref.read(catalogProvider);
     final filterOptions = ref.read(catalogFilterOptionsProvider);
     filterOptions.whenData((options) {
-      showDialog(
+      showFSheet<void>(
         context: context,
-        builder: (ctx) => Dialog(
-          backgroundColor: Colors.transparent,
-          child: FilterPopup(
-            filterGroups: options.toFilterGroups(),
-            selectedFilters: catalogState.filters,
-            onApply: (filters) {
-              ref.read(catalogProvider.notifier).setFilters(filters);
-              Navigator.of(ctx).pop();
-            },
-          ),
+        side: FLayout.btt,
+        mainAxisMaxRatio: 0.8,
+        builder: (sheetContext) => FilterPopup(
+          filterGroups: options.toFilterGroups(),
+          selectedFilters: catalogState.filters,
+          onApply: (filters) {
+            ref.read(catalogProvider.notifier).setFilters(filters);
+          },
         ),
       );
     });
@@ -85,8 +84,8 @@ class _CatalogScreenState extends ConsumerState<CatalogScreen> {
                       context.theme.tabsStyle.focusedOutlineStyle,
                 ),
                 control: FTabControl.lifted(
-                  index: 0,
-                  onChange: (index) {},
+                  index: _tabIndex,
+                  onChange: (index) => setState(() => _tabIndex = index),
                 ),
                 children: [
                   FTabEntry(

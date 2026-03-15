@@ -29,11 +29,6 @@ class PlaceDetailScreen extends ConsumerWidget {
     final placeAsync = ref.watch(placeDetailProvider(placeId));
 
     return Screen(
-      appBar: AppBar(
-        title: const Text('Place Details'),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-      ),
       body: placeAsync.when(
         loading: () => const Center(child: FCircularProgress()),
         error: (e, _) => const Center(child: Text('Failed to load place')),
@@ -50,13 +45,46 @@ class PlaceDetailScreen extends ConsumerWidget {
 
 // --- Place Detail Content ---
 
-class _PlaceDetailContent extends ConsumerWidget {
+class _PlaceDetailContent extends ConsumerStatefulWidget {
   final Place place;
 
   const _PlaceDetailContent({required this.place});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<_PlaceDetailContent> createState() =>
+      _PlaceDetailContentState();
+}
+
+class _PlaceDetailContentState extends ConsumerState<_PlaceDetailContent> {
+  late bool _saved;
+
+  @override
+  void initState() {
+    super.initState();
+    _saved = widget.place.saved;
+  }
+
+  void _toggleSave() {
+    final place = widget.place;
+    final nowSaved = !_saved;
+    setState(() => _saved = nowSaved);
+
+    // API call
+    final repo = ref.read(catalogRepositoryProvider);
+    if (nowSaved) {
+      repo.savePlace(place.id);
+    } else {
+      repo.unsavePlace(place.id);
+    }
+
+    // Sync catalog list + saved tab
+    ref.read(catalogProvider.notifier).setSaved(place.id, saved: nowSaved);
+    ref.invalidate(savedPlacesProvider);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final place = widget.place;
     final theme = context.theme;
 
     return SingleChildScrollView(
@@ -237,15 +265,13 @@ class _PlaceDetailContent extends ConsumerWidget {
             width: double.infinity,
             child: FButton(
               variant: FButtonVariant.outline,
-              onPress: () {
-                ref.read(catalogProvider.notifier).toggleSave(place.id);
-              },
+              onPress: _toggleSave,
               prefix: Icon(
-                place.saved
+                _saved
                     ? Icons.bookmark_rounded
                     : Icons.bookmark_border_rounded,
               ),
-              child: Text(place.saved ? 'Saved' : 'Save Place'),
+              child: Text(_saved ? 'Saved' : 'Save Place'),
             ),
           ),
 

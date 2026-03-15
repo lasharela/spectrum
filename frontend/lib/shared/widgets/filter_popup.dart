@@ -54,44 +54,74 @@ class _FilterPopupState extends State<FilterPopup> {
   @override
   Widget build(BuildContext context) {
     final theme = context.theme;
-    return ConstrainedBox(
-      constraints: const BoxConstraints(maxWidth: 320, maxHeight: 480),
-      child: Material(
-        elevation: 8,
-        borderRadius: BorderRadius.circular(AppSpacing.cardRadius),
-        color: theme.colors.background,
+    final colors = theme.colors;
+    final typography = theme.typography;
+
+    return Container(
+      decoration: BoxDecoration(
+        color: colors.background,
+        borderRadius: const BorderRadius.vertical(
+          top: Radius.circular(AppSpacing.cardRadiusLarge),
+        ),
+      ),
+      child: SafeArea(
+        top: false,
         child: Padding(
-          padding: const EdgeInsets.all(AppSpacing.lg),
+          padding: const EdgeInsets.fromLTRB(
+            AppSpacing.lg,
+            AppSpacing.md,
+            AppSpacing.lg,
+            AppSpacing.lg,
+          ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // Drag handle
+              Center(
+                child: Container(
+                  width: 40,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: colors.border,
+                    borderRadius: BorderRadius.circular(999),
+                  ),
+                ),
+              ),
+              const SizedBox(height: AppSpacing.md),
+
               // Header
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    'Filters',
-                    style: theme.typography.lg.copyWith(
-                      fontWeight: FontWeight.w600,
-                    ),
+                  FButton(
+                    variant: FButtonVariant.ghost,
+                    onPress: () {
+                      _clearAll();
+                    },
+                    child: const Text('Clear'),
                   ),
-                  GestureDetector(
-                    onTap: _clearAll,
+                  Expanded(
                     child: Text(
-                      'Clear All',
-                      style: theme.typography.sm.copyWith(
-                        color: AppColors.primary,
-                        fontWeight: FontWeight.w500,
+                      'Filters',
+                      textAlign: TextAlign.center,
+                      style: typography.lg.copyWith(
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
+                  ),
+                  FButton(
+                    onPress: () {
+                      widget.onApply(_selections);
+                      Navigator.of(context).pop();
+                    },
+                    child: const Text('Apply'),
                   ),
                 ],
               ),
               const SizedBox(height: AppSpacing.lg),
 
               // Scrollable filter groups
-              Flexible(
+              Expanded(
                 child: SingleChildScrollView(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -100,20 +130,9 @@ class _FilterPopupState extends State<FilterPopup> {
                         if (i > 0) const SizedBox(height: AppSpacing.xl),
                         _buildFilterGroup(widget.filterGroups[i], theme),
                       ],
+                      const SizedBox(height: AppSpacing.lg),
                     ],
                   ),
-                ),
-              ),
-              const SizedBox(height: AppSpacing.lg),
-
-              // Apply button
-              SizedBox(
-                width: double.infinity,
-                child: FButton(
-                  onPress: () {
-                    widget.onApply(_selections);
-                  },
-                  child: const Text('Apply Filters'),
                 ),
               ),
             ],
@@ -136,14 +155,16 @@ class _FilterPopupState extends State<FilterPopup> {
           ),
         ),
         const SizedBox(height: AppSpacing.sm),
-        // Use Column since FCheckbox renders label+checkbox as a row
         Column(
           children: group.options.map((option) {
-            final isSelected = selected.contains(option.id);
-            return FCheckbox(
-              label: Text(option.name),
-              value: isSelected,
-              onChange: (_) => _toggleOption(group.label, option.id),
+            final isSelected = selected.contains(option.name);
+            return Padding(
+              padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+              child: FCheckbox(
+                label: Text(option.name),
+                value: isSelected,
+                onChange: (_) => _toggleOption(group.label, option.name),
+              ),
             );
           }).toList(),
         ),

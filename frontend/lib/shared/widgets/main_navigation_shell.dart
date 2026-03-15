@@ -24,17 +24,28 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
     return 0;
   }
 
+  bool _isDetailRoute(String location) {
+    for (final route in _routes) {
+      if (location.startsWith(route) && location != route) return true;
+    }
+    return false;
+  }
+
   @override
   Widget build(BuildContext context) {
     final location = GoRouterState.of(context).uri.path;
     final selectedIndex = _indexFromLocation(location);
+    final isDetail = _isDetailRoute(location);
 
     return Scaffold(
       body: SafeArea(
         bottom: false,
         child: Column(
           children: [
-            SpectrumAppBar(title: _titles[selectedIndex]),
+            if (isDetail)
+              _DetailAppBar(onBack: () => context.pop())
+            else
+              SpectrumAppBar(title: _titles[selectedIndex]),
             Expanded(child: widget.child),
           ],
         ),
@@ -50,6 +61,26 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
           FBottomNavigationBarItem(icon: Icon(Icons.event), label: Text('Events')),
         ],
       ),
+    );
+  }
+}
+
+class _DetailAppBar extends StatelessWidget {
+  final VoidCallback onBack;
+
+  const _DetailAppBar({required this.onBack});
+
+  @override
+  Widget build(BuildContext context) {
+    return FHeader.nested(
+      title: const Text('Place Details'),
+      titleAlignment: Alignment.center,
+      prefixes: [
+        FHeaderAction(
+          icon: const Icon(Icons.arrow_back_rounded),
+          onPress: onBack,
+        ),
+      ],
     );
   }
 }
