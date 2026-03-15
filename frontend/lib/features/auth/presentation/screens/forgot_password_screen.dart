@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:forui/forui.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/constants/app_colors.dart';
@@ -69,11 +70,26 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
   Widget build(BuildContext context) {
     return Screen(
       body: SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(24.0),
-            child: _emailSent ? _buildSuccessState(context) : _buildFormState(context),
-          ),
+        child: Column(
+          children: [
+            FHeader.nested(
+              title: const Text('Forgot Password'),
+              prefixes: [
+                FHeaderAction.back(
+                    onPress: () => context.go('/login')),
+              ],
+            ),
+            Expanded(
+              child: SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                  child: _emailSent
+                      ? _buildSuccessState(context)
+                      : _buildFormState(context),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -83,15 +99,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        const SizedBox(height: 20),
-        Align(
-          alignment: Alignment.centerLeft,
-          child: IconButton(
-            onPressed: () => context.go('/login'),
-            icon: const Icon(Icons.arrow_back),
-          ),
-        ),
-        const SizedBox(height: 32),
+        const SizedBox(height: 24),
         Center(
           child: Container(
             width: 80,

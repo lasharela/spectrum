@@ -7,6 +7,29 @@ import 'package:forui/forui.dart';
 typedef AppTextFieldIconBuilder =
     Widget Function(BuildContext context, FTextFieldStyle style, Set<FTextFieldVariant> variants);
 
+/// Custom password visibility icon builder that shows closed eye when
+/// password is hidden and open eye when visible (reflecting current state).
+Widget passwordVisibilityIcon(
+  BuildContext context,
+  FTextFieldStyle style,
+  ValueNotifier<bool> obscure,
+  Set<FTextFieldVariant> variants,
+) {
+  return Padding(
+    padding: style.obscureButtonPadding,
+    child: FButton.icon(
+      style: style.obscureButtonStyle,
+      onPress: variants.contains(FTextFieldVariant.disabled)
+          ? null
+          : () => obscure.value = !obscure.value,
+      child: Icon(
+        obscure.value ? FIcons.eyeClosed : FIcons.eye,
+        semanticLabel: obscure.value ? 'Show password' : 'Hide password',
+      ),
+    ),
+  );
+}
+
 /// A shared text field widget wrapping Forui's [FTextField].
 ///
 /// Supports an optional [label], [hint], and [isPassword] mode.
@@ -93,11 +116,7 @@ class AppTextField extends StatelessWidget {
         onSubmit: onSubmit,
         keyboardType: keyboardType,
         error: error,
-        // prefixBuilder and suffixBuilder are intentionally omitted for
-        // password fields. FTextField.password uses a different builder
-        // signature (FPasswordFieldIconBuilder) and manages its own
-        // obscure-text toggle via suffixBuilder. Callers should not rely
-        // on these for password fields.
+        suffixBuilder: passwordVisibilityIcon,
       );
     }
 

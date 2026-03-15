@@ -4,6 +4,7 @@ import 'package:forui/forui.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../shared/api/api_exceptions.dart';
+import '../../../../shared/widgets/app_text_field.dart';
 import '../../../../shared/widgets/screen.dart';
 import '../providers/auth_provider.dart';
 
@@ -55,25 +56,16 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final colors = context.theme.colors;
-    final typography = context.theme.typography;
-
     return Screen(
       body: SafeArea(
         child: Column(
           children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 4),
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: IconButton(
-                  onPressed: () => context.go('/onboarding'),
-                  icon: Icon(
-                    Icons.arrow_back_rounded,
-                    color: colors.foreground,
-                  ),
-                ),
-              ),
+            FHeader.nested(
+              title: const Text('Sign In'),
+              prefixes: [
+                FHeaderAction.back(
+                    onPress: () => context.go('/onboarding')),
+              ],
             ),
             Expanded(
               child: SingleChildScrollView(
@@ -83,14 +75,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const SizedBox(height: 16),
-                      Text(
-                        'Sign In',
-                        style: typography.xl2.copyWith(
-                          fontWeight: FontWeight.w600,
-                          color: colors.foreground,
-                        ),
-                      ),
                       const SizedBox(height: 24),
                       FTextFormField(
                         control: FTextFieldControl.managed(
@@ -117,6 +101,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         control: FTextFieldControl.managed(
                           controller: _passwordController,
                         ),
+                        suffixBuilder: passwordVisibilityIcon,
                         label: const Text('Password'),
                         hint: 'Enter your password',
                         textInputAction: TextInputAction.done,
