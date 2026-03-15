@@ -22,11 +22,14 @@ model User {
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
-  posts     Post[]
-  comments  Comment[]
-  reactions Reaction[]
-  sessions  Session[]
-  accounts  Account[]
+  posts         Post[]
+  comments      Comment[]
+  reactions     Reaction[]
+  sessions      Session[]
+  accounts      Account[]
+  organizations Organization[]
+  ratings       Rating[]
+  savedItems    SavedItem[]
 }
 
 model Session {
@@ -112,4 +115,78 @@ model Reaction {
   post   Post @relation(fields: [postId], references: [id], onDelete: Cascade)
 
   @@unique([authorId, postId])
+}
+
+model Organization {
+  id            String   @id @default(cuid())
+  name          String
+  description   String?
+  category      String
+  address       String?
+  phone         String?
+  email         String?
+  website       String?
+  imageUrl      String?
+  averageRating Float    @default(0)
+  ratingCount   Int      @default(0)
+  features      String   @default("[]")
+  tags          String   @default("[]")
+  ageGroups     String   @default("[]")
+  specialNeeds  String   @default("[]")
+  latitude      Float?
+  longitude     Float?
+  ownerId       String
+  owner         User     @relation(fields: [ownerId], references: [id])
+  ratings       Rating[]
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([createdAt])
+}
+
+model Rating {
+  id             String       @id @default(cuid())
+  userId         String
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  score          Int
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  @@unique([userId, organizationId])
+}
+
+model SavedItem {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  itemType  String
+  itemId    String
+  createdAt DateTime @default(now())
+
+  @@unique([userId, itemType, itemId])
+  @@index([userId, itemType])
+}
+
+model CatalogCategory {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  icon      String?
+  sortOrder Int      @default(0)
+  updatedAt DateTime @updatedAt
+}
+
+model AgeGroup {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  sortOrder Int      @default(0)
+  updatedAt DateTime @updatedAt
+}
+
+model SpecialNeed {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  sortOrder Int      @default(0)
+  updatedAt DateTime @updatedAt
 }
