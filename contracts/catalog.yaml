@@ -1,0 +1,249 @@
+openapi: 3.1.0
+info:
+  title: Spectrum Catalog API
+  version: 1.0.0
+
+paths:
+  /api/catalog:
+    get:
+      summary: List places
+      parameters:
+        - name: cursor
+          in: query
+          schema: { type: string }
+        - name: limit
+          in: query
+          schema: { type: integer, minimum: 1, maximum: 50, default: 20 }
+        - name: q
+          in: query
+          schema: { type: string }
+        - name: category
+          in: query
+          schema: { type: string }
+        - name: ageGroup
+          in: query
+          schema: { type: string }
+        - name: specialNeed
+          in: query
+          schema: { type: string }
+      responses:
+        "200":
+          description: Paginated list of places
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  places:
+                    type: array
+                    items: { $ref: "#/components/schemas/Place" }
+                  nextCursor:
+                    type: string
+                    nullable: true
+    post:
+      summary: Create place (professional/educator only)
+      security: [{ bearer: [] }]
+      requestBody:
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/CreatePlace" }
+      responses:
+        "201":
+          description: Created place
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  place: { $ref: "#/components/schemas/Place" }
+
+  /api/catalog/{id}:
+    get:
+      summary: Get place details
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Place details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  place: { $ref: "#/components/schemas/Place" }
+    put:
+      summary: Update place (owner only)
+      security: [{ bearer: [] }]
+      responses:
+        "200":
+          description: Success
+    delete:
+      summary: Delete place (owner only)
+      security: [{ bearer: [] }]
+      responses:
+        "200":
+          description: Success
+
+  /api/catalog/{id}/rating:
+    put:
+      summary: Rate place 1-5
+      security: [{ bearer: [] }]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                score: { type: integer, minimum: 1, maximum: 5 }
+              required: [score]
+      responses:
+        "200":
+          description: Rating saved
+
+  /api/filters/catalog-categories:
+    get:
+      summary: List catalog categories
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  categories:
+                    type: array
+                    items: { $ref: "#/components/schemas/FilterOption" }
+
+  /api/filters/age-groups:
+    get:
+      summary: List age groups
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ageGroups:
+                    type: array
+                    items: { $ref: "#/components/schemas/FilterOption" }
+
+  /api/filters/special-needs:
+    get:
+      summary: List special needs
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  specialNeeds:
+                    type: array
+                    items: { $ref: "#/components/schemas/FilterOption" }
+
+  /api/saved:
+    put:
+      summary: Save item
+      security: [{ bearer: [] }]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                itemType: { type: string, enum: [catalog, promotion] }
+                itemId: { type: string }
+              required: [itemType, itemId]
+      responses:
+        "200":
+          description: Saved
+
+  /api/saved/{itemType}/{itemId}:
+    delete:
+      summary: Unsave item
+      security: [{ bearer: [] }]
+      responses:
+        "200":
+          description: Unsaved
+
+  /api/saved/{itemType}:
+    get:
+      summary: List saved items grouped by category
+      security: [{ bearer: [] }]
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  groups:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        category: { type: string }
+                        icon: { type: string, nullable: true }
+                        count: { type: integer }
+                        items: { type: array }
+
+components:
+  schemas:
+    Place:
+      type: object
+      properties:
+        id: { type: string }
+        name: { type: string }
+        description: { type: string, nullable: true }
+        category: { type: string }
+        address: { type: string, nullable: true }
+        imageUrl: { type: string, nullable: true }
+        averageRating: { type: number }
+        ratingCount: { type: integer }
+        tags: { type: array, items: { type: string } }
+        ageGroups: { type: array, items: { type: string } }
+        specialNeeds: { type: array, items: { type: string } }
+        latitude: { type: number, nullable: true }
+        longitude: { type: number, nullable: true }
+        ownerId: { type: string }
+        owner: { $ref: "#/components/schemas/Author" }
+        saved: { type: boolean }
+        userRating: { type: integer, nullable: true, minimum: 1, maximum: 5 }
+        createdAt: { type: string, format: date-time }
+
+    CreatePlace:
+      type: object
+      required: [name, category]
+      properties:
+        name: { type: string, maxLength: 200 }
+        description: { type: string, maxLength: 5000 }
+        category: { type: string }
+        address: { type: string }
+        imageUrl: { type: string, format: uri }
+        tags: { type: array, items: { type: string }, maxItems: 10 }
+        ageGroups: { type: array, items: { type: string } }
+        specialNeeds: { type: array, items: { type: string } }
+
+    Author:
+      type: object
+      properties:
+        id: { type: string }
+        name: { type: string }
+        image: { type: string, nullable: true }
+        userType: { type: string }
+
+    FilterOption:
+      type: object
+      properties:
+        id: { type: string }
+        name: { type: string }
+        icon: { type: string, nullable: true }
+
+  securitySchemes:
+    bearer:
+      type: http
+      scheme: bearer
