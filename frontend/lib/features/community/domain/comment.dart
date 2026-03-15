@@ -1,22 +1,6 @@
-class CommentAuthor {
-  final String id;
-  final String name;
-  final String? image;
+import 'package:spectrum_app/shared/domain/author.dart';
 
-  const CommentAuthor({
-    required this.id,
-    required this.name,
-    this.image,
-  });
-
-  factory CommentAuthor.fromJson(Map<String, dynamic> json) {
-    return CommentAuthor(
-      id: json['id'] as String,
-      name: json['name'] as String,
-      image: json['image'] as String?,
-    );
-  }
-}
+typedef CommentAuthor = Author;
 
 class Comment {
   final String id;

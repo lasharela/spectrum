@@ -1,25 +1,6 @@
-class PostAuthor {
-  final String id;
-  final String name;
-  final String? image;
-  final String userType;
+import 'package:spectrum_app/shared/domain/author.dart';
 
-  const PostAuthor({
-    required this.id,
-    required this.name,
-    this.image,
-    required this.userType,
-  });
-
-  factory PostAuthor.fromJson(Map<String, dynamic> json) {
-    return PostAuthor(
-      id: json['id'] as String,
-      name: json['name'] as String,
-      image: json['image'] as String?,
-      userType: json['userType'] as String,
-    );
-  }
-}
+typedef PostAuthor = Author;
 
 class Post {
   final String id;
