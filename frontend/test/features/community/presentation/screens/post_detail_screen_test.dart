@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:spectrum_app/features/community/domain/post.dart';
 import 'package:spectrum_app/features/community/domain/comment.dart';
 import 'package:spectrum_app/features/community/data/community_repository.dart';
+import 'package:spectrum_app/shared/domain/paginated_result.dart';
 import 'package:spectrum_app/features/community/presentation/providers/feed_provider.dart';
 import 'package:spectrum_app/features/community/presentation/screens/post_detail_screen.dart';
 import 'package:spectrum_app/shared/api/api_client.dart';

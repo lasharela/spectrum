@@ -1,13 +1,7 @@
 import '../../../shared/api/api_client.dart';
+import '../../../shared/domain/paginated_result.dart';
 import '../domain/post.dart';
 import '../domain/comment.dart';
-
-class PaginatedResult<T> {
-  final List<T> items;
-  final String? nextCursor;
-
-  const PaginatedResult({required this.items, this.nextCursor});
-}
 
 class CommunityRepository {
   final ApiClient _api;
