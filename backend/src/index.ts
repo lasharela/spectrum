@@ -9,6 +9,7 @@ import { communityRoutes } from "./routes/community.js";
 import { dashboardRoutes } from "./routes/dashboard.js";
 import { filterRoutes } from "./routes/filters.js";
 import { catalogRoutes } from "./routes/catalog.js";
+import { savedRoutes } from "./routes/saved.js";
 import type { AppBindings, AppVariables } from "./types/context.js";
 
 const app = new Hono<{ Bindings: AppBindings; Variables: AppVariables }>();
@@ -133,6 +134,7 @@ app.route("/api/posts", communityRoutes());
 app.route("/api/dashboard", dashboardRoutes());
 app.route("/api/filters", filterRoutes());
 app.route("/api/catalog", catalogRoutes());
+app.route("/api/saved", savedRoutes());
 
 // Global error handler
 app.onError((err, c) => {
