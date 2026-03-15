@@ -14,6 +14,8 @@ import '../../features/profile/presentation/screens/profile_screen.dart';
 import '../../features/profile/presentation/screens/edit_profile_screen.dart';
 import '../../shared/widgets/main_navigation_shell.dart';
 import '../../shared/widgets/screen.dart';
+import '../../features/catalog/presentation/screens/catalog_screen.dart';
+import '../../features/catalog/presentation/screens/place_detail_screen.dart';
 import '../../features/auth/presentation/providers/auth_provider.dart';
 
 /// Auth routes that don't require authentication
@@ -121,9 +123,15 @@ final routerProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: '/catalog',
             name: 'catalog',
-            builder: (context, state) => const Screen(
-              body: Center(child: Text('Catalog — coming in Phase 5')),
-            ),
+            builder: (context, state) => const CatalogScreen(),
+            routes: [
+              GoRoute(
+                path: ':placeId',
+                builder: (context, state) => PlaceDetailScreen(
+                  placeId: state.pathParameters['placeId']!,
+                ),
+              ),
+            ],
           ),
           GoRoute(
             path: '/promotions',
