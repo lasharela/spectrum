@@ -17,7 +17,7 @@ Spectrum is a mobile application designed as a social network for people with au
 - **Navigation**: go_router
 - **Forms**: flutter_form_builder with form_builder_validators
 - **API Contracts**: OpenAPI 3.1.0 specs in `contracts/`
-- **Testing**: Vitest (backend), flutter test (frontend)
+- **Testing**: Vitest (backend), flutter test (frontend), Vitest E2E (backend integration)
 
 ## Monorepo Structure
 
@@ -81,6 +81,24 @@ pnpm --filter backend db:studio
 # Deploy to Cloudflare Workers
 pnpm --filter backend deploy
 ```
+
+### Backend E2E Tests
+
+E2E tests run against a live dev server and test the full HTTP request/response cycle (auth, community, etc.). Logs and screenshots are saved to `backend/e2e/logs/` and `backend/e2e/screenshots/` — overwritten each run.
+
+```bash
+# 1. Start the dev server in one terminal
+pnpm dev:backend
+
+# 2. Run E2E tests in another terminal
+pnpm --filter backend test:e2e
+```
+
+Output:
+- `backend/e2e/logs/` — full request/response logs per test suite (JSON)
+- `backend/e2e/screenshots/` — response snapshots per step (JSON)
+
+> **Note:** E2E tests currently cover backend API flows only (auth lifecycle, sign-up, sign-in, session, sign-out). They require the dev server running on `http://localhost:8788`. Override with `E2E_BASE_URL` env var.
 
 ### Frontend Development
 ```bash

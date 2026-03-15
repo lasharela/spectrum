@@ -16,6 +16,7 @@ class ApiClient {
         _dio = dio ?? Dio() {
     _dio.options.baseUrl = baseUrl;
     _dio.options.headers['Content-Type'] = 'application/json';
+    _dio.options.headers['Origin'] = baseUrl;
 
     _dio.interceptors.add(InterceptorsWrapper(
       onRequest: (options, handler) async {
