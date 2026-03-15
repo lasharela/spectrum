@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:forui/forui.dart';
-import '../../../../shared/widgets/image_list_card.dart';
+import '../../../../shared/widgets/place_card.dart';
 import '../../domain/dashboard.dart';
 
 class PlacesSection extends StatelessWidget {
@@ -43,32 +43,10 @@ class PlacesSection extends StatelessWidget {
         else
           ...places.map((place) => Padding(
                 padding: const EdgeInsets.only(bottom: 12),
-                child: ImageListCard(
+                child: PlaceCard(
+                  name: place.name,
+                  address: place.address,
                   imageUrl: place.imageUrl,
-                  title: place.name,
-                  details: [
-                    ImageListCardDetail(icon: Icons.location_on, text: place.address),
-                    ImageListCardDetail(icon: Icons.directions_car, text: place.distance),
-                  ],
-                  trailing: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Container(
-                        width: 40,
-                        height: 40,
-                        decoration: BoxDecoration(
-                          color: colors.primary.withValues(alpha: 0.1),
-                          shape: BoxShape.circle,
-                        ),
-                        child: Icon(Icons.directions, color: colors.primary, size: 20),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        'Directions',
-                        style: typography.xs.copyWith(color: colors.mutedForeground),
-                      ),
-                    ],
-                  ),
                 ),
               )),
       ],

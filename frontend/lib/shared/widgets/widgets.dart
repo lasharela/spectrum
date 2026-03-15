@@ -8,3 +8,4 @@ export 'main_navigation_shell.dart';
 export 'spectrum_app_bar.dart';
 export 'image_list_card.dart';
 export 'filter_popup.dart';
+export 'place_card.dart';
