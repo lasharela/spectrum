@@ -90,6 +90,7 @@ model Post {
   updatedAt     DateTime   @updatedAt
   likesCount    Int        @default(0)
   commentsCount Int        @default(0)
+  deletedAt     DateTime?
 
   author    User       @relation(fields: [authorId], references: [id])
   comments  Comment[]
@@ -99,11 +100,12 @@ model Post {
 }
 
 model Comment {
-  id        String   @id @default(cuid())
+  id        String    @id @default(cuid())
   content   String
   authorId  String
   postId    String
-  createdAt DateTime @default(now())
+  createdAt DateTime  @default(now())
+  deletedAt DateTime?
 
   author User @relation(fields: [authorId], references: [id])
   post   Post @relation(fields: [postId], references: [id], onDelete: Cascade)
