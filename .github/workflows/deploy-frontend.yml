@@ -21,7 +21,7 @@ jobs:
 
       - run: cd frontend && flutter pub get
 
-      - run: cd frontend && flutter build web --release --dart-define=API_BASE_URL=https://spectrum-api.lasharela.workers.dev
+      - run: cd frontend && flutter build web --release --dart-define=API_BASE_URL=https://api.myspectrum.app
 
       - uses: pnpm/action-setup@v4
         with:

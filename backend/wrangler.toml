@@ -3,6 +3,11 @@ main = "src/index.ts"
 compatibility_date = "2026-03-12"
 compatibility_flags = ["nodejs_compat"]
 
+# Custom domain — auto-creates DNS record on deploy
+routes = [
+  { pattern = "api.myspectrum.app/*", zone_name = "myspectrum.app" }
+]
+
 [vars]
 ENVIRONMENT = "development"
 
