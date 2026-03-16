@@ -19,6 +19,7 @@ import '../../features/events/presentation/screens/events_screen.dart';
 import '../../features/events/presentation/screens/event_detail_screen.dart';
 import '../../features/promotions/presentation/screens/promotions_screen.dart';
 import '../../features/promotions/presentation/screens/promotion_detail_screen.dart';
+import '../../features/admin/presentation/screens/admin_screen.dart';
 import '../../features/auth/presentation/providers/auth_provider.dart';
 
 /// Auth routes that don't require authentication
@@ -163,6 +164,11 @@ final routerProvider = Provider<GoRouter>((ref) {
             ],
           ),
         ],
+      ),
+      GoRoute(
+        path: '/admin',
+        name: 'admin',
+        builder: (context, state) => const AdminScreen(),
       ),
       GoRoute(
         path: '/profile',
