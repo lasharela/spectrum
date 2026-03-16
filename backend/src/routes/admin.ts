@@ -48,8 +48,8 @@ function categoryRoutes(modelName: string) {
   app.get("/", async (c) => {
     const prisma = c.get("prisma");
     const model = getModel(prisma);
-    const items = await model.findMany({ orderBy: { sortOrder: "asc" } });
-    return c.json({ items });
+    const categories = await model.findMany({ orderBy: { sortOrder: "asc" } });
+    return c.json({ categories });
   });
 
   // POST / — create category
@@ -58,7 +58,7 @@ function categoryRoutes(modelName: string) {
     const model = getModel(prisma);
     const body = c.req.valid("json");
 
-    const item = await model.create({
+    const category = await model.create({
       data: {
         name: body.name,
         ...(body.icon !== undefined ? { icon: body.icon } : {}),
@@ -66,7 +66,7 @@ function categoryRoutes(modelName: string) {
       },
     });
 
-    return c.json({ item }, 201);
+    return c.json({ category }, 201);
   });
 
   // PUT /:id — update category
@@ -81,7 +81,7 @@ function categoryRoutes(modelName: string) {
       return c.json({ error: "Not found", code: "NOT_FOUND" }, 404);
     }
 
-    const item = await model.update({
+    const category = await model.update({
       where: { id },
       data: {
         ...(body.name !== undefined ? { name: body.name } : {}),
@@ -90,7 +90,7 @@ function categoryRoutes(modelName: string) {
       },
     });
 
-    return c.json({ item });
+    return c.json({ category });
   });
 
   // DELETE /:id — hard delete category

@@ -410,10 +410,10 @@ describe("Admin Category CRUD", () => {
 
       expect(res.status).toBe(200);
       const body = (await res.json()) as any;
-      expect(body.items).toHaveLength(2);
+      expect(body.categories).toHaveLength(2);
       // Should be ordered by sortOrder
-      expect(body.items[0].name).toBe("Education");
-      expect(body.items[1].name).toBe("Therapy");
+      expect(body.categories[0].name).toBe("Education");
+      expect(body.categories[1].name).toBe("Therapy");
     }
   );
 
@@ -435,10 +435,10 @@ describe("Admin Category CRUD", () => {
 
       expect(res.status).toBe(201);
       const body = (await res.json()) as any;
-      expect(body.item.name).toBe("Healthcare");
-      expect(body.item.icon).toBe("🏥");
-      expect(body.item.sortOrder).toBe(5);
-      expect(body.item.id).toBeDefined();
+      expect(body.category.name).toBe("Healthcare");
+      expect(body.category.icon).toBe("🏥");
+      expect(body.category.sortOrder).toBe(5);
+      expect(body.category.id).toBeDefined();
     }
   );
 
@@ -463,8 +463,8 @@ describe("Admin Category CRUD", () => {
 
       expect(res.status).toBe(200);
       const body = (await res.json()) as any;
-      expect(body.item.name).toBe("New Name");
-      expect(body.item.sortOrder).toBe(10);
+      expect(body.category.name).toBe("New Name");
+      expect(body.category.sortOrder).toBe(10);
     }
   );
 
@@ -521,7 +521,7 @@ describe("Admin Category CRUD", () => {
 
         expect(res.status).toBe(200);
         const body = (await res.json()) as any;
-        expect(Array.isArray(body.items)).toBe(true);
+        expect(Array.isArray(body.categories)).toBe(true);
       }
     );
   }
