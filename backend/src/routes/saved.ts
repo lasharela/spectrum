@@ -231,7 +231,100 @@ export function savedRoutes() {
       return c.json({ groups });
     }
 
-    // For other types (promotion, etc.) return empty groups for now
+    if (itemType === "promotion") {
+      const savedItems = await prisma.savedItem.findMany({
+        where: {
+          userId: user.id,
+          itemType: "promotion",
+        },
+        select: { itemId: true },
+      });
+
+      const itemIds = savedItems.map((s: any) => s.itemId);
+
+      if (itemIds.length === 0) {
+        return c.json({ groups: [] });
+      }
+
+      const promotions = await prisma.promotion.findMany({
+        where: { id: { in: itemIds } },
+        include: {
+          createdBy: {
+            select: { id: true, name: true, image: true, userType: true },
+          },
+          reactions: {
+            where: { authorId: user.id },
+            select: { authorId: true },
+          },
+          claims: {
+            where: { userId: user.id },
+            select: { userId: true },
+          },
+        },
+        orderBy: { createdAt: "desc" },
+      });
+
+      // Fetch promotion category icons
+      const categories = await prisma.promotionCategory.findMany({
+        select: { name: true, icon: true },
+      });
+      const categoryIconMap = new Map(
+        categories.map((cat: any) => [cat.name, cat.icon])
+      );
+
+      // Group by category
+      const groupMap = new Map<
+        string,
+        { category: string; icon: string | null; items: any[] }
+      >();
+
+      for (const promotion of promotions) {
+        const category = (promotion as any).category;
+        if (!groupMap.has(category)) {
+          groupMap.set(category, {
+            category,
+            icon: categoryIconMap.get(category) ?? null,
+            items: [],
+          });
+        }
+
+        const liked = (promotion as any).reactions?.length > 0;
+        const claimed = (promotion as any).claims?.length > 0;
+
+        groupMap.get(category)!.items.push({
+          id: promotion.id,
+          title: (promotion as any).title,
+          description: (promotion as any).description,
+          category,
+          discount: (promotion as any).discount,
+          store: (promotion as any).store,
+          brandLogoUrl: (promotion as any).brandLogoUrl,
+          imageUrl: (promotion as any).imageUrl,
+          expiresAt: (promotion as any).expiresAt?.toISOString() ?? null,
+          validFrom: (promotion as any).validFrom.toISOString(),
+          organizationId: (promotion as any).organizationId,
+          createdById: (promotion as any).createdById,
+          createdBy: (promotion as any).createdBy,
+          likesCount: (promotion as any).likesCount,
+          liked,
+          claimed,
+          saved: true,
+          createdAt: (promotion as any).createdAt.toISOString(),
+          updatedAt: (promotion as any).updatedAt.toISOString(),
+        });
+      }
+
+      const groups = Array.from(groupMap.values()).map((g) => ({
+        category: g.category,
+        icon: g.icon,
+        count: g.items.length,
+        items: g.items,
+      }));
+
+      return c.json({ groups });
+    }
+
+    // For other unknown item types return empty groups
     return c.json({ groups: [] });
   });
 
