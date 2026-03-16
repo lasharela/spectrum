@@ -239,25 +239,27 @@ class PromotionsRepository {
     }
   }
 
-  Future<void> likePromotion(String id) async {
+  Future<({bool liked, int likesCount})> likePromotion(String id) async {
     await Future<void>.delayed(const Duration(milliseconds: 200));
     final idx = _promotions.indexWhere((p) => p.id == id);
-    if (idx == -1) return;
+    if (idx == -1) return (liked: true, likesCount: 0);
     _promotions[idx] = _promotions[idx].copyWith(
       liked: true,
       likesCount: _promotions[idx].likesCount + 1,
     );
+    return (liked: true, likesCount: _promotions[idx].likesCount);
   }
 
-  Future<void> unlikePromotion(String id) async {
+  Future<({bool liked, int likesCount})> unlikePromotion(String id) async {
     await Future<void>.delayed(const Duration(milliseconds: 200));
     final idx = _promotions.indexWhere((p) => p.id == id);
-    if (idx == -1) return;
+    if (idx == -1) return (liked: false, likesCount: 0);
     final current = _promotions[idx];
     _promotions[idx] = current.copyWith(
       liked: false,
       likesCount: (current.likesCount - 1).clamp(0, 999999),
     );
+    return (liked: false, likesCount: _promotions[idx].likesCount);
   }
 
   Future<void> claimPromotion(String id) async {

@@ -179,19 +179,18 @@ class PromotionsNotifier extends Notifier<PromotionsState> {
     state = state.copyWith(promotions: optimistic);
 
     try {
-      if (nowLiked) {
-        await _repo.likePromotion(promotionId);
-      } else {
-        await _repo.unlikePromotion(promotionId);
-      }
+      final result = nowLiked
+          ? await _repo.likePromotion(promotionId)
+          : await _repo.unlikePromotion(promotionId);
 
-      // Reconcile with server state
-      final updated = await _repo.getPromotion(promotionId);
-      if (updated == null) return;
+      // Reconcile with server response
       final reconciled = List<Promotion>.from(state.promotions);
       final newIdx = reconciled.indexWhere((p) => p.id == promotionId);
       if (newIdx != -1) {
-        reconciled[newIdx] = updated;
+        reconciled[newIdx] = reconciled[newIdx].copyWith(
+          liked: result.liked,
+          likesCount: result.likesCount,
+        );
         state = state.copyWith(promotions: reconciled);
       }
     } catch (e) {
