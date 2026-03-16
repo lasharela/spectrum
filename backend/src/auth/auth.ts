@@ -3,10 +3,11 @@ import { prismaAdapter } from "better-auth/adapters/prisma";
 import { bearer } from "better-auth/plugins/bearer";
 import type { PrismaClient } from "@prisma/client";
 
-export function createAuth(prisma: PrismaClient, secret: string) {
+export function createAuth(prisma: PrismaClient, secret: string, baseURL?: string) {
   return betterAuth({
     secret,
-    trustedOrigins: ["http://localhost:*"],
+    baseURL: baseURL ?? "http://localhost:8788",
+    trustedOrigins: ["http://localhost:*", "https://api.myspectrum.app", "https://web.myspectrum.app", "https://*.spectrum-web.pages.dev"],
     database: prismaAdapter(prisma, {
       provider: "sqlite",
     }),

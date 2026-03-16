@@ -35,7 +35,8 @@ app.get("/api/health", (c) => {
 // Scoped to /api/* routes that need DB access (excludes /api/health above)
 app.use("/api/*", async (c, next) => {
   const prisma = createPrismaClient(c.env.DB);
-  const auth = createAuth(prisma, c.env.BETTER_AUTH_SECRET);
+  const baseURL = c.env.ENVIRONMENT === "production" ? "https://api.myspectrum.app" : undefined;
+  const auth = createAuth(prisma, c.env.BETTER_AUTH_SECRET, baseURL);
   c.set("prisma", prisma);
   c.set("auth", auth);
   await next();
@@ -45,7 +46,16 @@ app.use("/api/*", async (c, next) => {
 app.on(["GET", "POST"], "/api/auth/**", async (c) => {
   const auth = c.get("auth");
   try {
-    return await auth.handler(c.req.raw);
+    const response = await auth.handler(c.req.raw);
+    // Better Auth may return 500 with empty body on internal errors — ensure a JSON body
+    if (response.status >= 500 && response.headers.get("content-length") === "0") {
+      console.error("Auth handler returned empty 500 response for:", c.req.url);
+      return c.json(
+        { message: "Authentication service error", code: "AUTH_ERROR" },
+        500
+      );
+    }
+    return response;
   } catch (err) {
     console.error("Auth handler error:", err);
     return c.json(

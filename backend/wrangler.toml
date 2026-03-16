@@ -2,11 +2,10 @@ name = "spectrum-api"
 main = "src/index.ts"
 compatibility_date = "2026-03-12"
 compatibility_flags = ["nodejs_compat"]
+workers_dev = true
 
-# Custom domain — auto-creates DNS record on deploy
-routes = [
-  { pattern = "api.myspectrum.app/*", zone_name = "myspectrum.app" }
-]
+# Custom domain is managed via Workers Custom Domains (auto-creates DNS)
+# Do NOT use routes — it conflicts with Custom Domains and causes 503s
 
 [vars]
 ENVIRONMENT = "development"
