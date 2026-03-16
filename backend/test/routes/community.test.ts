@@ -336,6 +336,49 @@ describe("Posts API", () => {
         expect(body.posts[0].title).toBe("Flutter tips");
       }
     );
+
+    it.skipIf(!dbAvailable)(
+      "should not return soft-deleted posts in list",
+      async () => {
+        const { token } = await createTestUser();
+        const { body: created } = await createPost(token, {
+          title: "Will be soft-deleted",
+          content: "Hidden post",
+        });
+        const postId = created.post.id;
+
+        // Soft-delete directly in DB
+        await prisma!.post.update({
+          where: { id: postId },
+          data: { deletedAt: new Date() },
+        });
+
+        const res = await app.request("/api/posts", { method: "GET" });
+        const body = (await res.json()) as any;
+        const ids = body.posts.map((p: any) => p.id);
+        expect(ids).not.toContain(postId);
+      }
+    );
+
+    it.skipIf(!dbAvailable)(
+      "should return 404 for soft-deleted post by ID",
+      async () => {
+        const { token } = await createTestUser();
+        const { body: created } = await createPost(token, {
+          title: "Soft-deleted detail",
+          content: "Should 404",
+        });
+        const postId = created.post.id;
+
+        await prisma!.post.update({
+          where: { id: postId },
+          data: { deletedAt: new Date() },
+        });
+
+        const res = await app.request(`/api/posts/${postId}`, { method: "GET" });
+        expect(res.status).toBe(404);
+      }
+    );
   });
 
   // ---- GET /api/posts/:id ----
@@ -677,6 +720,46 @@ describe("Comments API", () => {
         }
         // nextCursor should be null with only 2 comments
         expect(body.nextCursor).toBeNull();
+      }
+    );
+
+    it.skipIf(!dbAvailable)(
+      "should not return soft-deleted comments in list",
+      async () => {
+        const { token } = await createTestUser();
+        const { body: created } = await createPost(token, {
+          title: "Post with comments",
+          content: "Some will be soft-deleted",
+        });
+        const postId = created.post.id;
+
+        const { body: commentBody } = await createComment(
+          token,
+          postId,
+          "Visible comment"
+        );
+        const { body: deletedCommentBody } = await createComment(
+          token,
+          postId,
+          "Hidden comment"
+        );
+        const deletedCommentId = deletedCommentBody.comment.id;
+
+        // Soft-delete one comment directly in DB
+        await prisma!.comment.update({
+          where: { id: deletedCommentId },
+          data: { deletedAt: new Date() },
+        });
+
+        const res = await app.request(`/api/posts/${postId}/comments`, {
+          method: "GET",
+        });
+        expect(res.status).toBe(200);
+        const body = (await res.json()) as any;
+        expect(body.comments.length).toBe(1);
+        expect(body.comments[0].content).toBe("Visible comment");
+        const ids = body.comments.map((c: any) => c.id);
+        expect(ids).not.toContain(deletedCommentId);
       }
     );
   });

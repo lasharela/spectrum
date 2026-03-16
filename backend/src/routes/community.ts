@@ -55,7 +55,7 @@ export function communityRoutes() {
 
     const user = c.get("user") as any;
 
-    const where: Record<string, unknown> = {};
+    const where: Record<string, unknown> = { deletedAt: null };
     if (q) {
       where.OR = [
         { title: { contains: q } },
@@ -149,8 +149,8 @@ export function communityRoutes() {
     const user = c.get("user");
     const prisma = c.get("prisma");
 
-    const post = await prisma.post.findUnique({
-      where: { id },
+    const post = await prisma.post.findFirst({
+      where: { id, deletedAt: null },
       include: {
         author: { select: { id: true, name: true, image: true, userType: true } },
         ...(user ? { reactions: { where: { authorId: user.id }, select: { id: true } } } : {}),
@@ -265,7 +265,7 @@ export function communityRoutes() {
     }
 
     const comments = await prisma.comment.findMany({
-      where: { postId },
+      where: { postId, deletedAt: null },
       take: limit + 1,
       ...(cursor ? { cursor: { id: cursor }, skip: 1 } : {}),
       orderBy: { createdAt: "desc" },
