@@ -116,5 +116,100 @@ export function adminRoutes() {
     }
   );
 
+  // =========================================================================
+  // Community moderation
+  // =========================================================================
+
+  // GET /posts — list ALL posts including soft-deleted (moderation view)
+  app.get("/posts", async (c) => {
+    const prisma = c.get("prisma");
+
+    const posts = await prisma.post.findMany({
+      orderBy: { createdAt: "desc" },
+      include: {
+        author: {
+          select: { id: true, name: true, image: true, userType: true },
+        },
+      },
+    });
+
+    return c.json({
+      posts: posts.map((p: any) => ({
+        id: p.id,
+        title: p.title,
+        content: p.content,
+        imageUrl: p.imageUrl,
+        tags: JSON.parse(p.tags),
+        category: p.category,
+        authorId: p.authorId,
+        author: p.author,
+        createdAt: p.createdAt.toISOString(),
+        likesCount: p.likesCount,
+        commentsCount: p.commentsCount,
+        deletedAt: p.deletedAt ? p.deletedAt.toISOString() : null,
+      })),
+    });
+  });
+
+  // DELETE /posts/:id — soft-delete a post
+  app.delete("/posts/:id", async (c) => {
+    const id = c.req.param("id");
+    const prisma = c.get("prisma");
+
+    const post = await prisma.post.findUnique({ where: { id } });
+    if (!post) {
+      return c.json({ error: "Post not found", code: "NOT_FOUND" }, 404);
+    }
+
+    await prisma.post.update({
+      where: { id },
+      data: { deletedAt: new Date() },
+    });
+
+    return c.json({ success: true });
+  });
+
+  // PUT /posts/:id/restore — restore a soft-deleted post
+  app.put("/posts/:id/restore", async (c) => {
+    const id = c.req.param("id");
+    const prisma = c.get("prisma");
+
+    const post = await prisma.post.findUnique({ where: { id } });
+    if (!post) {
+      return c.json({ error: "Post not found", code: "NOT_FOUND" }, 404);
+    }
+
+    await prisma.post.update({
+      where: { id },
+      data: { deletedAt: null },
+    });
+
+    return c.json({ success: true });
+  });
+
+  // DELETE /comments/:id — soft-delete a comment (and decrement parent post's commentsCount)
+  app.delete("/comments/:id", async (c) => {
+    const id = c.req.param("id");
+    const prisma = c.get("prisma");
+
+    const comment = await prisma.comment.findUnique({ where: { id } });
+    if (!comment) {
+      return c.json({ error: "Comment not found", code: "NOT_FOUND" }, 404);
+    }
+
+    await prisma.$transaction([
+      prisma.comment.update({
+        where: { id },
+        data: { deletedAt: new Date() },
+      }),
+      prisma.post.update({
+        where: { id: comment.postId },
+        data: { commentsCount: { decrement: 1 } },
+      }),
+    ]);
+
+    return c.json({ success: true });
+  });
+
   return app;
 }
