@@ -61,6 +61,23 @@ async function main() {
     });
   }
 
+  // Promotion Categories
+  const promotionCategories = [
+    { name: "Health & Wellness", icon: "health_and_safety", sortOrder: 1 },
+    { name: "Education", icon: "school", sortOrder: 2 },
+    { name: "Entertainment", icon: "theater_comedy", sortOrder: 3 },
+    { name: "Food & Dining", icon: "restaurant", sortOrder: 4 },
+    { name: "Services", icon: "miscellaneous_services", sortOrder: 5 },
+  ];
+
+  for (const pc of promotionCategories) {
+    await prisma.promotionCategory.upsert({
+      where: { name: pc.name },
+      update: { icon: pc.icon, sortOrder: pc.sortOrder },
+      create: pc,
+    });
+  }
+
   console.log("Filter options seeded successfully.");
 }
 
