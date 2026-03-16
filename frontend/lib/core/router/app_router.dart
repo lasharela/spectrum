@@ -13,11 +13,12 @@ import '../../features/community/presentation/screens/post_detail_screen.dart';
 import '../../features/profile/presentation/screens/profile_screen.dart';
 import '../../features/profile/presentation/screens/edit_profile_screen.dart';
 import '../../shared/widgets/main_navigation_shell.dart';
-import '../../shared/widgets/screen.dart';
 import '../../features/catalog/presentation/screens/catalog_screen.dart';
 import '../../features/catalog/presentation/screens/place_detail_screen.dart';
 import '../../features/events/presentation/screens/events_screen.dart';
 import '../../features/events/presentation/screens/event_detail_screen.dart';
+import '../../features/promotions/presentation/screens/promotions_screen.dart';
+import '../../features/promotions/presentation/screens/promotion_detail_screen.dart';
 import '../../features/auth/presentation/providers/auth_provider.dart';
 
 /// Auth routes that don't require authentication
@@ -138,9 +139,15 @@ final routerProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: '/promotions',
             name: 'promotions',
-            builder: (context, state) => const Screen(
-              body: Center(child: Text('Promotions — coming in Phase 7')),
-            ),
+            builder: (context, state) => const PromotionsScreen(),
+            routes: [
+              GoRoute(
+                path: ':promotionId',
+                builder: (context, state) => PromotionDetailScreen(
+                  promotionId: state.pathParameters['promotionId']!,
+                ),
+              ),
+            ],
           ),
           GoRoute(
             path: '/events',
