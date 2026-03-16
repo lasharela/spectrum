@@ -13,6 +13,104 @@ const approveEventSchema = z.object({
   status: z.enum(["approved", "rejected"]),
 });
 
+const categorySchema = z.object({
+  name: z.string().min(1).max(100),
+  icon: z.string().max(10).optional(),
+  sortOrder: z.number().int().default(0),
+});
+
+const updateCategorySchema = z.object({
+  name: z.string().min(1).max(100).optional(),
+  icon: z.string().max(10).optional(),
+  sortOrder: z.number().int().optional(),
+});
+
+// ---------------------------------------------------------------------------
+// Category route factory
+// ---------------------------------------------------------------------------
+
+type PrismaDelegate = {
+  findMany: (args?: any) => Promise<any[]>;
+  create: (args: any) => Promise<any>;
+  findUnique: (args: any) => Promise<any>;
+  update: (args: any) => Promise<any>;
+  delete: (args: any) => Promise<any>;
+};
+
+function categoryRoutes(modelName: string) {
+  const app = new Hono<{ Bindings: AppBindings; Variables: AppVariables }>();
+
+  function getModel(prisma: any): PrismaDelegate {
+    return prisma[modelName] as PrismaDelegate;
+  }
+
+  // GET / — list categories ordered by sortOrder
+  app.get("/", async (c) => {
+    const prisma = c.get("prisma");
+    const model = getModel(prisma);
+    const items = await model.findMany({ orderBy: { sortOrder: "asc" } });
+    return c.json({ items });
+  });
+
+  // POST / — create category
+  app.post("/", zValidator("json", categorySchema), async (c) => {
+    const prisma = c.get("prisma");
+    const model = getModel(prisma);
+    const body = c.req.valid("json");
+
+    const item = await model.create({
+      data: {
+        name: body.name,
+        ...(body.icon !== undefined ? { icon: body.icon } : {}),
+        sortOrder: body.sortOrder,
+      },
+    });
+
+    return c.json({ item }, 201);
+  });
+
+  // PUT /:id — update category
+  app.put("/:id", zValidator("json", updateCategorySchema), async (c) => {
+    const id = c.req.param("id");
+    const prisma = c.get("prisma");
+    const model = getModel(prisma);
+    const body = c.req.valid("json");
+
+    const existing = await model.findUnique({ where: { id } });
+    if (!existing) {
+      return c.json({ error: "Not found", code: "NOT_FOUND" }, 404);
+    }
+
+    const item = await model.update({
+      where: { id },
+      data: {
+        ...(body.name !== undefined ? { name: body.name } : {}),
+        ...(body.icon !== undefined ? { icon: body.icon } : {}),
+        ...(body.sortOrder !== undefined ? { sortOrder: body.sortOrder } : {}),
+      },
+    });
+
+    return c.json({ item });
+  });
+
+  // DELETE /:id — hard delete category
+  app.delete("/:id", async (c) => {
+    const id = c.req.param("id");
+    const prisma = c.get("prisma");
+    const model = getModel(prisma);
+
+    const existing = await model.findUnique({ where: { id } });
+    if (!existing) {
+      return c.json({ error: "Not found", code: "NOT_FOUND" }, 404);
+    }
+
+    await model.delete({ where: { id } });
+    return c.json({ success: true });
+  });
+
+  return app;
+}
+
 // ---------------------------------------------------------------------------
 // Main admin routes
 // ---------------------------------------------------------------------------
@@ -210,6 +308,16 @@ export function adminRoutes() {
 
     return c.json({ success: true });
   });
+
+  // =========================================================================
+  // Category CRUD — register all 5 types
+  // =========================================================================
+
+  app.route("/categories/catalog", categoryRoutes("catalogCategory"));
+  app.route("/categories/event", categoryRoutes("eventCategory"));
+  app.route("/categories/promotion", categoryRoutes("promotionCategory"));
+  app.route("/categories/age-group", categoryRoutes("ageGroup"));
+  app.route("/categories/special-need", categoryRoutes("specialNeed"));
 
   return app;
 }

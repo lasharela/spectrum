@@ -24,6 +24,11 @@ export async function cleanDatabase() {
   await prisma.comment.deleteMany();
   await prisma.post.deleteMany();
   await prisma.userRole.deleteMany();
+  await prisma.catalogCategory.deleteMany();
+  await prisma.eventCategory.deleteMany();
+  await prisma.promotionCategory.deleteMany();
+  await prisma.ageGroup.deleteMany();
+  await prisma.specialNeed.deleteMany();
   await prisma.session.deleteMany();
   await prisma.account.deleteMany();
   await prisma.verification.deleteMany();
