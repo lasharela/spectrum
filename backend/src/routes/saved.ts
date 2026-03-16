@@ -4,7 +4,7 @@ import { sessionMiddleware } from "../middleware/session.js";
 import type { AppBindings, AppVariables } from "../types/context.js";
 
 const saveItemSchema = z.object({
-  itemType: z.enum(["catalog", "promotion"]),
+  itemType: z.enum(["catalog", "promotion", "event"]),
   itemId: z.string().min(1),
 });
 
@@ -136,6 +136,88 @@ export function savedRoutes() {
           saved: true,
           userRating,
           createdAt: (org as any).createdAt.toISOString(),
+        });
+      }
+
+      const groups = Array.from(groupMap.values()).map((g) => ({
+        category: g.category,
+        icon: g.icon,
+        count: g.items.length,
+        items: g.items,
+      }));
+
+      return c.json({ groups });
+    }
+
+    if (itemType === "event") {
+      const savedItems = await prisma.savedItem.findMany({
+        where: {
+          userId: user.id,
+          itemType: "event",
+        },
+        select: { itemId: true },
+      });
+
+      const itemIds = savedItems.map((s: any) => s.itemId);
+
+      if (itemIds.length === 0) {
+        return c.json({ groups: [] });
+      }
+
+      const events = await prisma.event.findMany({
+        where: { id: { in: itemIds } },
+        include: {
+          organizer: {
+            select: { id: true, name: true, image: true, userType: true },
+          },
+          _count: { select: { attendees: true } },
+          ...(user
+            ? {
+                attendees: {
+                  where: { userId: user.id },
+                  select: { id: true },
+                },
+              }
+            : {}),
+        },
+        orderBy: { startDate: "asc" },
+      });
+
+      // Group by category
+      const groupMap = new Map<
+        string,
+        { category: string; icon: string | null; items: any[] }
+      >();
+
+      for (const event of events) {
+        const category = (event as any).category;
+        if (!groupMap.has(category)) {
+          groupMap.set(category, {
+            category,
+            icon: null,
+            items: [],
+          });
+        }
+
+        groupMap.get(category)!.items.push({
+          id: event.id,
+          title: (event as any).title,
+          description: (event as any).description,
+          category,
+          location: (event as any).location,
+          startDate: (event as any).startDate.toISOString(),
+          endDate: (event as any).endDate?.toISOString() ?? null,
+          imageUrl: (event as any).imageUrl,
+          isOnline: (event as any).isOnline,
+          isFree: (event as any).isFree,
+          price: (event as any).price,
+          status: (event as any).status,
+          organizerId: (event as any).organizerId,
+          organizer: (event as any).organizer,
+          attendeeCount: (event as any)._count?.attendees ?? 0,
+          saved: true,
+          rsvped: ((event as any).attendees?.length ?? 0) > 0,
+          createdAt: (event as any).createdAt.toISOString(),
         });
       }
 

@@ -1,0 +1,392 @@
+openapi: 3.1.0
+info:
+  title: Spectrum Events API
+  version: 1.0.0
+  description: Events endpoints for the Spectrum app
+
+paths:
+  /api/events:
+    get:
+      summary: List events
+      description: Returns a paginated list of approved events (or user's own events with mine=true)
+      parameters:
+        - name: cursor
+          in: query
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 50
+            default: 20
+        - name: q
+          in: query
+          description: Search query (matches title, description)
+          schema:
+            type: string
+        - name: category
+          in: query
+          schema:
+            type: string
+        - name: isOnline
+          in: query
+          schema:
+            type: string
+            enum: ["true", "false"]
+        - name: isFree
+          in: query
+          schema:
+            type: string
+            enum: ["true", "false"]
+        - name: from
+          in: query
+          description: Filter events starting after this date (ISO 8601)
+          schema:
+            type: string
+            format: date-time
+        - name: to
+          in: query
+          description: Filter events starting before this date (ISO 8601)
+          schema:
+            type: string
+            format: date-time
+        - name: mine
+          in: query
+          description: When "true", returns current user's events regardless of status
+          schema:
+            type: string
+            enum: ["true"]
+      responses:
+        "200":
+          description: List of events
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  events:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Event"
+                  nextCursor:
+                    type: string
+                    nullable: true
+
+    post:
+      summary: Create event
+      description: Creates a new event with status "pending" (requires authentication)
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateEventInput"
+      responses:
+        "201":
+          description: Event created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  event:
+                    $ref: "#/components/schemas/Event"
+
+  /api/events/{id}:
+    get:
+      summary: Get event details
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Event details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  event:
+                    $ref: "#/components/schemas/Event"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+    put:
+      summary: Update event (owner only)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateEventInput"
+      responses:
+        "200":
+          description: Event updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  event:
+                    $ref: "#/components/schemas/Event"
+
+    delete:
+      summary: Delete event (owner only)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Event deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+
+  /api/events/{id}/rsvp:
+    post:
+      summary: RSVP to event
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: RSVP confirmed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  rsvped:
+                    type: boolean
+                  attendeeCount:
+                    type: integer
+
+    delete:
+      summary: Cancel RSVP
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: RSVP cancelled
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  rsvped:
+                    type: boolean
+                  attendeeCount:
+                    type: integer
+
+  /api/events/{id}/approve:
+    put:
+      summary: Approve or reject event (ADMIN only)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - status
+              properties:
+                status:
+                  type: string
+                  enum: [approved, rejected]
+      responses:
+        "200":
+          description: Event status updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  event:
+                    $ref: "#/components/schemas/Event"
+
+  /api/filters/event-categories:
+    get:
+      summary: List event categories
+      responses:
+        "200":
+          description: Event categories
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  categories:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/FilterOption"
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+
+  responses:
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+              code:
+                type: string
+
+  schemas:
+    Event:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+          nullable: true
+        category:
+          type: string
+        location:
+          type: string
+          nullable: true
+        startDate:
+          type: string
+          format: date-time
+        endDate:
+          type: string
+          format: date-time
+          nullable: true
+        imageUrl:
+          type: string
+          nullable: true
+        isOnline:
+          type: boolean
+        isFree:
+          type: boolean
+        price:
+          type: string
+          nullable: true
+        status:
+          type: string
+          enum: [pending, approved, rejected]
+        organizerId:
+          type: string
+        organizer:
+          $ref: "#/components/schemas/Author"
+        attendeeCount:
+          type: integer
+        saved:
+          type: boolean
+        rsvped:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+
+    CreateEventInput:
+      type: object
+      required:
+        - title
+        - category
+        - startDate
+      properties:
+        title:
+          type: string
+          maxLength: 200
+        description:
+          type: string
+          maxLength: 5000
+        category:
+          type: string
+        location:
+          type: string
+        startDate:
+          type: string
+          format: date-time
+        endDate:
+          type: string
+          format: date-time
+        imageUrl:
+          type: string
+          format: uri
+        isOnline:
+          type: boolean
+          default: false
+        isFree:
+          type: boolean
+          default: true
+        price:
+          type: string
+
+    Author:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        image:
+          type: string
+          nullable: true
+        userType:
+          type: string
+
+    FilterOption:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        icon:
+          type: string
+          nullable: true

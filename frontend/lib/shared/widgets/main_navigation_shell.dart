@@ -31,6 +31,14 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
     return false;
   }
 
+  String _detailTitle(String location) {
+    if (location.startsWith('/community')) return 'Discussion';
+    if (location.startsWith('/catalog')) return 'Place Details';
+    if (location.startsWith('/promotions')) return 'Promotion Details';
+    if (location.startsWith('/events')) return 'Event Details';
+    return 'Details';
+  }
+
   @override
   Widget build(BuildContext context) {
     final location = GoRouterState.of(context).uri.path;
@@ -43,7 +51,10 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
         child: Column(
           children: [
             if (isDetail)
-              _DetailAppBar(onBack: () => context.pop())
+              _DetailAppBar(
+                title: _detailTitle(location),
+                onBack: () => context.pop(),
+              )
             else
               SpectrumAppBar(title: _titles[selectedIndex]),
             Expanded(child: widget.child),
@@ -66,14 +77,15 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
 }
 
 class _DetailAppBar extends StatelessWidget {
+  final String title;
   final VoidCallback onBack;
 
-  const _DetailAppBar({required this.onBack});
+  const _DetailAppBar({required this.title, required this.onBack});
 
   @override
   Widget build(BuildContext context) {
     return FHeader.nested(
-      title: const Text('Place Details'),
+      title: Text(title),
       titleAlignment: Alignment.center,
       prefixes: [
         FHeaderAction(

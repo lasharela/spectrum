@@ -30,6 +30,9 @@ model User {
   organizations Organization[]
   ratings       Rating[]
   savedItems    SavedItem[]
+  roles         UserRole[]
+  events        Event[]
+  eventRsvps    EventAttendee[]
 }
 
 model Session {
@@ -187,6 +190,56 @@ model AgeGroup {
 model SpecialNeed {
   id        String   @id @default(cuid())
   name      String   @unique
+  sortOrder Int      @default(0)
+  updatedAt DateTime @updatedAt
+}
+
+model UserRole {
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role   String
+
+  @@unique([userId, role])
+}
+
+model Event {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  category    String
+  location    String?
+  startDate   DateTime
+  endDate     DateTime?
+  imageUrl    String?
+  isOnline    Boolean  @default(false)
+  isFree      Boolean  @default(true)
+  price       String?
+  status      String   @default("pending")
+  organizerId String
+  organizer   User     @relation(fields: [organizerId], references: [id])
+  attendees   EventAttendee[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([startDate])
+}
+
+model EventAttendee {
+  id        String   @id @default(cuid())
+  eventId   String
+  event     Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([eventId, userId])
+}
+
+model EventCategory {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  icon      String?
   sortOrder Int      @default(0)
   updatedAt DateTime @updatedAt
 }

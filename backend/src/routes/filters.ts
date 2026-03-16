@@ -28,5 +28,13 @@ export function filterRoutes() {
     return c.json({ specialNeeds });
   });
 
+  app.get("/event-categories", async (c) => {
+    const prisma = c.get("prisma");
+    const categories = await prisma.eventCategory.findMany({
+      orderBy: { sortOrder: "asc" },
+    });
+    return c.json({ categories });
+  });
+
   return app;
 }

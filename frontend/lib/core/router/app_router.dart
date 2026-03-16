@@ -16,6 +16,8 @@ import '../../shared/widgets/main_navigation_shell.dart';
 import '../../shared/widgets/screen.dart';
 import '../../features/catalog/presentation/screens/catalog_screen.dart';
 import '../../features/catalog/presentation/screens/place_detail_screen.dart';
+import '../../features/events/presentation/screens/events_screen.dart';
+import '../../features/events/presentation/screens/event_detail_screen.dart';
 import '../../features/auth/presentation/providers/auth_provider.dart';
 
 /// Auth routes that don't require authentication
@@ -143,9 +145,15 @@ final routerProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: '/events',
             name: 'events',
-            builder: (context, state) => const Screen(
-              body: Center(child: Text('Events — coming in Phase 6')),
-            ),
+            builder: (context, state) => const EventsScreen(),
+            routes: [
+              GoRoute(
+                path: ':eventId',
+                builder: (context, state) => EventDetailScreen(
+                  eventId: state.pathParameters['eventId']!,
+                ),
+              ),
+            ],
           ),
         ],
       ),

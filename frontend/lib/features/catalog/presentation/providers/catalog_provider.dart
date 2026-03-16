@@ -75,7 +75,7 @@ class CatalogState {
   }) {
     return CatalogState(
       places: places ?? this.places,
-      nextCursor: nextCursor,
+      nextCursor: nextCursor ?? this.nextCursor,
       isLoading: isLoading ?? this.isLoading,
       isLoadingMore: isLoadingMore ?? this.isLoadingMore,
       searchQuery: searchQuery ?? this.searchQuery,
