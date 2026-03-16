@@ -33,6 +33,9 @@ model User {
   roles         UserRole[]
   events        Event[]
   eventRsvps    EventAttendee[]
+  promotions         Promotion[]
+  promotionReactions PromotionReaction[]
+  promotionClaims    PromotionClaim[]
 }
 
 model Session {
@@ -237,6 +240,59 @@ model EventAttendee {
 }
 
 model EventCategory {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  icon      String?
+  sortOrder Int      @default(0)
+  updatedAt DateTime @updatedAt
+}
+
+model Promotion {
+  id             String              @id @default(cuid())
+  title          String
+  description    String?
+  category       String
+  discount       String?
+  store          String
+  brandLogoUrl   String?
+  imageUrl       String?
+  expiresAt      DateTime?
+  validFrom      DateTime            @default(now())
+  organizationId String?
+  createdById    String
+  createdBy      User                @relation(fields: [createdById], references: [id])
+  likesCount     Int                 @default(0)
+  reactions      PromotionReaction[]
+  claims         PromotionClaim[]
+  createdAt      DateTime            @default(now())
+  updatedAt      DateTime            @updatedAt
+
+  @@index([createdAt])
+}
+
+model PromotionReaction {
+  id          String    @id @default(cuid())
+  authorId    String
+  author      User      @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  promotionId String
+  promotion   Promotion @relation(fields: [promotionId], references: [id], onDelete: Cascade)
+  createdAt   DateTime  @default(now())
+
+  @@unique([authorId, promotionId])
+}
+
+model PromotionClaim {
+  id          String    @id @default(cuid())
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  promotionId String
+  promotion   Promotion @relation(fields: [promotionId], references: [id], onDelete: Cascade)
+  createdAt   DateTime  @default(now())
+
+  @@unique([userId, promotionId])
+}
+
+model PromotionCategory {
   id        String   @id @default(cuid())
   name      String   @unique
   icon      String?
