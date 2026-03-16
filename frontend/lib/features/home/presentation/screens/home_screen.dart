@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:forui/forui.dart';
+import 'package:go_router/go_router.dart';
 import '../../../../core/constants/app_spacing.dart';
 import '../../../../shared/widgets/screen.dart';
 import '../providers/dashboard_provider.dart';
@@ -84,7 +85,10 @@ class HomeScreen extends ConsumerWidget {
                     top: AppSpacing.screenPadding,
                     bottom: AppSpacing.sectionGap,
                   ),
-                  child: PromotionsSection(promotions: dashboard.promotions),
+                  child: PromotionsSection(
+                    promotions: dashboard.promotions,
+                    onItemSelected: (id) => context.push('/promotions/$id'),
+                  ),
                 ),
               ),
               // Remaining sections — with horizontal padding
