@@ -1,0 +1,259 @@
+openapi: 3.1.0
+info:
+  title: Spectrum Promotions API
+  version: 1.0.0
+
+paths:
+  /api/promotions:
+    get:
+      summary: List active promotions (paginated)
+      security: [{}]
+      parameters:
+        - name: cursor
+          in: query
+          schema: { type: string }
+        - name: limit
+          in: query
+          schema: { type: integer, minimum: 1, maximum: 50, default: 20 }
+        - name: q
+          in: query
+          schema: { type: string }
+        - name: category
+          in: query
+          schema: { type: string }
+      responses:
+        "200":
+          description: Paginated list of promotions
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  promotions:
+                    type: array
+                    items: { $ref: "#/components/schemas/Promotion" }
+                  nextCursor:
+                    type: string
+                    nullable: true
+    post:
+      summary: Create promotion (authenticated)
+      security: [{ bearer: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/CreatePromotion" }
+      responses:
+        "201":
+          description: Created promotion
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  promotion: { $ref: "#/components/schemas/Promotion" }
+
+  /api/promotions/{id}:
+    get:
+      summary: Get promotion details
+      security: [{}]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Promotion details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  promotion: { $ref: "#/components/schemas/Promotion" }
+        "404":
+          description: Promotion not found
+    put:
+      summary: Update promotion (owner only)
+      security: [{ bearer: [] }]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/CreatePromotion" }
+      responses:
+        "200":
+          description: Updated promotion
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  promotion: { $ref: "#/components/schemas/Promotion" }
+        "403":
+          description: Not authorized
+        "404":
+          description: Promotion not found
+    delete:
+      summary: Delete promotion (owner only)
+      security: [{ bearer: [] }]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+        "403":
+          description: Not authorized
+        "404":
+          description: Promotion not found
+
+  /api/promotions/{id}/reactions:
+    put:
+      summary: Like a promotion (idempotent)
+      security: [{ bearer: [] }]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Reaction result
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  liked: { type: boolean }
+                  likesCount: { type: integer }
+        "404":
+          description: Promotion not found
+    delete:
+      summary: Unlike a promotion (idempotent)
+      security: [{ bearer: [] }]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Reaction result
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  liked: { type: boolean }
+                  likesCount: { type: integer }
+        "404":
+          description: Promotion not found
+
+  /api/promotions/{id}/claim:
+    post:
+      summary: Claim a promotion (idempotent)
+      security: [{ bearer: [] }]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Claim result
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  claimed: { type: boolean }
+        "404":
+          description: Promotion not found
+
+  /api/filters/promotion-categories:
+    get:
+      summary: List promotion categories
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  categories:
+                    type: array
+                    items: { $ref: "#/components/schemas/FilterOption" }
+
+components:
+  schemas:
+    Promotion:
+      type: object
+      properties:
+        id: { type: string }
+        title: { type: string }
+        description: { type: string, nullable: true }
+        category: { type: string }
+        discount: { type: string, nullable: true }
+        store: { type: string }
+        brandLogoUrl: { type: string, nullable: true }
+        imageUrl: { type: string, nullable: true }
+        expiresAt: { type: string, format: date-time, nullable: true }
+        validFrom: { type: string, format: date-time }
+        organizationId: { type: string, nullable: true }
+        createdById: { type: string }
+        createdBy: { $ref: "#/components/schemas/Author" }
+        likesCount: { type: integer }
+        liked: { type: boolean }
+        claimed: { type: boolean }
+        saved: { type: boolean }
+        createdAt: { type: string, format: date-time }
+        updatedAt: { type: string, format: date-time }
+
+    CreatePromotion:
+      type: object
+      required: [title, category, store]
+      properties:
+        title: { type: string, maxLength: 200 }
+        description: { type: string, maxLength: 5000 }
+        category: { type: string }
+        discount: { type: string }
+        store: { type: string, maxLength: 200 }
+        brandLogoUrl: { type: string, format: uri }
+        imageUrl: { type: string, format: uri }
+        expiresAt: { type: string, format: date-time }
+        validFrom: { type: string, format: date-time }
+        organizationId: { type: string }
+
+    Author:
+      type: object
+      properties:
+        id: { type: string }
+        name: { type: string }
+        image: { type: string, nullable: true }
+        userType: { type: string }
+
+    FilterOption:
+      type: object
+      properties:
+        id: { type: string }
+        name: { type: string }
+        icon: { type: string, nullable: true }
+
+  securitySchemes:
+    bearer:
+      type: http
+      scheme: bearer
