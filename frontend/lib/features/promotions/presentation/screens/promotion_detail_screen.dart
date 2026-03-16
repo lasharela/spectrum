@@ -10,6 +10,7 @@ import 'package:spectrum_app/features/promotions/domain/promotion.dart';
 import 'package:spectrum_app/features/promotions/presentation/providers/promotions_provider.dart';
 import 'package:spectrum_app/shared/widgets/screen.dart';
 
+
 // ---------------------------------------------------------------------------
 // Detail Provider
 // ---------------------------------------------------------------------------
@@ -34,24 +35,6 @@ class PromotionDetailScreen extends ConsumerWidget {
     final promoAsync = ref.watch(promotionDetailProvider(promotionId));
 
     return Screen(
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_rounded),
-          color: AppColors.textPrimary,
-          onPressed: () => context.pop(),
-        ),
-        title: Text(
-          'Deal Details',
-          style: TextStyle(
-            color: AppColors.textPrimary,
-            fontSize: 17,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        centerTitle: true,
-      ),
       body: promoAsync.when(
         loading: () => const Center(child: FCircularProgress()),
         error: (e, _) => const Center(child: Text('Failed to load promotion')),
