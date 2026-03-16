@@ -69,7 +69,11 @@ app.on(["GET", "POST"], "/api/auth/**", async (c) => {
 // Profile endpoints
 app.get("/api/me", sessionMiddleware, async (c) => {
   const user = c.get("user");
-  return c.json({ user });
+  const prisma = c.get("prisma");
+  const adminRole = await prisma.userRole.findUnique({
+    where: { userId_role: { userId: user.id, role: "ADMIN" } },
+  });
+  return c.json({ user: { ...user, isAdmin: !!adminRole } });
 });
 
 const updateProfileSchema = z.object({

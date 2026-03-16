@@ -80,6 +80,19 @@ class ProfileScreen extends ConsumerWidget {
                       ],
                     ),
                     const SizedBox(height: 16),
+                    if (user?.isAdmin == true)
+                      FTileGroup(
+                        children: [
+                          FTile(
+                            prefix: const Icon(FIcons.settings),
+                            title: const Text('Admin Panel'),
+                            suffix: const Icon(FIcons.chevronRight),
+                            onPress: () => context.push('/admin'),
+                          ),
+                        ],
+                      ),
+                    if (user?.isAdmin == true)
+                      const SizedBox(height: 16),
                     FTileGroup(
                       label: const Text('Support'),
                       children: [

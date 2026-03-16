@@ -9,6 +9,7 @@ class User {
   final String? state;
   final String? city;
   final String? image;
+  final bool isAdmin;
   final DateTime createdAt;
 
   const User({
@@ -22,6 +23,7 @@ class User {
     this.state,
     this.city,
     this.image,
+    this.isAdmin = false,
     required this.createdAt,
   });
 
@@ -37,6 +39,7 @@ class User {
       state: json['state'] as String?,
       city: json['city'] as String?,
       image: json['image'] as String?,
+      isAdmin: json['isAdmin'] as bool? ?? false,
       createdAt: DateTime.parse(json['createdAt'] as String),
     );
   }
