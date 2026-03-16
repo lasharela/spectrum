@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:spectrum_app/features/catalog/domain/filter_option.dart';
 import 'package:spectrum_app/features/promotions/domain/promotion.dart';
 import 'package:spectrum_app/shared/domain/paginated_result.dart';
+import 'package:spectrum_app/shared/api/api_client.dart';
 import 'package:spectrum_app/shared/providers/api_provider.dart';
 
 final promotionsRepositoryProvider = Provider<PromotionsRepository>((ref) {
@@ -11,7 +12,7 @@ final promotionsRepositoryProvider = Provider<PromotionsRepository>((ref) {
 });
 
 class PromotionsRepository {
-  final dynamic _api;
+  final ApiClient _api;
 
   PromotionsRepository(this._api);
 

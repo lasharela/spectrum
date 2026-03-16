@@ -1,5 +1,6 @@
 import { Hono } from "hono";
 import { z } from "zod";
+import { zValidator } from "@hono/zod-validator";
 import {
   sessionMiddleware,
   optionalSessionMiddleware,
@@ -202,11 +203,11 @@ export function promotionRoutes() {
   });
 
   // POST / — create promotion (authenticated)
-  app.post("/", sessionMiddleware, async (c) => {
+  app.post("/", sessionMiddleware, zValidator("json", createPromotionSchema), async (c) => {
     const user = c.get("user");
     const prisma = c.get("prisma");
 
-    const body = createPromotionSchema.parse(await c.req.json());
+    const body = c.req.valid("json");
 
     const promotion = await prisma.promotion.create({
       data: {
@@ -236,7 +237,7 @@ export function promotionRoutes() {
   });
 
   // PUT /:id — update promotion (owner only)
-  app.put("/:id", sessionMiddleware, async (c) => {
+  app.put("/:id", sessionMiddleware, zValidator("json", updatePromotionSchema), async (c) => {
     const id = c.req.param("id");
     const user = c.get("user");
     const prisma = c.get("prisma");
@@ -251,7 +252,7 @@ export function promotionRoutes() {
       return c.json({ error: "Not authorized", code: "FORBIDDEN" }, 403);
     }
 
-    const body = updatePromotionSchema.parse(await c.req.json());
+    const body = c.req.valid("json");
 
     const updated = await prisma.promotion.update({
       where: { id },
