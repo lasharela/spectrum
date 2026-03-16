@@ -39,31 +39,7 @@ class PromotionCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Top section: discount badge + expiry badge
-            if (promotion.discount != null || promotion.expiresAt != null)
-              Padding(
-                padding: const EdgeInsets.fromLTRB(
-                  AppSpacing.md,
-                  AppSpacing.md,
-                  AppSpacing.md,
-                  0,
-                ),
-                child: Row(
-                  children: [
-                    if (promotion.discount != null)
-                      _DiscountBadge(label: promotion.discount!),
-                    const Spacer(),
-                    if (!promotion.isPermanent)
-                      _TimerBadge(
-                        label: promotion.timeRemaining,
-                        isUrgent: isUrgent,
-                        isExpired: promotion.isExpired,
-                      ),
-                  ],
-                ),
-              ),
-
-            // Brand + store row
+            // Top row: [discount] [timer] ... [category]
             Padding(
               padding: const EdgeInsets.fromLTRB(
                 AppSpacing.md,
@@ -73,32 +49,18 @@ class PromotionCard extends StatelessWidget {
               ),
               child: Row(
                 children: [
-                  // Brand logo / initials avatar
-                  FAvatar.raw(
-                    size: 36,
-                    child: Text(
-                      promotion.store.isNotEmpty
-                          ? promotion.store[0].toUpperCase()
-                          : '?',
-                      style: theme.typography.sm.copyWith(
-                        color: AppColors.primary,
-                        fontWeight: FontWeight.w700,
-                      ),
+                  if (promotion.discount != null) ...[
+                    _DiscountBadge(label: promotion.discount!),
+                    if (!promotion.isPermanent)
+                      const SizedBox(width: AppSpacing.sm),
+                  ],
+                  if (!promotion.isPermanent)
+                    _TimerBadge(
+                      label: promotion.timeRemaining,
+                      isUrgent: isUrgent,
+                      isExpired: promotion.isExpired,
                     ),
-                  ),
-                  const SizedBox(width: AppSpacing.sm),
-                  Expanded(
-                    child: Text(
-                      promotion.store,
-                      style: theme.typography.sm.copyWith(
-                        fontWeight: FontWeight.w600,
-                        color: theme.colors.foreground,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                  // Category tag
+                  const Spacer(),
                   Container(
                     padding: const EdgeInsets.symmetric(
                       horizontal: AppSpacing.sm,
@@ -114,6 +76,44 @@ class PromotionCard extends StatelessWidget {
                         color: AppColors.primary,
                         fontWeight: FontWeight.w500,
                       ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            // Store row
+            Padding(
+              padding: const EdgeInsets.fromLTRB(
+                AppSpacing.md,
+                AppSpacing.sm,
+                AppSpacing.md,
+                0,
+              ),
+              child: Row(
+                children: [
+                  FAvatar.raw(
+                    size: 28,
+                    child: Text(
+                      promotion.store.isNotEmpty
+                          ? promotion.store[0].toUpperCase()
+                          : '?',
+                      style: theme.typography.xs.copyWith(
+                        color: AppColors.primary,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: AppSpacing.sm),
+                  Expanded(
+                    child: Text(
+                      promotion.store,
+                      style: theme.typography.xs.copyWith(
+                        fontWeight: FontWeight.w600,
+                        color: theme.colors.mutedForeground,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
                 ],
