@@ -12,6 +12,7 @@ import { catalogRoutes } from "./routes/catalog.js";
 import { savedRoutes } from "./routes/saved.js";
 import { eventsRoutes } from "./routes/events.js";
 import { promotionRoutes } from "./routes/promotions.js";
+import { adminRoutes } from "./routes/admin.js";
 import type { AppBindings, AppVariables } from "./types/context.js";
 
 const app = new Hono<{ Bindings: AppBindings; Variables: AppVariables }>();
@@ -149,6 +150,7 @@ app.route("/api/catalog", catalogRoutes());
 app.route("/api/saved", savedRoutes());
 app.route("/api/events", eventsRoutes());
 app.route("/api/promotions", promotionRoutes());
+app.route("/api/admin", adminRoutes());
 
 // Global error handler
 app.onError((err, c) => {
