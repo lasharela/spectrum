@@ -8,7 +8,7 @@ Spectrum is a mobile application designed as a social network for people with au
 
 ## Tech Stack
 
-- **Frontend**: Flutter 3.32.5 / Dart 3.8.1
+- **Frontend**: Flutter 3.41.4 / Dart 3.11.1
 - **Backend**: Hono (TypeScript) on Cloudflare Workers
 - **Database**: Cloudflare D1 (SQLite-based) with Prisma adapter
 - **Auth**: Better Auth
